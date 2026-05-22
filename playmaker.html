@@ -215,36 +215,51 @@ function readFile(f){
   reader.readAsText(f);
 }
 
+function parseCSVLine(line){
+  const result = [];
+  let cur = '', inQ = false;
+  for(let i=0;i<line.length;i++){
+    const c = line[i];
+    if(c==='"'){ inQ=!inQ; continue; }
+    if(c===',' && !inQ){ result.push(cur.trim()); cur=''; continue; }
+    cur += c;
+  }
+  result.push(cur.trim());
+  return result;
+}
+
 function parseCSV(text, fname){
-  const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
+  const lines = text.trim().split(/\r?\n/);
+  const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
   const idx = {
     so:     headers.findIndex(h => h.includes('so_number')),
-    dest:   headers.findIndex(h => h.includes('destination')),
+    dest:   headers.findIndex(h => h.includes('destination_name')),
     qty:    headers.findIndex(h => h.includes('request_quantity')),
     status: headers.findIndex(h => h === 'status'),
     wave:   headers.findIndex(h => h === 'wave'),
     type:   headers.findIndex(h => h === 'type'),
   };
 
-  const rawRows = [];
-  for(let i=1;i<lines.length;i++){
-    const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g,''));
-    if(!cols[idx.so]) continue;
-    rawRows.push({
-      so_number: cols[idx.so]||'',
-      destination_name: cols[idx.dest]||'',
-      qty: parseInt(cols[idx.qty])||0,
-      status: cols[idx.status]||'NEW',
-      wave: idx.wave>=0 ? cols[idx.wave] : null,
-      type: idx.type>=0 ? cols[idx.type] : null,
-    });
-  }
+  if(idx.so<0 || idx.dest<0 || idx.qty<0){ alert('Kolom tidak ditemukan. Cek format CSV.'); return; }
 
   const soMap = {};
-  for(const r of rawRows){
-    if(!soMap[r.so_number]) soMap[r.so_number] = {...r, qty:0};
-    soMap[r.so_number].qty += r.qty;
+  for(let i=1;i<lines.length;i++){
+    if(!lines[i].trim()) continue;
+    const cols = parseCSVLine(lines[i]);
+    const soNum = cols[idx.so]||'';
+    if(!soNum) continue;
+    const qty = parseFloat((cols[idx.qty]||'0').replace(/,/g,''))||0;
+    if(!soMap[soNum]){
+      soMap[soNum] = {
+        so_number: soNum,
+        destination_name: cols[idx.dest]||'',
+        qty: 0,
+        status: cols[idx.status]||'NEW',
+        wave: idx.wave>=0 ? cols[idx.wave]||null : null,
+        type: idx.type>=0 ? cols[idx.type]||null : null,
+      };
+    }
+    soMap[soNum].qty += qty;
   }
 
   soData = Object.values(soMap).map(s => ({
@@ -253,7 +268,7 @@ function parseCSV(text, fname){
     type: s.type || getType(s.destination_name),
   }));
 
-  document.getElementById('upload-label').textContent = '✓ ' + fname;
+  document.getElementById('upload-label').textContent = '\u2713 ' + fname + ' (' + soData.length + ' SO)';
   updateStats();
 }
 
@@ -307,6 +322,8 @@ function runAssign(){
   if(!pickers.length){ alert('Tambahkan picker dulu.'); return; }
 
   const target = parseInt(document.getElementById('target-qty').value)||2400;
+
+  // Filter SO NEW, sort by wave -> type
   const newSO = soData
     .filter(s => !SKIP_STATUS.includes((s.status||'').toUpperCase()))
     .sort((a,b) => {
@@ -316,15 +333,31 @@ function runAssign(){
     });
 
   assignResult = {};
-  pickers.forEach(p => assignResult[p]={picker:p,soList:[],totalQty:0});
+  pickers.forEach(p => assignResult[p]={picker:p,soList:[],totalQty:0,soCount:0});
   unassignedSO = [];
 
+  // Group SO by wave+type
+  const groups = {};
   for(const so of newSO){
-    const avail = pickers.filter(p => assignResult[p].totalQty < target*1.3);
-    if(!avail.length){ unassignedSO.push(so); continue; }
-    const pick = avail.reduce((a,b) => assignResult[a].totalQty <= assignResult[b].totalQty ? a : b);
-    assignResult[pick].soList.push(so);
-    assignResult[pick].totalQty += so.qty;
+    const key = (so.wave||'?')+'-'+(so.type||'?');
+    if(!groups[key]) groups[key]=[];
+    groups[key].push(so);
+  }
+
+  // Assign per group: round-robin + greedy balance
+  for(const key of Object.keys(groups)){
+    const groupSO = groups[key];
+    // Sort group by qty desc so big SO spread first
+    groupSO.sort((a,b)=>b.qty-a.qty);
+    for(const so of groupSO){
+      // Pick picker with lowest totalQty, within 1.3x target cap
+      const avail = pickers.filter(p => assignResult[p].totalQty < target*1.3);
+      if(!avail.length){ unassignedSO.push(so); continue; }
+      const pick = avail.reduce((a,b) => assignResult[a].totalQty <= assignResult[b].totalQty ? a : b);
+      assignResult[pick].soList.push(so);
+      assignResult[pick].totalQty += so.qty;
+      assignResult[pick].soCount++;
+    }
   }
 
   renderResult(target);

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playmaker — SO Assignment Tool</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;
+  --text:#e8e8e8;--text2:#a0a0a0;--text3:#666;
+  --border:#333;--border2:#444;
+  --blue:#378ADD;--blue-bg:#0c1e2e;--blue-text:#7bbfef;
+  --green:#639922;--green-bg:#1a2e0a;--green-text:#97C459;
+  --amber:#BA7517;--amber-bg:#2e1e04;--amber-text:#EF9F27;
+  --red:#A32D2D;--red-bg:#2e0a0a;--red-text:#E24B4A;
+  --purple:#534AB7;--purple-bg:#1a1830;--purple-text:#AFA9EC;
+  --teal:#0F6E56;--teal-bg:#0a2420;--teal-text:#5DCAA5;
+  --coral:#993C1D;--coral-bg:#2e1208;--coral-text:#F0997B;
+  --accent:#378ADD;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:22px;font-weight:600;margin-bottom:.25rem;color:var(--text)}
+.subtitle{font-size:13px;color:var(--text2);margin-bottom:2rem}
+.section{margin-bottom:1.5rem}
+.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.upload-area{border:1.5px dashed var(--border2);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;color:var(--text2);transition:.2s}
+.upload-area:hover,.upload-area.drag{border-color:var(--accent);background:var(--blue-bg)}
+.upload-icon{font-size:32px;margin-bottom:.5rem;opacity:.5}
+.upload-label{font-size:14px;margin-bottom:.25rem}
+.upload-hint{font-size:11px;color:var(--text3)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:1rem}
+.stat{background:var(--bg3);border-radius:8px;padding:.75rem 1rem}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:3px}
+.stat-val{font-size:20px;font-weight:600;color:var(--text)}
+.mp-input-row{display:flex;gap:8px;margin-bottom:.75rem}
+.mp-input-row input{flex:1;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none}
+.mp-input-row input:focus{border-color:var(--accent)}
+.btn{padding:8px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:13px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--bg4);border-color:var(--border2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+.btn-primary:hover{opacity:.9}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.5rem}
+.tag{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--text)}
+.tag-rm{cursor:pointer;color:var(--text3);font-size:16px;line-height:1;margin-left:2px}
+.tag-rm:hover{color:var(--red-text)}
+.mp-count{font-size:12px;color:var(--text3)}
+.target-row{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.target-row label{font-size:13px;color:var(--text2)}
+.target-row input{width:120px;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none}
+.target-row input:focus{border-color:var(--accent)}
+.hidden{display:none}
+.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.tab{padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text2);transition:.15s}
+.tab:hover{border-color:var(--border2);color:var(--text)}
+.tab.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-text)}
+.picker-summary{display:flex;flex-direction:column;gap:0}
+.picker-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.picker-row:last-child{border-bottom:none}
+.picker-name{font-size:13px;font-weight:500;min-width:180px;color:var(--text)}
+.bar-wrap{flex:1;background:var(--bg3);border-radius:4px;height:6px;overflow:hidden}
+.bar{height:6px;border-radius:4px;background:var(--accent);transition:width .4s}
+.bar.over{background:var(--red-text)}
+.picker-qty{font-size:13px;font-weight:500;min-width:70px;text-align:right;color:var(--text)}
+.picker-so-count{font-size:11px;color:var(--text3);min-width:40px;text-align:right}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);font-weight:500;color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+tbody td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--bg3)}
+.mono{font-family:monospace;font-size:12px;color:var(--text2)}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:500}
+.wave1{background:var(--blue-bg);color:var(--blue-text)}
+.wave2{background:var(--green-bg);color:var(--green-text)}
+.wave3{background:var(--amber-bg);color:var(--amber-text)}
+.wave4{background:var(--red-bg);color:var(--red-text)}
+.kepala{background:var(--purple-bg);color:var(--purple-text)}
+.badan{background:var(--teal-bg);color:var(--teal-text)}
+.ekor{background:var(--coral-bg);color:var(--coral-text)}
+.other{background:var(--bg3);color:var(--text3)}
+.warn{background:var(--amber-bg);border:1px solid var(--amber);border-radius:8px;padding:.6rem .9rem;font-size:12px;color:var(--amber-text);margin-bottom:.75rem}
+.detail-meta{font-size:12px;color:var(--text3);margin-bottom:.6rem}
+.detail-meta strong{color:var(--text2)}
+.tbl-wrap{overflow-x:auto}
+.divider{height:1px;background:var(--border);margin:1.25rem 0}
+.logo{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem}
+.logo-box{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="logo">
+    <div class="logo-box">🎯</div>
+    <div>
+      <h1>Playmaker</h1>
+      <div class="subtitle">SO Assignment Tool — STL Warehouse</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">1. Upload data SO (CSV)</div>
+    <div class="card">
+      <div class="upload-area" id="drop-area" onclick="document.getElementById('csv-input').click()">
+        <div class="upload-icon">📂</div>
+        <div class="upload-label" id="upload-label">Klik atau drag CSV di sini</div>
+        <div class="upload-hint">kolom: so_number, destination_name, request_quantity, status (+ optional: WAVE, TYPE)</div>
+      </div>
+      <input type="file" id="csv-input" accept=".csv" style="display:none">
+      <div class="stats-row hidden" id="file-stats">
+        <div class="stat"><div class="stat-label">Total SO</div><div class="stat-val" id="stat-so">0</div></div>
+        <div class="stat"><div class="stat-label">SO New (belum assign)</div><div class="stat-val" id="stat-new">0</div></div>
+        <div class="stat"><div class="stat-label">Total Qty</div><div class="stat-val" id="stat-qty">0</div></div>
+        <div class="stat"><div class="stat-label">Estimasi qty/picker</div><div class="stat-val" id="stat-est">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">2. Input MP shift ini</div>
+    <div class="card">
+      <div class="mp-input-row">
+        <input type="text" id="mp-name" placeholder="Nama picker... (Enter untuk tambah)" />
+        <button class="btn btn-primary" onclick="addPicker()">+ Tambah</button>
+      </div>
+      <div class="tags" id="mp-list"></div>
+      <div class="mp-count" id="mp-count">0 picker ditambahkan</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">3. Assign</div>
+    <div class="card">
+      <div class="target-row">
+        <label>Target qty / picker</label>
+        <input type="number" id="target-qty" value="2400" min="100" step="100">
+        <span style="font-size:12px;color:var(--text3)">Picker akan di-assign sampai 130% target sebelum overflow ke unassigned</span>
+      </div>
+      <button class="btn btn-primary" onclick="runAssign()">▶ Jalankan Assign</button>
+    </div>
+  </div>
+
+  <div class="section hidden" id="result-section">
+    <div class="section-title">Hasil Assignment</div>
+    <div class="card">
+      <div class="result-stats">
+        <div class="stat"><div class="stat-label">SO terassign</div><div class="stat-val" id="r-assigned">0</div></div>
+        <div class="stat"><div class="stat-label">SO unassigned</div><div class="stat-val" id="r-unassigned">0</div></div>
+        <div class="stat"><div class="stat-label">Picker aktif</div><div class="stat-val" id="r-pickers">0</div></div>
+      </div>
+      <div class="tabs" id="result-tabs"></div>
+      <div id="result-content"></div>
+      <div class="divider"></div>
+      <button class="btn" onclick="downloadCSV()">⬇ Download hasil (.csv)</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let soData = [];
+let pickers = [];
+let assignResult = {};
+let unassignedSO = [];
+
+const SKIP_STATUS = ['IN PROGRESS','COMPLETED','ON DELIVERY','UNLOADING'];
+const TYPE_ORDER  = {Kepala:1,Badan:2,Ekor:3,Other:4};
+const WAVE_ORDER  = {'WAVE 1':1,'WAVE 2':2,'WAVE 3':3,'WAVE 4':4};
+
+const WAVE_MAP = {
+  APR:'WAVE 1',KJT:'WAVE 1',BSX:'WAVE 1',BGS:'WAVE 1',ASA:'WAVE 1',PBT:'WAVE 1',PKC:'WAVE 1',
+  SRP:'WAVE 1',BRY:'WAVE 1',TDN:'WAVE 1',GPL:'WAVE 1',PPN:'WAVE 1',PPL:'WAVE 1',FTW:'WAVE 1',
+  CLN:'WAVE 2',PIN:'WAVE 2',LBB:'WAVE 2',CPT:'WAVE 2',KGS:'WAVE 2',RDS:'WAVE 2',MRY:'WAVE 2',
+  DST:'WAVE 2',MSB:'WAVE 2',SAL:'WAVE 2',CWG:'WAVE 2',TGX:'WAVE 2',BS9:'WAVE 2',JBG:'WAVE 2',
+  JLB:'WAVE 3',DNS:'WAVE 3',KPM:'WAVE 3',CT2:'WAVE 3',SMN:'WAVE 3',MGR:'WAVE 3',MTG:'WAVE 3',GMD:'WAVE 3',
+  CSA:'WAVE 4',BDC:'WAVE 4',KLD:'WAVE 4',TSY:'WAVE 4',MRG:'WAVE 4',SWG:'WAVE 4',CNR:'WAVE 4',PSG:'WAVE 4',PAM:'WAVE 4'
+};
+const KEPALA = ['KJT','ASA','SRP','GPL','FTW','CPT','MRY','CWG','JBG','JLB','SMN','GMD','KLD','SWG','PAM'];
+const BADAN  = ['APR','BGS','PKC','TDN','PPL','LBB','PIN','RDS','SAL','MSB','BS9','CT2','KPM','MTG','BDC','MRG','PSG'];
+const EKOR   = ['BSX','PBT','BRY','PPN','CLN','KGS','DST','TGX','DNS','MGR','CSA','TSY','CNR'];
+
+function getWave(dest){
+  for(const [k,v] of Object.entries(WAVE_MAP)) if(dest.includes(k)) return v;
+  return null;
+}
+function getType(dest){
+  for(const k of KEPALA) if(dest.includes(k)) return 'Kepala';
+  for(const k of BADAN)  if(dest.includes(k)) return 'Badan';
+  for(const k of EKOR)   if(dest.includes(k)) return 'Ekor';
+  return 'Other';
+}
+function waveClass(w){ return w ? 'wave'+w.replace('WAVE ','') : 'other'; }
+function typeClass(t){ return (t||'other').toLowerCase(); }
+
+// CSV Upload
+document.getElementById('csv-input').addEventListener('change', e => {
+  const f = e.target.files[0]; if(!f) return;
+  readFile(f);
+});
+const dropArea = document.getElementById('drop-area');
+dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag'); });
+dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag'));
+dropArea.addEventListener('drop', e => {
+  e.preventDefault(); dropArea.classList.remove('drag');
+  const f = e.dataTransfer.files[0]; if(!f) return;
+  readFile(f);
+});
+function readFile(f){
+  const reader = new FileReader();
+  reader.onload = ev => parseCSV(ev.target.result, f.name);
+  reader.readAsText(f);
+}
+
+function parseCSV(text, fname){
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
+  const idx = {
+    so:     headers.findIndex(h => h.includes('so_number')),
+    dest:   headers.findIndex(h => h.includes('destination')),
+    qty:    headers.findIndex(h => h.includes('request_quantity')),
+    status: headers.findIndex(h => h === 'status'),
+    wave:   headers.findIndex(h => h === 'wave'),
+    type:   headers.findIndex(h => h === 'type'),
+  };
+
+  const rawRows = [];
+  for(let i=1;i<lines.length;i++){
+    const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g,''));
+    if(!cols[idx.so]) continue;
+    rawRows.push({
+      so_number: cols[idx.so]||'',
+      destination_name: cols[idx.dest]||'',
+      qty: parseInt(cols[idx.qty])||0,
+      status: cols[idx.status]||'NEW',
+      wave: idx.wave>=0 ? cols[idx.wave] : null,
+      type: idx.type>=0 ? cols[idx.type] : null,
+    });
+  }
+
+  const soMap = {};
+  for(const r of rawRows){
+    if(!soMap[r.so_number]) soMap[r.so_number] = {...r, qty:0};
+    soMap[r.so_number].qty += r.qty;
+  }
+
+  soData = Object.values(soMap).map(s => ({
+    ...s,
+    wave: s.wave || getWave(s.destination_name),
+    type: s.type || getType(s.destination_name),
+  }));
+
+  document.getElementById('upload-label').textContent = '✓ ' + fname;
+  updateStats();
+}
+
+function updateStats(){
+  const newSO = soData.filter(s => !SKIP_STATUS.includes((s.status||'').toUpperCase()));
+  const totalQty = newSO.reduce((a,b)=>a+b.qty,0);
+  const n = pickers.length;
+  document.getElementById('file-stats').classList.remove('hidden');
+  document.getElementById('stat-so').textContent = soData.length.toLocaleString('id-ID');
+  document.getElementById('stat-new').textContent = newSO.length.toLocaleString('id-ID');
+  document.getElementById('stat-qty').textContent = totalQty.toLocaleString('id-ID');
+  document.getElementById('stat-est').textContent = n>0 ? Math.round(totalQty/n).toLocaleString('id-ID') : '—';
+}
+
+// Picker management
+document.getElementById('mp-name').addEventListener('keydown', e => { if(e.key==='Enter') addPicker(); });
+document.getElementById('mp-name').addEventListener('paste', e => {
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  const names = text.split(/\n|\r/).map(n => n.trim()).filter(Boolean);
+  if(names.length > 1){
+    e.preventDefault();
+    names.forEach(n => { if(n && !pickers.includes(n)) pickers.push(n); });
+    renderTags();
+    updateStats();
+  }
+});
+function addPicker(){
+  const inp = document.getElementById('mp-name');
+  const name = inp.value.trim();
+  if(!name || pickers.includes(name)){ inp.value=''; return; }
+  pickers.push(name);
+  inp.value='';
+  renderTags();
+  updateStats();
+}
+function removePicker(name){
+  pickers = pickers.filter(p=>p!==name);
+  renderTags();
+  updateStats();
+}
+function renderTags(){
+  document.getElementById('mp-list').innerHTML = pickers.map(p =>
+    `<span class="tag">${p}<span class="tag-rm" onclick="removePicker('${p.replace(/'/g,"\\'")}')">&times;</span></span>`
+  ).join('');
+  document.getElementById('mp-count').textContent = pickers.length + ' picker ditambahkan';
+}
+
+// Assign logic
+function runAssign(){
+  if(!soData.length){ alert('Upload CSV dulu.'); return; }
+  if(!pickers.length){ alert('Tambahkan picker dulu.'); return; }
+
+  const target = parseInt(document.getElementById('target-qty').value)||2400;
+  const newSO = soData
+    .filter(s => !SKIP_STATUS.includes((s.status||'').toUpperCase()))
+    .sort((a,b) => {
+      const wo = (WAVE_ORDER[a.wave]||9)-(WAVE_ORDER[b.wave]||9);
+      if(wo!==0) return wo;
+      return (TYPE_ORDER[a.type]||9)-(TYPE_ORDER[b.type]||9);
+    });
+
+  assignResult = {};
+  pickers.forEach(p => assignResult[p]={picker:p,soList:[],totalQty:0});
+  unassignedSO = [];
+
+  for(const so of newSO){
+    const avail = pickers.filter(p => assignResult[p].totalQty < target*1.3);
+    if(!avail.length){ unassignedSO.push(so); continue; }
+    const pick = avail.reduce((a,b) => assignResult[a].totalQty <= assignResult[b].totalQty ? a : b);
+    assignResult[pick].soList.push(so);
+    assignResult[pick].totalQty += so.qty;
+  }
+
+  renderResult(target);
+}
+
+function renderResult(target){
+  document.getElementById('result-section').classList.remove('hidden');
+  const assigned = Object.values(assignResult).reduce((a,b)=>a+b.soList.length,0);
+  document.getElementById('r-assigned').textContent = assigned.toLocaleString('id-ID');
+  document.getElementById('r-unassigned').textContent = unassignedSO.length.toLocaleString('id-ID');
+  document.getElementById('r-pickers').textContent = pickers.length;
+
+  const allTabs = ['Ringkasan',...pickers,...(unassignedSO.length?['Unassigned']:[])];
+  document.getElementById('result-tabs').innerHTML = allTabs.map((t,i) =>
+    `<div class="tab ${i===0?'active':''}" onclick="switchTab(this,'rtab-${i}')">${t}</div>`
+  ).join('');
+
+  let html = '';
+
+  // Tab 0: Ringkasan
+  html += `<div id="rtab-0"><div class="picker-summary">`;
+  for(const p of pickers){
+    const d = assignResult[p];
+    const pct = Math.min(100,Math.round(d.totalQty/target*100));
+    const over = d.totalQty > target*1.1;
+    html += `<div class="picker-row">
+      <div class="picker-name">${p}</div>
+      <div class="bar-wrap"><div class="bar ${over?'over':''}" style="width:${pct}%"></div></div>
+      <div class="picker-qty">${d.totalQty.toLocaleString('id-ID')}</div>
+      <div class="picker-so-count">${d.soList.length} SO</div>
+    </div>`;
+  }
+  html += `</div></div>`;
+
+  // Per picker tabs
+  pickers.forEach((p,i) => {
+    const d = assignResult[p];
+    html += `<div id="rtab-${i+1}" class="hidden">`;
+    if(!d.soList.length){
+      html += `<div style="color:var(--text3);font-size:13px;padding:1rem 0">Tidak ada SO terassign.</div>`;
+    } else {
+      html += `<div class="detail-meta">Total qty: <strong>${d.totalQty.toLocaleString('id-ID')}</strong> &nbsp;|&nbsp; ${d.soList.length} SO</div>`;
+      html += `<div class="tbl-wrap"><table><thead><tr>
+        <th>SO Number</th><th>Destination</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th>
+      </tr></thead><tbody>`;
+      for(const so of d.soList){
+        html += `<tr>
+          <td class="mono">${so.so_number}</td>
+          <td>${so.destination_name}</td>
+          <td><span class="badge ${waveClass(so.wave)}">${so.wave||'—'}</span></td>
+          <td><span class="badge ${typeClass(so.type)}">${so.type||'—'}</span></td>
+          <td style="text-align:right">${so.qty.toLocaleString('id-ID')}</td>
+        </tr>`;
+      }
+      html += `</tbody></table></div>`;
+    }
+    html += `</div>`;
+  });
+
+  // Unassigned tab
+  if(unassignedSO.length){
+    const ui = pickers.length+1;
+    html += `<div id="rtab-${ui}" class="hidden">
+      <div class="warn">⚠ ${unassignedSO.length} SO melebihi kapasitas picker. Tambah picker atau naikkan target qty.</div>
+      <div class="tbl-wrap"><table><thead><tr>
+        <th>SO Number</th><th>Destination</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th>
+      </tr></thead><tbody>`;
+    for(const so of unassignedSO){
+      html += `<tr>
+        <td class="mono">${so.so_number}</td>
+        <td>${so.destination_name}</td>
+        <td><span class="badge ${waveClass(so.wave)}">${so.wave||'—'}</span></td>
+        <td><span class="badge ${typeClass(so.type)}">${so.type||'—'}</span></td>
+        <td style="text-align:right">${so.qty.toLocaleString('id-ID')}</td>
+      </tr>`;
+    }
+    html += `</tbody></table></div></div>`;
+  }
+
+  document.getElementById('result-content').innerHTML = html;
+  document.getElementById('result-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function switchTab(el,tabId){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="rtab-"]').forEach(t=>t.classList.add('hidden'));
+  document.getElementById(tabId).classList.remove('hidden');
+}
+
+function downloadCSV(){
+  let rows = ['Picker,SO Number,Destination,Wave,Type,Qty'];
+  for(const p of pickers){
+    for(const so of assignResult[p].soList){
+      rows.push(`"${p}","${so.so_number}","${so.destination_name}","${so.wave||''}","${so.type||''}",${so.qty}`);
+    }
+  }
+  for(const so of unassignedSO){
+    rows.push(`"UNASSIGNED","${so.so_number}","${so.destination_name}","${so.wave||''}","${so.type||''}",${so.qty}`);
+  }
+  const blob = new Blob([rows.join('\n')],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'assignment_result.csv';
+  a.click();
+}
+</script>
+</body>
+</html>

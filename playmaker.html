@@ -577,7 +577,7 @@ function renderResult(target){
   document.getElementById('result-area').style.display = 'block';
 
   const assigned = Object.values(assignResult).reduce((a,b)=>a+b.soList.length,0);
-  const totalQty = Object.values(assignResult).reduce((a,b)=>a+(b.totalQty - b.existingQty),0);
+  const totalQty = Object.values(assignResult).reduce((a,b)=>a+b.soList.reduce((x,s)=>x+s.qty,0),0);
   const avgQty   = pickers.length > 0 ? totalQty / pickers.length : 0;
 
   document.getElementById('r-assigned').textContent = fmt(assigned);
@@ -612,9 +612,10 @@ function renderResult(target){
   sortedPickers.forEach((p, idx) => {
     const d = assignResult[p.name];
     if(!d) return;
-    const pct = Math.min(100, Math.round(d.totalQty / target * 100));
-    const remaining = Math.max(0, target - d.totalQty);
-    const over = d.totalQty > target * 1.05;
+    const assignedQty = d.soList.reduce((a,s)=>a+s.qty,0);
+    const pct = Math.min(100, Math.round(assignedQty / target * 100));
+    const remaining = Math.max(0, target - assignedQty);
+    const over = assignedQty > target * 1.05;
     const color = d.color;
     const barColor = over ? '#f85149' : color;
 
@@ -637,7 +638,7 @@ function renderResult(target){
         </div>
         <div class="picker-stats">
           <div>
-            <div class="picker-qty-val" style="color:${barColor}">${fmt(d.totalQty - d.existingQty)}</div>
+            <div class="picker-qty-val" style="color:${barColor}">${fmt(d.soList.reduce((a,s)=>a+s.qty,0))}</div>
             <div class="picker-so-ct">${pct}% target</div>
           </div>
           <div class="chevron">▼</div>
@@ -648,13 +649,13 @@ function renderResult(target){
           <div class="bar-fill" style="width:${pct}%;background:${barColor}"></div>
         </div>
         <div class="bar-pct" style="color:${color}">${pct}%</div>
-        <div class="bar-remaining" style="color:var(--text3)">${remaining>0?'sisa '+fmt(remaining):over?'over '+fmt(d.totalQty-target):'✓ on target'}</div>
+        <div class="bar-remaining" style="color:var(--text3)">${remaining>0?'sisa '+fmt(remaining):over?'over '+fmt(assignedQty-target):'✓ on target'}</div>
       </div>
       <div class="picker-detail">
         <div class="detail-summary">
           <div class="detail-stat">
             <div class="detail-stat-label">Total Qty</div>
-            <div class="detail-stat-val" style="color:${color}">${fmt(d.totalQty - d.existingQty)}</div>
+            <div class="detail-stat-val" style="color:${color}">${fmt(d.soList.reduce((a,s)=>a+s.qty,0))}</div>
           </div>
           <div class="detail-stat">
             <div class="detail-stat-label">Total SO</div>

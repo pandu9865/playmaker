@@ -27,8 +27,10 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 /* LAYOUT */
 .app{display:grid;grid-template-rows:48px 1fr;height:100vh;overflow:hidden}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 16px;flex-shrink:0}
-.body{display:grid;grid-template-columns:260px 1fr;overflow:hidden;height:100%}
-.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.body{display:grid;grid-template-columns:260px 1fr;overflow:hidden;height:100%;transition:grid-template-columns .25s ease}
+.body.sidebar-hidden{grid-template-columns:0 1fr}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s ease}
+.sidebar.collapsed{width:0!important;border-right:none;overflow:hidden}
 .main{display:flex;flex-direction:column;overflow:hidden}
 
 /* TOPBAR */
@@ -307,15 +309,15 @@ tr:hover td{background:var(--bg3)}
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
       <div class="as-card">
         <div style="font-weight:600;font-size:12px;margin-bottom:10px;color:var(--text2)">Progress Wave by SO</div>
-        <canvas id="chart-wave-so" height="180"></canvas>
+        <div style="position:relative;height:180px"><canvas id="chart-wave-so"></canvas></div>
       </div>
       <div class="as-card">
         <div style="font-weight:600;font-size:12px;margin-bottom:10px;color:var(--text2)">Progress Wave by Qty</div>
-        <canvas id="chart-wave-qty" height="180"></canvas>
+        <div style="position:relative;height:180px"><canvas id="chart-wave-qty"></canvas></div>
       </div>
       <div class="as-card">
         <div style="font-weight:600;font-size:12px;margin-bottom:10px;color:var(--text2)">SO Remarks</div>
-        <canvas id="chart-remarks" height="180"></canvas>
+        <div style="position:relative;height:180px"><canvas id="chart-remarks"></canvas></div>
       </div>
     </div>
     <!-- Picker Summary -->
@@ -458,6 +460,14 @@ function checkReset(){
     assignResult = {}; unassignedSO = [];
     renderAssign();
   }
+}
+
+// ── SIDEBAR TOGGLE ────────────────────────────────────────────
+function toggleSidebar(){
+  const body = document.querySelector('.body');
+  const sidebar = document.querySelector('.sidebar');
+  body.classList.toggle('sidebar-hidden');
+  sidebar.classList.toggle('collapsed');
 }
 
 // ── LOAD DATA ──────────────────────────────────────────────────

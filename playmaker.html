@@ -522,13 +522,6 @@ function runAssign(){
     soToAssign = soData.filter(s => !skip.includes((s.status||'').toUpperCase()));
   }
 
-  // Sort: Wave → Type (Kepala first)
-  soToAssign.sort((a,b) => {
-    const wo = (WAVE_ORDER[a.wave]||9) - (WAVE_ORDER[b.wave]||9);
-    if(wo!==0) return wo;
-    return (TYPE_ORDER[a.type]||9) - (TYPE_ORDER[b.type]||9);
-  });
-
   // Init assign buckets
   assignResult = {};
   pickers.forEach((p,i) => {
@@ -536,37 +529,37 @@ function runAssign(){
       picker: p.name,
       color: COLORS[i%COLORS.length],
       soList: [],
-      totalQty: p.existingQty || 0, // start from existing productivity
+      totalQty: p.existingQty || 0,
       existingQty: p.existingQty || 0,
       soCount: 0,
     };
   });
   unassignedSO = [];
 
-  // TRUE balanced assign: always pick picker with lowest totalQty
-  // Process group by wave+type to maintain wave order
-  const groups = {};
-  for(const so of soToAssign){
-    const key = (WAVE_ORDER[so.wave]||9)+'-'+(TYPE_ORDER[so.type]||9)+'-'+so.wave+'-'+so.type;
-    if(!groups[key]) groups[key]=[];
-    groups[key].push(so);
-  }
+  // Group SO by TYPE batch (Kepala → Badan → Ekor → Other)
+  // Within each type, sort by Wave order, then qty desc
+  const TYPE_BATCHES = ['Kepala', 'Badan', 'Ekor', 'Other'];
 
-  const groupKeys = Object.keys(groups).sort((a,b) => {
-    const [aw,at] = a.split('-');
-    const [bw,bt] = b.split('-');
-    return parseInt(aw)-parseInt(bw) || parseInt(at)-parseInt(bt);
-  });
+  for(const typeBatch of TYPE_BATCHES){
+    // Get all SO of this type, sorted by wave then qty desc
+    const batchSO = soToAssign
+      .filter(s => s.type === typeBatch)
+      .sort((a,b) => {
+        const wo = (WAVE_ORDER[a.wave]||9) - (WAVE_ORDER[b.wave]||9);
+        if(wo!==0) return wo;
+        return b.qty - a.qty;
+      });
 
-  for(const key of groupKeys){
-    const groupSO = groups[key];
-    // Sort within group: qty desc for better spread
-    groupSO.sort((a,b) => b.qty - a.qty);
-    for(const so of groupSO){
-      // Always pick picker with lowest total qty (true balanced)
+    if(!batchSO.length) continue;
+
+    for(const so of batchSO){
+      // Pick picker with lowest totalQty that is still below target
       const pickerNames = Object.keys(assignResult);
-      if(!pickerNames.length){ unassignedSO.push(so); continue; }
-      const pick = pickerNames.reduce((a,b) =>
+      // First try: picker below target
+      const belowTarget = pickerNames.filter(p => assignResult[p].totalQty < target);
+      // If all above target, pick lowest overall (overflow — still assign, merata)
+      const candidates = belowTarget.length > 0 ? belowTarget : pickerNames;
+      const pick = candidates.reduce((a,b) =>
         assignResult[a].totalQty <= assignResult[b].totalQty ? a : b
       );
       assignResult[pick].soList.push(so);

@@ -580,13 +580,14 @@ function runAssign(){
     }
   }
 
-  renderAssignResult(target);
-  // Auto switch to assign page
+  // Switch page dulu baru render (biar div visible)
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-tab')[2].classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-assign').classList.add('active');
   if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+  // Render setelah page visible
+  setTimeout(()=>renderAssignResult(target), 50);
 }
 
 function renderAssignResult(target){

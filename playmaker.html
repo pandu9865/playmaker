@@ -580,14 +580,20 @@ function runAssign(){
     }
   }
 
-  // Switch page dulu baru render (biar div visible)
+  // Switch page dulu baru render
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-tab')[2].classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-assign').classList.add('active');
   if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-  // Render setelah page visible
-  setTimeout(()=>renderAssignResult(target), 50);
+  console.log('assignResult keys:', Object.keys(assignResult));
+  console.log('assignResult sample:', JSON.stringify(Object.values(assignResult)[0]?.soList?.length));
+  console.log('assign-result el:', document.getElementById('assign-result'));
+  setTimeout(()=>{
+    console.log('rendering...');
+    renderAssignResult(target);
+    console.log('done, innerHTML length:', document.getElementById('assign-result')?.innerHTML?.length);
+  }, 100);
 }
 
 function renderAssignResult(target){

@@ -360,7 +360,7 @@ tr:hover td{background:var(--bg3)}
 
   <!-- PAGE: ASSIGN SO -->
   <div id="page-assign" class="page">
-    <div id="assign-result" style="overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;flex:1">
+    <div id="assign-result" style="overflow-y:auto;padding:14px;flex:1;min-height:0">
       <div class="empty">
         <div class="empty-icon">🎯</div>
         <div class="empty-text">Set filter & picker di menu ☰<br>lalu klik Assign Sekarang</div>
@@ -659,6 +659,8 @@ function renderAssignResult(target){
   });
 
   document.getElementById('assign-result').innerHTML=html;
+  // Force reflow
+  document.getElementById('assign-result').scrollTop=0;
 }
 
 // DASHBOARD

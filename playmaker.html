@@ -3,310 +3,330 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Playmaker — SO Assignment</title>
+<title>Playmaker STL</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#080c10;--bg2:#0d1117;--bg3:#141b22;--bg4:#1c2430;--bg5:#232d3a;
-  --text:#c9d1d9;--text2:#8b949e;--text3:#484f58;
-  --border:#21262d;--border2:#30363d;
-  --blue:#58a6ff;--blue-dim:#1f6feb33;
-  --green:#3fb950;--green-dim:#238636;
-  --amber:#d29922;--amber-dim:#9e6a0333;
-  --red:#f85149;--red-dim:#da363333;
-  --purple:#bc8cff;--purple-dim:#6e40c933;
-  --teal:#39d353;--teal-dim:#23863633;
-  --coral:#ffa657;--coral-dim:#9b4a1133;
-  --mono:'JetBrains Mono',monospace;
-  --sans:'DM Sans',sans-serif;
+  --bg:#f5f6fa;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e8ebf5;--bg5:#dde1ef;
+  --text:#1e2340;--text2:#5a6282;--text3:#9aa0be;
+  --border:#e0e4f0;--border2:#c8ceea;
+  --blue:#2563eb;--blue2:#1d4ed8;--blue-dim:#dbeafe;
+  --green:#16a34a;--green-dim:#dcfce7;
+  --amber:#d97706;--amber-dim:#fef3c7;
+  --red:#dc2626;--red-dim:#fee2e2;
+  --purple:#7c3aed;--purple-dim:#ede9fe;
+  --teal:#0d9488;--teal-dim:#ccfbf1;
+  --coral:#ea580c;--coral-dim:#ffedd5;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans',sans-serif;
 }
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px}
 
-/* Layout */
-.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
-.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;position:sticky;top:0;height:100vh;overflow-y:auto}
-.main{padding:1.5rem;overflow-y:auto}
+/* LAYOUT */
+.app{display:grid;grid-template-rows:48px 1fr;height:100vh;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 16px;flex-shrink:0}
+.body{display:grid;grid-template-columns:260px 1fr;overflow:hidden;height:100%}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.main{display:flex;flex-direction:column;overflow:hidden}
 
-/* Header */
-.logo{display:flex;align-items:center;gap:10px;margin-bottom:.5rem}
-.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#1f6feb,#58a6ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.logo-text{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.02em}
-.logo-sub{font-size:11px;color:var(--text3);font-family:var(--mono)}
+/* TOPBAR */
+.logo{font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:.05em;color:var(--blue2)}
+.logo span{color:var(--text3)}
+.topbar-meta{font-family:var(--mono);font-size:10px;color:var(--text3);margin-left:auto;display:flex;align-items:center;gap:12px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.last-sync{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.btn-refresh{padding:5px 10px;border-radius:5px;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s}
+.btn-refresh:hover{background:var(--bg5);color:var(--text)}
+.btn-refresh.loading{opacity:.5;cursor:not-allowed}
 
-/* Sections */
-.section-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
-.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* SIDEBAR */
+.sidebar-section{padding:12px;border-bottom:1px solid var(--border)}
+.sidebar-label{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
 
-/* Upload */
-.upload-zone{border:1px dashed var(--border2);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;transition:.2s;background:var(--bg3)}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--blue);background:var(--blue-dim)}
-.upload-icon{font-size:24px;margin-bottom:.4rem;opacity:.6}
-.upload-label{font-size:12px;color:var(--text2);margin-bottom:.2rem}
-.upload-hint{font-size:10px;color:var(--text3)}
-.file-loaded{font-family:var(--mono);font-size:11px;color:var(--green);background:var(--green-dim);padding:4px 8px;border-radius:4px;margin-top:.5rem}
-
-/* Stats mini */
-.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:.5rem}
-.mini-stat{background:var(--bg4);border-radius:6px;padding:.5rem .75rem}
-.mini-stat-label{font-size:10px;color:var(--text3);margin-bottom:2px;font-family:var(--mono)}
-.mini-stat-val{font-size:16px;font-weight:600;color:var(--text);font-family:var(--mono)}
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.stat-box{background:var(--bg3);border-radius:6px;padding:8px 10px;border:1px solid var(--border)}
+.stat-box-label{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:2px}
+.stat-box-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text)}
+.stat-box-sub{font-size:10px;color:var(--text2);margin-top:1px}
+.stat-box.blue{border-color:var(--blue)33;background:var(--blue-dim)}
+.stat-box.green{border-color:var(--green)33;background:var(--green-dim)}
+.stat-box.amber{border-color:var(--amber)33;background:var(--amber-dim)}
 
 /* Picker input */
-.inp{width:100%;padding:7px 10px;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:var(--sans)}
-.inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-dim)}
-.inp-row{display:flex;gap:6px;margin-bottom:.5rem}
-.btn{padding:7px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg4);color:var(--text);font-size:12px;cursor:pointer;transition:.15s;font-family:var(--sans);white-space:nowrap}
-.btn:hover{background:var(--bg5);border-color:var(--border2)}
-.btn-blue{background:var(--blue);border-color:var(--blue);color:#000;font-weight:600}
-.btn-blue:hover{opacity:.9}
-.btn-sm{padding:4px 8px;font-size:11px}
+.inp{width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;outline:none;font-family:var(--mono)}
+.inp:focus{border-color:var(--blue)}
+.inp-row{display:flex;gap:6px;margin-bottom:6px}
+.btn-add{padding:7px 10px;border-radius:6px;background:var(--blue);border:none;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--mono);white-space:nowrap}
+.btn-add:hover{opacity:.85}
+.tags{display:flex;flex-wrap:wrap;gap:4px;min-height:20px}
+.tag{display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:3px 8px;font-size:11px;font-family:var(--mono);border:1px solid transparent}
+.tag-rm{cursor:pointer;color:inherit;opacity:.5;font-size:13px;line-height:1}
+.tag-rm:hover{opacity:1}
+.picker-count{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px}
 
-/* Picker tags */
-.tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.4rem;min-height:24px}
-.tag{display:inline-flex;align-items:center;gap:4px;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;padding:3px 8px;font-size:11px;font-family:var(--mono)}
-.tag.has-prod{border-color:var(--green);background:var(--teal-dim)}
-.tag-rm{cursor:pointer;color:var(--text3);font-size:14px;line-height:1}
-.tag-rm:hover{color:var(--red)}
-.tag-prod{font-size:10px;color:var(--green);margin-left:2px}
-
-/* Target input */
+/* Target */
 .target-row{display:flex;align-items:center;gap:8px}
-.target-row label{font-size:12px;color:var(--text2);white-space:nowrap}
-.target-row input{width:90px;padding:6px 8px;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:var(--mono)}
-.target-row input:focus{border-color:var(--blue)}
+.target-row label{font-family:var(--mono);font-size:11px;color:var(--text2);white-space:nowrap}
+.target-inp{width:80px;padding:5px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none}
+.target-inp:focus{border-color:var(--blue)}
 
-/* Run button */
-.run-btn{width:100%;padding:10px;border-radius:8px;background:linear-gradient(135deg,#1f6feb,#58a6ff);border:none;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--mono);letter-spacing:.02em;transition:.2s;margin-top:.25rem}
-.run-btn:hover{opacity:.9;transform:translateY(-1px)}
-.run-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+/* Run btn */
+.run-btn{margin:12px;padding:10px;border-radius:7px;background:var(--blue);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--mono);letter-spacing:.05em;transition:.2s}
+.run-btn:hover{opacity:.85}
+.run-btn:disabled{opacity:.4;cursor:not-allowed}
 
-/* Mode toggle */
-.mode-toggle{display:flex;gap:4px;background:var(--bg4);border-radius:6px;padding:3px}
-.mode-btn{flex:1;padding:5px 8px;border-radius:4px;border:none;background:none;color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s}
-.mode-btn.active{background:var(--bg5);color:var(--text);font-weight:600}
+/* Download btn */
+.dl-btn{margin:0 12px 12px;padding:7px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s;width:calc(100% - 24px)}
+.dl-btn:hover{background:var(--bg5);color:var(--text)}
 
-/* === MAIN CONTENT === */
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem}
-.page-title{font-family:var(--mono);font-size:16px;font-weight:700}
-.page-meta{font-size:12px;color:var(--text2);font-family:var(--mono)}
+/* MAIN CONTENT */
+.main-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg2)}
+.main-tab{padding:10px 16px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;white-space:nowrap}
+.main-tab:hover{color:var(--text2)}
+.main-tab.active{color:var(--blue2);border-bottom-color:var(--blue)}
+.tab-badge{display:inline-block;background:var(--bg4);border-radius:3px;padding:0 5px;font-size:9px;margin-left:4px;color:var(--text3)}
+.main-tab.active .tab-badge{background:var(--blue-dim);color:var(--blue2)}
 
-/* Summary cards */
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
-.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem}
-.sum-label{font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em}
-.sum-val{font-size:22px;font-weight:700;font-family:var(--mono);color:var(--text)}
-.sum-sub{font-size:10px;color:var(--text2);margin-top:1px}
+/* TABLE AREA */
+.table-area{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.table-toolbar{padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.search-inp{padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-size:12px;outline:none;font-family:var(--mono);width:200px}
+.search-inp:focus{border-color:var(--blue)}
+.filter-btn{padding:5px 10px;border-radius:5px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s}
+.filter-btn:hover,.filter-btn.active{background:var(--blue-dim);border-color:var(--blue);color:var(--blue2)}
+.toolbar-right{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text3)}
 
-/* Picker cards */
-.picker-list{display:flex;flex-direction:column;gap:8px}
-.picker-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:.2s}
-.picker-card:hover{border-color:var(--border2)}
-.picker-header{display:flex;align-items:center;gap:12px;padding:.9rem 1rem;cursor:pointer;user-select:none}
-.picker-header:hover{background:var(--bg3)}
-.picker-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;font-family:var(--mono)}
-.picker-info{flex:1;min-width:0}
-.picker-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.picker-meta{font-size:11px;color:var(--text2);font-family:var(--mono)}
-.picker-stats{display:flex;align-items:center;gap:12px;flex-shrink:0}
-.picker-qty-val{font-family:var(--mono);font-size:15px;font-weight:700}
-.picker-so-ct{font-size:11px;color:var(--text2);font-family:var(--mono)}
-.chevron{color:var(--text3);font-size:12px;transition:transform .2s;flex-shrink:0}
-.picker-card.open .chevron{transform:rotate(180deg)}
+.tbl-wrap{flex:1;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{position:sticky;top:0;z-index:10}
+th{text-align:left;padding:8px 12px;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:hover td{background:var(--bg3)}
+.mono{font-family:var(--mono);font-size:11px;color:var(--text2)}
 
-/* Progress bar */
-.picker-progress{padding:0 1rem .75rem;display:flex;align-items:center;gap:8px}
-.bar-wrap{flex:1;background:var(--bg4);border-radius:3px;height:4px;overflow:hidden}
-.bar-fill{height:4px;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.bar-pct{font-family:var(--mono);font-size:10px;color:var(--text2);min-width:36px;text-align:right}
-.bar-remaining{font-family:var(--mono);font-size:10px;min-width:60px;text-align:right}
+/* STATUS BADGES */
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);white-space:nowrap}
+.s-new{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd}
+.s-progress{background:#fef3c7;color:#b45309;border:1px solid #fcd34d}
+.s-completed{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+.s-delivery{background:#ede9fe;color:#6d28d9;border:1px solid #c4b5fd}
+.s-other{background:var(--bg4);color:var(--text3);border:1px solid var(--border2)}
+.w1{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd}
+.w2{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+.w3{background:#fef3c7;color:#b45309;border:1px solid #fcd34d}
+.w4{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5}
+.wother{background:var(--bg4);color:var(--text3);border:1px solid var(--border2)}
+.kepala{background:#ede9fe;color:#6d28d9;border:1px solid #c4b5fd}
+.badan{background:#ccfbf1;color:#0f766e;border:1px solid #5eead4}
+.ekor{background:#ffedd5;color:#c2410c;border:1px solid #fdba74}
+.type-other{background:var(--bg4);color:var(--text3);border:1px solid var(--border2)}
 
-/* Picker dropdown detail */
-.picker-detail{display:none;border-top:1px solid var(--border);padding:0}
-.picker-card.open .picker-detail{display:block}
-.detail-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:.75rem 1rem;background:var(--bg3)}
-.detail-stat{text-align:center}
-.detail-stat-label{font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase}
-.detail-stat-val{font-size:16px;font-weight:700;font-family:var(--mono);color:var(--text)}
+/* ASSIGN PANEL */
+.assign-panel{flex:1;overflow:auto;padding:14px}
+.assign-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.as-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+.as-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.as-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text)}
+.as-sub{font-size:10px;color:var(--text2);margin-top:1px}
 
-/* Wave group inside detail */
-.wave-group{border-top:1px solid var(--border)}
-.wave-group-header{padding:.5rem 1rem;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;background:var(--bg3)}
-.so-table{width:100%;border-collapse:collapse;font-size:12px}
-.so-table th{text-align:left;padding:6px 1rem;font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg2)}
-.so-table td{padding:6px 1rem;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
-.so-table tr:last-child td{border-bottom:none}
-.so-table tr:hover td{background:var(--bg3)}
-.so-num{font-family:var(--mono);font-size:11px;color:var(--text2)}
+.picker-cards{display:flex;flex-direction:column;gap:6px}
+.pc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:.15s}
+.pc:hover{border-color:var(--border2)}
+.pc-head{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer}
+.pc-head:hover{background:var(--bg3)}
+.pc-avatar{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:var(--mono);flex-shrink:0}
+.pc-info{flex:1;min-width:0}
+.pc-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-meta{font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:1px}
+.pc-right{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.pc-qty{font-family:var(--mono);font-size:16px;font-weight:700}
+.pc-pct{font-family:var(--mono);font-size:10px;color:var(--text2)}
+.chevron{font-size:10px;color:var(--text3);transition:transform .2s}
+.pc.open .chevron{transform:rotate(180deg)}
+.pc-bar{padding:0 14px 8px;display:flex;align-items:center;gap:8px}
+.bar-bg{flex:1;background:var(--bg4);border-radius:2px;height:3px;overflow:hidden}
+.bar-fg{height:3px;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.bar-label{font-family:var(--mono);font-size:9px;color:var(--text3);min-width:50px;text-align:right}
 
-/* Badges */
-.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono)}
-.w1{background:#1f3a5f;color:#58a6ff}
-.w2{background:#1a3a1a;color:#3fb950}
-.w3{background:#3a2e0a;color:#d29922}
-.w4{background:#3a1a1a;color:#f85149}
-.kepala{background:#2a1f5f;color:#bc8cff}
-.badan{background:#0a2e2e;color:#39d353}
-.ekor{background:#2e1a0a;color:#ffa657}
-.other{background:var(--bg4);color:var(--text3)}
-.status-new{background:var(--blue-dim);color:var(--blue)}
-.status-done{background:var(--green-dim);color:var(--green)}
+.pc-detail{display:none;border-top:1px solid var(--border)}
+.pc.open .pc-detail{display:block}
+.pc-detail-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1px solid var(--border)}
+.pc-ds{padding:8px 14px;text-align:center;border-right:1px solid var(--border)}
+.pc-ds:last-child{border-right:none}
+.pc-ds-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase}
+.pc-ds-val{font-family:var(--mono);font-size:15px;font-weight:700;margin-top:2px}
 
-/* Unassigned */
-.unassigned-card{background:var(--bg2);border:1px solid var(--amber);border-radius:10px;overflow:hidden}
-.unassigned-header{padding:.9rem 1rem;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--amber-dim)}
-.unassigned-header:hover{opacity:.9}
+.wave-section{border-bottom:1px solid var(--border)}
+.wave-hdr{padding:6px 14px;font-family:var(--mono);font-size:10px;font-weight:600;display:flex;align-items:center;gap:8px;background:var(--bg3)}
+.so-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.so-tbl th{padding:5px 12px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg2);text-align:left}
+.so-tbl td{padding:5px 12px;border-bottom:1px solid var(--border);color:var(--text)}
+.so-tbl tr:last-child td{border-bottom:none}
+.so-tbl tr:hover td{background:var(--bg3)}
 
-/* Empty state */
-.empty{text-align:center;padding:4rem 1rem;color:var(--text3)}
-.empty-icon{font-size:48px;margin-bottom:1rem;opacity:.3}
-.empty-text{font-family:var(--mono);font-size:13px}
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:8px}
+.empty-icon{font-size:32px;opacity:.3}
+.empty-text{font-family:var(--mono);font-size:12px}
 
-/* Scrollbar */
-::-webkit-scrollbar{width:6px;height:6px}
+/* LOADING */
+.loading-overlay{position:absolute;inset:0;background:var(--bg)cc;display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(2px)}
+.loading-text{font-family:var(--mono);font-size:12px;color:var(--text2);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* UNASSIGNED */
+.unassigned-card{background:var(--bg2);border:1px solid var(--amber)44;border-radius:8px;overflow:hidden}
+.unassigned-hdr{padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--amber-dim)}
+.unassigned-hdr:hover{opacity:.9}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* Alert */
-.alert{padding:.6rem .9rem;border-radius:6px;font-size:12px;margin-bottom:.75rem;font-family:var(--mono)}
-.alert-info{background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue)}
-.alert-warn{background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber)}
-
-/* Divider */
-.divider{height:1px;background:var(--border);margin:.75rem 0}
-
-@media(max-width:768px){
-  .app{grid-template-columns:1fr}
-  .sidebar{height:auto;position:static}
-  .summary-grid{grid-template-columns:1fr 1fr}
-}
 </style>
 </head>
 <body>
 <div class="app">
 
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">PLAY<span>MAKER</span></div>
+  <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-left:8px">STL Outbound</div>
+  <div class="topbar-meta">
+    <div style="display:flex;align-items:center;gap:5px">
+      <div class="status-dot" id="sync-dot" style="background:var(--text3)"></div>
+      <span class="last-sync" id="last-sync">Belum sync</span>
+    </div>
+    <button class="btn-refresh" id="btn-refresh" onclick="loadData()">↻ Refresh</button>
+  </div>
+</div>
+
+<div class="body">
+
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div>
-    <div class="logo">
-      <div class="logo-mark">🎯</div>
-      <div>
-        <div class="logo-text">PLAYMAKER</div>
-        <div class="logo-sub">SO Assignment Tool</div>
+  <!-- Stats -->
+  <div class="sidebar-section">
+    <div class="sidebar-label">Overview</div>
+    <div class="stat-grid">
+      <div class="stat-box blue">
+        <div class="stat-box-label">Total SO</div>
+        <div class="stat-box-val" id="s-total">—</div>
       </div>
-    </div>
-  </div>
-
-  <!-- Mode -->
-  <div>
-    <div class="section-label">Mode</div>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="mode-fresh" onclick="setMode('fresh')">Fresh Assign</button>
-      <button class="mode-btn" id="mode-reassign" onclick="setMode('reassign')">Re-assign</button>
-    </div>
-    <div style="font-size:10px;color:var(--text3);margin-top:.4rem;font-family:var(--mono)" id="mode-hint">Upload CSV baru, assign dari awal</div>
-  </div>
-
-  <!-- Upload -->
-  <div>
-    <div class="section-label">CSV Data SO</div>
-    <div class="upload-zone" id="drop-area" onclick="document.getElementById('csv-input').click()">
-      <div class="upload-icon">📂</div>
-      <div class="upload-label" id="upload-label">Klik atau drag CSV</div>
-      <div class="upload-hint">so_number · destination_name · request_quantity · status · WAVE · Picker</div>
-    </div>
-    <input type="file" id="csv-input" accept=".csv" style="display:none">
-    <div class="mini-stats hidden" id="file-stats">
-      <div class="mini-stat"><div class="mini-stat-label">Total SO</div><div class="mini-stat-val" id="stat-so">0</div></div>
-      <div class="mini-stat"><div class="mini-stat-label">Unassigned</div><div class="mini-stat-val" id="stat-new">0</div></div>
-      <div class="mini-stat"><div class="mini-stat-label">Total Qty</div><div class="mini-stat-val" id="stat-qty">0</div></div>
-      <div class="mini-stat"><div class="mini-stat-label">Est/picker</div><div class="mini-stat-val" id="stat-est">—</div></div>
+      <div class="stat-box green">
+        <div class="stat-box-label">Unassigned</div>
+        <div class="stat-box-val" id="s-new">—</div>
+      </div>
+      <div class="stat-box" style="grid-column:span 2">
+        <div class="stat-box-label">Total Qty</div>
+        <div class="stat-box-val" id="s-qty">—</div>
+        <div class="stat-box-sub" id="s-est">Est/picker: —</div>
+      </div>
     </div>
   </div>
 
   <!-- Pickers -->
-  <div>
-    <div class="section-label">Picker Shift Ini</div>
+  <div class="sidebar-section" style="flex:1;overflow-y:auto">
+    <div class="sidebar-label">Picker Shift Ini</div>
     <div class="inp-row">
       <input type="text" id="mp-name" class="inp" placeholder="Nama picker (Enter)">
-      <button class="btn btn-blue" onclick="addPicker()">+</button>
+      <button class="btn-add" onclick="addPicker()">+</button>
     </div>
     <div class="tags" id="mp-list"></div>
-    <div style="font-size:10px;color:var(--text3);font-family:var(--mono)" id="mp-count">0 picker</div>
+    <div class="picker-count" id="mp-count">0 picker</div>
   </div>
 
   <!-- Target -->
-  <div>
-    <div class="section-label">Parameter</div>
-    <div class="target-row" style="margin-bottom:.5rem">
-      <label>Target qty/picker</label>
-      <input type="number" id="target-qty" value="2400" min="100" step="100">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Parameter</div>
+    <div class="target-row">
+      <label>Target qty</label>
+      <input type="number" id="target-qty" class="target-inp" value="2400" min="100" step="100">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">/picker</span>
     </div>
-    <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:.75rem">Assign merata sampai semua SO ter-cover</div>
   </div>
 
   <button class="run-btn" onclick="runAssign()" id="run-btn">▶ JALANKAN ASSIGN</button>
-
-  <div style="margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border)">
-    <button class="btn btn-sm" style="width:100%" onclick="downloadCSV()">⬇ Download CSV</button>
-  </div>
+  <button class="dl-btn" onclick="downloadCSV()">⬇ Download CSV</button>
 </aside>
 
 <!-- MAIN -->
-<main class="main">
-  <div id="empty-state" class="empty">
-    <div class="empty-icon">📋</div>
-    <div class="empty-text">Upload CSV & input picker,<br>lalu jalankan assign</div>
+<div class="main" style="position:relative">
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-text">Memuat data SO...</div>
   </div>
 
-  <div id="result-area" style="display:none">
-    <div class="page-header">
-      <div>
-        <div class="page-title">Hasil Assignment</div>
-        <div class="page-meta" id="result-meta"></div>
-      </div>
-    </div>
-
-    <div class="summary-grid">
-      <div class="sum-card">
-        <div class="sum-label">SO Assigned</div>
-        <div class="sum-val" id="r-assigned">0</div>
-        <div class="sum-sub" id="r-assigned-sub"></div>
-      </div>
-      <div class="sum-card">
-        <div class="sum-label">SO Unassigned</div>
-        <div class="sum-val" id="r-unassigned">0</div>
-        <div class="sum-sub" id="r-unassigned-sub"></div>
-      </div>
-      <div class="sum-card">
-        <div class="sum-label">Picker Aktif</div>
-        <div class="sum-val" id="r-pickers">0</div>
-        <div class="sum-sub" id="r-target-sub"></div>
-      </div>
-      <div class="sum-card">
-        <div class="sum-label">Total Qty</div>
-        <div class="sum-val" id="r-totalqty">0</div>
-        <div class="sum-sub" id="r-avg-sub"></div>
-      </div>
-    </div>
-
-    <div id="alert-area"></div>
-    <div class="picker-list" id="picker-list"></div>
+  <!-- TABS -->
+  <div class="main-tabs">
+    <div class="main-tab active" onclick="switchTab('so',this)">Data SO <span class="tab-badge" id="tab-so-ct">0</span></div>
+    <div class="main-tab" onclick="switchTab('assign',this)">Hasil Assign <span class="tab-badge" id="tab-assign-ct">0</span></div>
   </div>
-</main>
+
+  <!-- TAB: SO TABLE -->
+  <div id="tab-so" class="table-area">
+    <div class="table-toolbar">
+      <input type="text" class="search-inp" id="so-search" placeholder="Cari SO / tujuan..." oninput="renderTable()">
+      <button class="filter-btn active" onclick="setFilter('ALL',this)">Semua</button>
+      <button class="filter-btn" onclick="setFilter('NEW',this)">Baru</button>
+      <button class="filter-btn" onclick="setFilter('IN PROGRESS',this)">In Progress</button>
+      <button class="filter-btn" onclick="setFilter('COMPLETED',this)">Selesai</button>
+      <button class="filter-btn" onclick="setFilter('ON DELIVERY',this)">Delivery</button>
+      <div class="toolbar-right" id="tbl-count">0 SO</div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>SO Number</th>
+            <th>Tujuan</th>
+            <th>Wave</th>
+            <th>Type</th>
+            <th>Zone</th>
+            <th>Status</th>
+            <th>Picker</th>
+            <th style="text-align:right">Req Qty</th>
+            <th style="text-align:right">Inc Qty</th>
+            <th style="text-align:right">SKU</th>
+          </tr>
+        </thead>
+        <tbody id="so-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: ASSIGN RESULT -->
+  <div id="tab-assign" class="table-area" style="display:none">
+    <div id="assign-empty" class="empty">
+      <div class="empty-icon">📋</div>
+      <div class="empty-text">Jalankan assign dulu</div>
+    </div>
+    <div id="assign-content" class="assign-panel" style="display:none"></div>
+  </div>
+</div>
+
+</div>
 </div>
 
 <script>
+// ── CONFIG ─────────────────────────────────────────────────────
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzBbgxinr4KIgCiZbT3ii3e84qVME0IYXpzAVJYX-SDlsu0LKmPVaFxrlX8EwvP9qVEmg/exec';
+const RESET_HOUR = 3; // jam 3 pagi WIB
+
 // ── STATE ──────────────────────────────────────────────────────
 let soData = [];
 let pickers = [];
 let assignResult = {};
 let unassignedSO = [];
-let mode = 'fresh'; // 'fresh' | 'reassign'
+let activeFilter = 'ALL';
+let activeTab = 'so';
 
-const SKIP_STATUS = ['IN PROGRESS','COMPLETED','ON DELIVERY','UNLOADING'];
-const TYPE_ORDER  = {Kepala:1,Badan:2,Ekor:3,Other:4};
-const WAVE_ORDER  = {'WAVE 1':1,'WAVE 2':2,'WAVE 3':3,'WAVE 4':4};
+const COLORS = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#a855f7','#14b8a6','#f97316','#06b6d4','#84cc16','#ec4899'];
+const WAVE_ORDER = {'WAVE 1':1,'WAVE 2':2,'WAVE 3':3,'WAVE 4':4};
+const TYPE_ORDER = {Kepala:1,Badan:2,Ekor:3,Other:4};
+const TYPE_BATCHES = ['Kepala','Badan','Ekor','Other'];
 
 const WAVE_MAP = {
   APR:'WAVE 1',KJT:'WAVE 1',BSX:'WAVE 1',BGS:'WAVE 1',ASA:'WAVE 1',PBT:'WAVE 1',PKC:'WAVE 1',
@@ -320,8 +340,6 @@ const KEPALA = ['KJT','ASA','SRP','GPL','FTW','CPT','MRY','CWG','JBG','JLB','SMN
 const BADAN  = ['APR','BGS','PKC','TDN','PPL','LBB','PIN','RDS','SAL','MSB','BS9','CT2','KPM','MTG','BDC','MRG','PSG'];
 const EKOR   = ['BSX','PBT','BRY','PPN','CLN','KGS','DST','TGX','DNS','MGR','CSA','TSY','CNR'];
 
-const COLORS = ['#58a6ff','#3fb950','#d29922','#f85149','#bc8cff','#ffa657','#39d353','#79c0ff','#56d364','#e3b341'];
-
 function getWave(dest){
   for(const [k,v] of Object.entries(WAVE_MAP)) if(dest.includes(k)) return v;
   return 'Other';
@@ -332,124 +350,119 @@ function getType(dest){
   for(const k of EKOR)   if(dest.includes(k)) return 'Ekor';
   return 'Other';
 }
-function waveClass(w){ return w ? 'w'+w.replace('WAVE ','') : 'other'; }
-function typeClass(t){ return (t||'other').toLowerCase(); }
 function fmt(n){ return Math.round(n).toLocaleString('id-ID'); }
-function initials(name){ return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+function initials(name){ return name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2); }
 
-// ── MODE ───────────────────────────────────────────────────────
-function setMode(m){
-  mode = m;
-  document.getElementById('mode-fresh').classList.toggle('active', m==='fresh');
-  document.getElementById('mode-reassign').classList.toggle('active', m==='reassign');
-  document.getElementById('mode-hint').textContent = m==='fresh'
-    ? 'Upload CSV baru, assign dari awal'
-    : 'Upload CSV terbaru, hitung sisa berdasarkan produktivitas existing picker';
-  updateStats();
+function statusClass(s){
+  const u = (s||'').toUpperCase();
+  if(u==='NEW') return 's-new';
+  if(u==='IN PROGRESS') return 's-progress';
+  if(u==='COMPLETED') return 's-completed';
+  if(u==='ON DELIVERY') return 's-delivery';
+  return 's-other';
+}
+function waveClass(w){
+  if(w==='WAVE 1') return 'w1';
+  if(w==='WAVE 2') return 'w2';
+  if(w==='WAVE 3') return 'w3';
+  if(w==='WAVE 4') return 'w4';
+  return 'wother';
+}
+function typeClass(t){
+  if(t==='Kepala') return 'kepala';
+  if(t==='Badan') return 'badan';
+  if(t==='Ekor') return 'ekor';
+  return 'type-other';
 }
 
-// ── CSV UPLOAD ─────────────────────────────────────────────────
-document.getElementById('csv-input').addEventListener('change', e => {
-  const f = e.target.files[0]; if(!f) return; readFile(f);
-});
-const dropArea = document.getElementById('drop-area');
-dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.classList.add('drag'); });
-dropArea.addEventListener('dragleave', ()=>dropArea.classList.remove('drag'));
-dropArea.addEventListener('drop', e=>{
-  e.preventDefault(); dropArea.classList.remove('drag');
-  const f = e.dataTransfer.files[0]; if(!f) return; readFile(f);
-});
-function readFile(f){
-  const r = new FileReader();
-  r.onload = ev => parseCSV(ev.target.result, f.name);
-  r.readAsText(f);
-}
-
-function parseCSVLine(line){
-  const result=[]; let cur='',inQ=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){inQ=!inQ;continue;}
-    if(c===','&&!inQ){result.push(cur.trim());cur='';continue;}
-    cur+=c;
+// ── RESET CHECK ─────────────────────────────────────────────────
+function checkReset(){
+  const now = new Date();
+  const wib = new Date(now.toLocaleString('en-US', {timeZone:'Asia/Jakarta'}));
+  if(wib.getHours() === RESET_HOUR && wib.getMinutes() < 10){
+    assignResult = {}; unassignedSO = [];
+    renderAssign();
   }
-  result.push(cur.trim());
-  return result;
 }
 
-function parseCSV(text, fname){
-  const lines = text.trim().split(/\r?\n/);
-  const headers = parseCSVLine(lines[0]).map(h=>h.toLowerCase().trim());
-  const idx = {
-    so:      headers.findIndex(h=>h.includes('so_number')),
-    dest:    headers.findIndex(h=>h.includes('destination_name')),
-    qty:     headers.findIndex(h=>h.includes('request_quantity')),
-    inqty:   headers.findIndex(h=>h.includes('incoming_quantity')),
-    status:  headers.findIndex(h=>h==='status'),
-    wave:    headers.findIndex(h=>h==='wave'),
-    picker:  headers.findIndex(h=>h==='picker'),
-    sku:     headers.findIndex(h=>h.includes('sku_number')),
-    name:    headers.findIndex(h=>h==='name'),
-  };
-  if(idx.so<0||idx.dest<0||idx.qty<0){ alert('Kolom tidak ditemukan. Cek format CSV.'); return; }
+// ── LOAD DATA ──────────────────────────────────────────────────
+async function loadData(){
+  const btn = document.getElementById('btn-refresh');
+  const dot = document.getElementById('sync-dot');
+  btn.classList.add('loading'); btn.disabled = true;
+  dot.style.background = 'var(--amber)';
 
-  const soMap = {};
-  for(let i=1;i<lines.length;i++){
-    if(!lines[i].trim()) continue;
-    const cols = parseCSVLine(lines[i]);
-    const soNum = (cols[idx.so]||'').trim();
-    if(!soNum) continue;
-    const qty = parseFloat((cols[idx.qty]||'0').replace(/,/g,''))||0;
-    const inQty = idx.inqty>=0 ? parseFloat((cols[idx.inqty]||'0').replace(/,/g,''))||0 : 0;
-    const pickerName = idx.picker>=0 ? (cols[idx.picker]||'').trim() : '';
-    const skuNum = idx.sku>=0 ? (cols[idx.sku]||'').trim() : '';
-    const skuName = idx.name>=0 ? (cols[idx.name]||'').trim() : '';
-    if(!soMap[soNum]){
-      soMap[soNum]={
-        so_number:soNum,
-        destination_name:(cols[idx.dest]||'').trim(),
-        qty:0, inQty:0,
-        status:(cols[idx.status]||'NEW').trim(),
-        wave:idx.wave>=0?(cols[idx.wave]||'').trim()||null:null,
-        existingPicker: pickerName,
-        skus:[], skuNames:[],
-      };
-    }
-    soMap[soNum].qty += qty;
-    soMap[soNum].inQty += inQty;
-    if(skuNum && !soMap[soNum].skus.includes(skuNum)) soMap[soNum].skus.push(skuNum);
-    if(skuName && !soMap[soNum].skuNames.includes(skuName)) soMap[soNum].skuNames.push(skuName);
+  try {
+    const resp = await fetch(GAS_URL + '?action=so');
+    const json = await resp.json();
+
+    if(json.error) throw new Error(json.error);
+
+    // Enrich with wave + type
+    soData = (json.rows || []).map(so => ({
+      ...so,
+      WAVE: so.WAVE || getWave(so.destination_name || ''),
+      type: getType(so.destination_name || ''),
+    }));
+
+    // Update stats
+    document.getElementById('s-total').textContent = fmt(json.totalSO || 0);
+    document.getElementById('s-new').textContent = fmt(json.newSO || 0);
+    document.getElementById('s-qty').textContent = fmt(json.totalQty || 0);
+    updateEstimate();
+
+    document.getElementById('last-sync').textContent = 'Sync ' + (json.lastUpdated || '').slice(11,16) + ' WIB';
+    dot.style.background = 'var(--green)';
+
+    // Update tab badge
+    document.getElementById('tab-so-ct').textContent = soData.length;
+
+    renderTable();
+    document.getElementById('loading-overlay').style.display = 'none';
+
+  } catch(e) {
+    dot.style.background = 'var(--red)';
+    document.getElementById('last-sync').textContent = 'Error: ' + e.message.slice(0,30);
+    document.getElementById('loading-overlay').style.display = 'none';
   }
 
-  soData = Object.values(soMap).map(s=>({
-    ...s,
-    wave: s.wave || getWave(s.destination_name),
-    type: getType(s.destination_name),
-  }));
-
-  document.getElementById('upload-label').textContent = '✓ ' + fname;
-  document.getElementById('file-stats').classList.remove('hidden');
-  updateStats();
+  btn.classList.remove('loading'); btn.disabled = false;
 }
 
-function updateStats(){
-  const skip = SKIP_STATUS.map(s=>s.toUpperCase());
+// ── TABLE ──────────────────────────────────────────────────────
+function setFilter(f, el){
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
 
-  // In reassign mode: unassigned = SO that don't have existingPicker assigned AND not in SKIP status
-  // In fresh mode: unassigned = all non-skipped SO
-  let unassigned;
-  if(mode === 'reassign'){
-    unassigned = soData.filter(s=>!skip.includes((s.status||'').toUpperCase()) && !s.existingPicker);
-  } else {
-    unassigned = soData.filter(s=>!skip.includes((s.status||'').toUpperCase()));
-  }
+function renderTable(){
+  const search = document.getElementById('so-search').value.toLowerCase();
+  const tbody = document.getElementById('so-tbody');
 
-  const totalQty = unassigned.reduce((a,b)=>a+b.qty,0);
-  const n = pickers.length;
-  document.getElementById('stat-so').textContent = fmt(soData.length);
-  document.getElementById('stat-new').textContent = fmt(unassigned.length);
-  document.getElementById('stat-qty').textContent = fmt(totalQty);
-  document.getElementById('stat-est').textContent = n>0 ? fmt(totalQty/n) : '—';
+  let filtered = soData.filter(so => {
+    if(activeFilter !== 'ALL' && (so.status||'').toUpperCase() !== activeFilter) return false;
+    if(search && !so.so_number.toLowerCase().includes(search) && !(so.destination_name||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  document.getElementById('tbl-count').textContent = fmt(filtered.length) + ' SO';
+
+  tbody.innerHTML = filtered.map(so => `
+    <tr>
+      <td class="mono">${so.so_number}</td>
+      <td>${so.destination_name||'—'}</td>
+      <td><span class="badge ${waveClass(so.WAVE)}">${so.WAVE||'—'}</span></td>
+      <td><span class="badge ${typeClass(so.type)}">${so.type||'—'}</span></td>
+      <td class="mono">${so.picking_zone||'—'}</td>
+      <td><span class="badge ${statusClass(so.status)}">${so.status||'—'}</span></td>
+      <td style="font-size:11px;color:var(--text2)">${so.Picker||'—'}</td>
+      <td style="text-align:right;font-family:var(--mono)">${fmt(so.request_quantity)}</td>
+      <td style="text-align:right;font-family:var(--mono);color:var(--text2)">${fmt(so.incoming_quantity)}</td>
+      <td style="text-align:right;font-family:var(--mono)">${so.sku_count||0}</td>
+    </tr>
+  `).join('');
 }
 
 // ── PICKER MANAGEMENT ──────────────────────────────────────────
@@ -457,10 +470,10 @@ document.getElementById('mp-name').addEventListener('keydown', e=>{ if(e.key==='
 document.getElementById('mp-name').addEventListener('paste', e=>{
   const text = (e.clipboardData||window.clipboardData).getData('text');
   const names = text.split(/[\n\r,;]+/).map(n=>n.trim()).filter(Boolean);
-  if(names.length>1){
+  if(names.length > 1){
     e.preventDefault();
     names.forEach(n=>{ if(n && !pickers.find(p=>p.name===n)) pickers.push({name:n}); });
-    renderTags(); updateStats();
+    renderTags(); updateEstimate();
   }
 });
 function addPicker(){
@@ -469,223 +482,160 @@ function addPicker(){
   if(!name || pickers.find(p=>p.name===name)){ inp.value=''; return; }
   pickers.push({name});
   inp.value='';
-  renderTags(); updateStats();
+  renderTags(); updateEstimate();
 }
 function removePicker(name){
   pickers = pickers.filter(p=>p.name!==name);
-  renderTags(); updateStats();
+  renderTags(); updateEstimate();
 }
 function renderTags(){
-  document.getElementById('mp-list').innerHTML = pickers.map((p,i) => {
-    const hasProd = p.existingQty > 0;
-    return `<span class="tag ${hasProd?'has-prod':''}" style="border-color:${COLORS[i%COLORS.length]}40">
+  document.getElementById('mp-list').innerHTML = pickers.map((p,i) =>
+    `<span class="tag" style="background:${COLORS[i%COLORS.length]}22;border-color:${COLORS[i%COLORS.length]}44;color:${COLORS[i%COLORS.length]}">
       ${p.name}
-      ${hasProd ? `<span class="tag-prod">${fmt(p.existingQty)}✓</span>` : ''}
-      <span class="tag-rm" onclick="removePicker('${p.name.replace(/'/g,"\\'")}')">&times;</span>
-    </span>`;
-  }).join('');
+      <span class="tag-rm" onclick="removePicker('${p.name.replace(/'/g,"\\'")}')">×</span>
+    </span>`
+  ).join('');
   document.getElementById('mp-count').textContent = pickers.length + ' picker';
 }
+function updateEstimate(){
+  const assignable = soData.filter(s => (s.status||'').toUpperCase()==='NEW' && !s.Picker);
+  const totalQty = assignable.reduce((a,s)=>a+s.request_quantity,0);
+  const n = pickers.length;
+  document.getElementById('s-est').textContent = 'Est/picker: ' + (n>0 ? fmt(totalQty/n) : '—');
+}
 
-// ── ASSIGN LOGIC ───────────────────────────────────────────────
+// ── ASSIGN ─────────────────────────────────────────────────────
 function runAssign(){
-  if(!soData.length){ alert('Upload CSV dulu.'); return; }
+  if(!soData.length){ alert('Data SO belum dimuat. Klik Refresh.'); return; }
   if(!pickers.length){ alert('Tambahkan picker dulu.'); return; }
 
   const target = parseInt(document.getElementById('target-qty').value)||2400;
-  const skip = SKIP_STATUS.map(s=>s.toUpperCase());
 
-  // In reassign mode: get existing productivity from CSV
-  if(mode === 'reassign'){
-    // Map existing picker productivity from CSV
-    const prodMap = {};
-    soData.forEach(so => {
-      if(so.existingPicker && !skip.includes((so.status||'').toUpperCase())){
-        prodMap[so.existingPicker] = (prodMap[so.existingPicker]||0) + so.inQty;
-      }
-    });
-    // Attach existing qty to pickers
-    pickers.forEach(p => {
-      p.existingQty = prodMap[p.name] || 0;
-    });
-    renderTags();
-  } else {
-    pickers.forEach(p => { p.existingQty = 0; });
-  }
+  // SO yang bisa di-assign: NEW + belum ada picker
+  const soToAssign = soData
+    .filter(s => (s.status||'').toUpperCase() === 'NEW' && !s.Picker);
 
-  // Get SO to assign
-  let soToAssign;
-  if(mode === 'reassign'){
-    // Only assign SO without existing picker
-    soToAssign = soData.filter(s => !skip.includes((s.status||'').toUpperCase()) && !s.existingPicker);
-  } else {
-    soToAssign = soData.filter(s => !skip.includes((s.status||'').toUpperCase()));
-  }
-
-  // Init assign buckets
+  // Init buckets
   assignResult = {};
   pickers.forEach((p,i) => {
     assignResult[p.name] = {
-      picker: p.name,
-      color: COLORS[i%COLORS.length],
-      soList: [],
-      totalQty: p.existingQty || 0,
-      existingQty: p.existingQty || 0,
-      soCount: 0,
+      picker: p.name, color: COLORS[i%COLORS.length],
+      soList: [], totalQty: 0, soCount: 0,
     };
   });
   unassignedSO = [];
 
-  // Group SO by TYPE batch (Kepala → Badan → Ekor → Other)
-  // Within each type, sort by Wave order, then qty desc
-  const TYPE_BATCHES = ['Kepala', 'Badan', 'Ekor', 'Other'];
-
+  // Batch: Kepala → Badan → Ekor → Other, dalam tiap batch sort by Wave
   for(const typeBatch of TYPE_BATCHES){
-    // Get all SO of this type, sorted by wave then qty desc
-    const batchSO = soToAssign
+    const batch = soToAssign
       .filter(s => s.type === typeBatch)
       .sort((a,b) => {
-        const wo = (WAVE_ORDER[a.wave]||9) - (WAVE_ORDER[b.wave]||9);
-        if(wo!==0) return wo;
-        return b.qty - a.qty;
+        const wo = (WAVE_ORDER[a.WAVE]||9) - (WAVE_ORDER[b.WAVE]||9);
+        return wo !== 0 ? wo : b.request_quantity - a.request_quantity;
       });
 
-    if(!batchSO.length) continue;
-
-    for(const so of batchSO){
-      // Pick picker with lowest totalQty that is still below target
-      const pickerNames = Object.keys(assignResult);
-      // First try: picker below target
-      const belowTarget = pickerNames.filter(p => assignResult[p].totalQty < target);
-      // If all above target, pick lowest overall (overflow — still assign, merata)
-      const candidates = belowTarget.length > 0 ? belowTarget : pickerNames;
+    for(const so of batch){
+      const names = Object.keys(assignResult);
+      const belowTarget = names.filter(n => assignResult[n].totalQty < target);
+      const candidates = belowTarget.length > 0 ? belowTarget : names;
       const pick = candidates.reduce((a,b) =>
         assignResult[a].totalQty <= assignResult[b].totalQty ? a : b
       );
       assignResult[pick].soList.push(so);
-      assignResult[pick].totalQty += so.qty;
+      assignResult[pick].totalQty += so.request_quantity;
       assignResult[pick].soCount++;
     }
   }
 
-  renderResult(target);
+  renderAssign();
+  switchTab('assign', document.querySelectorAll('.main-tab')[1]);
 }
 
-// ── RENDER ─────────────────────────────────────────────────────
-function renderResult(target){
-  document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('result-area').style.display = 'block';
+function renderAssign(){
+  const hasResult = Object.keys(assignResult).length > 0;
+  document.getElementById('assign-empty').style.display = hasResult ? 'none' : 'flex';
+  document.getElementById('assign-content').style.display = hasResult ? 'block' : 'none';
+  if(!hasResult) return;
 
+  const target = parseInt(document.getElementById('target-qty').value)||2400;
   const assigned = Object.values(assignResult).reduce((a,b)=>a+b.soList.length,0);
-  const totalQty = Object.values(assignResult).reduce((a,b)=>a+b.soList.reduce((x,s)=>x+s.qty,0),0);
-  const avgQty   = pickers.length > 0 ? totalQty / pickers.length : 0;
+  const totalAssignedQty = Object.values(assignResult).reduce((a,b)=>a+b.soList.reduce((x,s)=>x+s.request_quantity,0),0);
+  const avgQty = pickers.length > 0 ? totalAssignedQty/pickers.length : 0;
 
-  document.getElementById('r-assigned').textContent = fmt(assigned);
-  document.getElementById('r-assigned-sub').textContent = 'dari ' + fmt(soData.length) + ' total SO';
-  document.getElementById('r-unassigned').textContent = fmt(unassignedSO.length);
-  document.getElementById('r-unassigned-sub').textContent = unassignedSO.length > 0 ? '⚠ perlu penanganan' : '✓ semua terassign';
-  document.getElementById('r-pickers').textContent = pickers.length;
-  document.getElementById('r-target-sub').textContent = 'target ' + fmt(target) + ' qty/picker';
-  document.getElementById('r-totalqty').textContent = fmt(totalQty);
-  document.getElementById('r-avg-sub').textContent = 'avg ' + fmt(avgQty) + ' / picker';
-  document.getElementById('result-meta').textContent =
-    (mode==='reassign' ? 'Re-assign mode' : 'Fresh assign') + ' · ' + new Date().toLocaleTimeString('id-ID');
+  document.getElementById('tab-assign-ct').textContent = assigned;
 
-  // Alerts
-  let alerts = '';
-  if(unassignedSO.length > 0)
-    alerts += `<div class="alert alert-warn">⚠ ${fmt(unassignedSO.length)} SO unassigned — semua picker sudah balance</div>`;
-  if(mode==='reassign'){
-    const withProd = pickers.filter(p=>assignResult[p.name]?.existingQty>0);
-    if(withProd.length>0)
-      alerts += `<div class="alert alert-info">ℹ ${withProd.length} picker punya existing productivity — assign dimulai dari sisa target mereka</div>`;
-  }
-  document.getElementById('alert-area').innerHTML = alerts;
+  let html = `<div class="assign-summary">
+    <div class="as-card"><div class="as-label">SO Assigned</div><div class="as-val">${fmt(assigned)}</div><div class="as-sub">${fmt(soData.filter(s=>(s.status||'').toUpperCase()==='NEW'&&!s.Picker).length)} total unassigned</div></div>
+    <div class="as-card"><div class="as-label">SO Unassigned</div><div class="as-val" style="color:${unassignedSO.length>0?'var(--amber)':'var(--green)'}">${fmt(unassignedSO.length)}</div><div class="as-sub">${unassignedSO.length>0?'⚠ perlu penanganan':'✓ semua terassign'}</div></div>
+    <div class="as-card"><div class="as-label">Picker Aktif</div><div class="as-val">${pickers.length}</div><div class="as-sub">target ${fmt(target)} qty</div></div>
+    <div class="as-card"><div class="as-label">Avg Qty/Picker</div><div class="as-val">${fmt(avgQty)}</div><div class="as-sub">total ${fmt(totalAssignedQty)}</div></div>
+  </div><div class="picker-cards">`;
 
-  // Picker cards
-  // Sort by totalQty desc for display
-  const sortedPickers = [...pickers].sort((a,b) =>
-    (assignResult[b.name]?.totalQty||0) - (assignResult[a.name]?.totalQty||0)
+  const sorted = [...pickers].sort((a,b)=>
+    (assignResult[b.name]?.soList.reduce((x,s)=>x+s.request_quantity,0)||0) -
+    (assignResult[a.name]?.soList.reduce((x,s)=>x+s.request_quantity,0)||0)
   );
 
-  let html = '';
-  sortedPickers.forEach((p, idx) => {
+  sorted.forEach((p,idx) => {
     const d = assignResult[p.name];
     if(!d) return;
-    const assignedQty = d.soList.reduce((a,s)=>a+s.qty,0);
-    const pct = Math.min(100, Math.round(assignedQty / target * 100));
-    const remaining = Math.max(0, target - assignedQty);
+    const assignedQty = d.soList.reduce((a,s)=>a+s.request_quantity,0);
+    const totalSKU = d.soList.reduce((a,s)=>a+s.sku_count,0);
+    const pct = Math.min(100, Math.round(assignedQty/target*100));
     const over = assignedQty > target * 1.05;
-    const color = d.color;
-    const barColor = over ? '#f85149' : color;
+    const barColor = over ? 'var(--red)' : d.color;
 
-    // Group SO by wave
+    // Group by wave
     const byWave = {};
     d.soList.forEach(so => {
-      const w = so.wave || 'Other';
-      if(!byWave[w]) byWave[w] = [];
+      const w = so.WAVE || 'Other';
+      if(!byWave[w]) byWave[w]=[];
       byWave[w].push(so);
     });
 
-    const totalSKU = d.soList.reduce((a,so)=>a+so.skus.length,0);
-
-    html += `<div class="picker-card" id="pc-${idx}">
-      <div class="picker-header" onclick="toggleCard(${idx})">
-        <div class="picker-avatar" style="background:${color}22;color:${color}">${initials(p.name)}</div>
-        <div class="picker-info">
-          <div class="picker-name">${p.name}</div>
-          <div class="picker-meta">${d.soList.length} SO · ${totalSKU} SKU${d.existingQty>0?' · existing: '+fmt(d.existingQty):''}</div>
+    html += `<div class="pc" id="pc-${idx}">
+      <div class="pc-head" onclick="togglePC(${idx})">
+        <div class="pc-avatar" style="background:${d.color}22;color:${d.color}">${initials(p.name)}</div>
+        <div class="pc-info">
+          <div class="pc-name">${p.name}</div>
+          <div class="pc-meta">${d.soList.length} SO · ${totalSKU} SKU</div>
         </div>
-        <div class="picker-stats">
+        <div class="pc-right">
           <div>
-            <div class="picker-qty-val" style="color:${barColor}">${fmt(d.soList.reduce((a,s)=>a+s.qty,0))}</div>
-            <div class="picker-so-ct">${pct}% target</div>
+            <div class="pc-qty" style="color:${barColor}">${fmt(assignedQty)}</div>
+            <div class="pc-pct">${pct}% target</div>
           </div>
           <div class="chevron">▼</div>
         </div>
       </div>
-      <div class="picker-progress">
-        <div class="bar-wrap">
-          <div class="bar-fill" style="width:${pct}%;background:${barColor}"></div>
-        </div>
-        <div class="bar-pct" style="color:${color}">${pct}%</div>
-        <div class="bar-remaining" style="color:var(--text3)">${remaining>0?'sisa '+fmt(remaining):over?'over '+fmt(assignedQty-target):'✓ on target'}</div>
+      <div class="pc-bar">
+        <div class="bar-bg"><div class="bar-fg" style="width:${pct}%;background:${barColor}"></div></div>
+        <div class="bar-label" style="color:${barColor}">${pct >= 100 ? (over ? 'over '+fmt(assignedQty-target) : '✓') : 'sisa '+fmt(target-assignedQty)}</div>
       </div>
-      <div class="picker-detail">
-        <div class="detail-summary">
-          <div class="detail-stat">
-            <div class="detail-stat-label">Total Qty</div>
-            <div class="detail-stat-val" style="color:${color}">${fmt(d.soList.reduce((a,s)=>a+s.qty,0))}</div>
-          </div>
-          <div class="detail-stat">
-            <div class="detail-stat-label">Total SO</div>
-            <div class="detail-stat-val">${d.soList.length}</div>
-          </div>
-          <div class="detail-stat">
-            <div class="detail-stat-label">Total SKU</div>
-            <div class="detail-stat-val">${totalSKU}</div>
-          </div>
+      <div class="pc-detail">
+        <div class="pc-detail-stats">
+          <div class="pc-ds"><div class="pc-ds-label">Total Qty</div><div class="pc-ds-val" style="color:${d.color}">${fmt(assignedQty)}</div></div>
+          <div class="pc-ds"><div class="pc-ds-label">Total SO</div><div class="pc-ds-val">${d.soList.length}</div></div>
+          <div class="pc-ds"><div class="pc-ds-label">Total SKU</div><div class="pc-ds-val">${totalSKU}</div></div>
         </div>
         ${Object.keys(byWave).sort((a,b)=>(WAVE_ORDER[a]||9)-(WAVE_ORDER[b]||9)).map(wave => {
-          const soList = byWave[wave];
-          return `<div class="wave-group">
-            <div class="wave-group-header">
+          const wso = byWave[wave];
+          const wqty = wso.reduce((a,s)=>a+s.request_quantity,0);
+          return `<div class="wave-section">
+            <div class="wave-hdr">
               <span class="badge ${waveClass(wave)}">${wave}</span>
-              <span style="color:var(--text3)">${soList.length} SO · ${fmt(soList.reduce((a,s)=>a+s.qty,0))} qty</span>
+              <span style="color:var(--text3)">${wso.length} SO · ${fmt(wqty)} qty</span>
             </div>
-            <table class="so-table">
-              <thead><tr>
-                <th>SO Number</th><th>Destination</th><th>Type</th><th>SKU</th><th style="text-align:right">Qty</th>
-              </tr></thead>
-              <tbody>
-                ${soList.map(so => `<tr>
-                  <td class="so-num">${so.so_number}</td>
-                  <td>${so.destination_name}</td>
-                  <td><span class="badge ${typeClass(so.type)}">${so.type}</span></td>
-                  <td style="color:var(--text3)">${so.skus.length}</td>
-                  <td style="text-align:right;font-family:var(--mono)">${fmt(so.qty)}</td>
-                </tr>`).join('')}
-              </tbody>
+            <table class="so-tbl">
+              <thead><tr><th>SO Number</th><th>Tujuan</th><th>Type</th><th>Zone</th><th style="text-align:right">Qty</th><th style="text-align:right">SKU</th></tr></thead>
+              <tbody>${wso.map(so=>`<tr>
+                <td class="mono">${so.so_number}</td>
+                <td>${so.destination_name}</td>
+                <td><span class="badge ${typeClass(so.type)}">${so.type}</span></td>
+                <td class="mono">${so.picking_zone||'—'}</td>
+                <td style="text-align:right;font-family:var(--mono)">${fmt(so.request_quantity)}</td>
+                <td style="text-align:right;font-family:var(--mono)">${so.sku_count||0}</td>
+              </tr>`).join('')}</tbody>
             </table>
           </div>`;
         }).join('')}
@@ -696,60 +646,66 @@ function renderResult(target){
   // Unassigned
   if(unassignedSO.length){
     html += `<div class="unassigned-card">
-      <div class="unassigned-header" onclick="toggleUnassigned()">
-        <span style="font-size:16px">⚠</span>
-        <span style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--amber)">UNASSIGNED — ${unassignedSO.length} SO</span>
-        <span style="margin-left:auto;font-size:12px;color:var(--amber)">▼</span>
+      <div class="unassigned-hdr" onclick="document.getElementById('ua-detail').style.display=document.getElementById('ua-detail').style.display==='none'?'block':'none'">
+        <span>⚠</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--amber)">${unassignedSO.length} SO UNASSIGNED</span>
       </div>
-      <div id="unassigned-detail" style="display:none">
-        <table class="so-table">
-          <thead><tr><th>SO Number</th><th>Destination</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th></tr></thead>
-          <tbody>
-            ${unassignedSO.map(so=>`<tr>
-              <td class="so-num">${so.so_number}</td>
-              <td>${so.destination_name}</td>
-              <td><span class="badge ${waveClass(so.wave)}">${so.wave||'—'}</span></td>
-              <td><span class="badge ${typeClass(so.type)}">${so.type}</span></td>
-              <td style="text-align:right;font-family:var(--mono)">${fmt(so.qty)}</td>
-            </tr>`).join('')}
-          </tbody>
+      <div id="ua-detail" style="display:none">
+        <table class="so-tbl">
+          <thead><tr><th>SO Number</th><th>Tujuan</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th></tr></thead>
+          <tbody>${unassignedSO.map(so=>`<tr>
+            <td class="mono">${so.so_number}</td><td>${so.destination_name}</td>
+            <td><span class="badge ${waveClass(so.WAVE)}">${so.WAVE||'—'}</span></td>
+            <td><span class="badge ${typeClass(so.type)}">${so.type}</span></td>
+            <td style="text-align:right;font-family:var(--mono)">${fmt(so.request_quantity)}</td>
+          </tr>`).join('')}</tbody>
         </table>
       </div>
     </div>`;
   }
 
-  document.getElementById('picker-list').innerHTML = html;
+  html += '</div>';
+  document.getElementById('assign-content').innerHTML = html;
 }
 
-function toggleCard(idx){
-  const card = document.getElementById('pc-'+idx);
-  card.classList.toggle('open');
+function togglePC(idx){
+  document.getElementById('pc-'+idx).classList.toggle('open');
 }
-function toggleUnassigned(){
-  const d = document.getElementById('unassigned-detail');
-  d.style.display = d.style.display==='none' ? 'block' : 'none';
+
+// ── TABS ───────────────────────────────────────────────────────
+function switchTab(name, el){
+  activeTab = name;
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-so').style.display = name==='so' ? 'flex' : 'none';
+  document.getElementById('tab-assign').style.display = name==='assign' ? 'flex' : 'none';
 }
 
 // ── DOWNLOAD ───────────────────────────────────────────────────
 function downloadCSV(){
   if(!Object.keys(assignResult).length){ alert('Jalankan assign dulu.'); return; }
-  let rows = ['Picker,SO Number,Destination,Wave,Type,SKU Count,Qty'];
+  let rows = ['Picker,SO Number,Destination,Wave,Type,Zone,SKU Count,Qty'];
   for(const p of pickers){
     const d = assignResult[p.name];
     if(!d) continue;
     for(const so of d.soList){
-      rows.push(`"${p.name}","${so.so_number}","${so.destination_name}","${so.wave||''}","${so.type||''}",${so.skus.length},${so.qty}`);
+      rows.push(`"${p.name}","${so.so_number}","${so.destination_name}","${so.WAVE||''}","${so.type||''}","${so.picking_zone||''}",${so.sku_count||0},${so.request_quantity}`);
     }
   }
   for(const so of unassignedSO){
-    rows.push(`"UNASSIGNED","${so.so_number}","${so.destination_name}","${so.wave||''}","${so.type||''}",${so.skus.length},${so.qty}`);
+    rows.push(`"UNASSIGNED","${so.so_number}","${so.destination_name}","${so.WAVE||''}","${so.type||''}","${so.picking_zone||''}",${so.sku_count||0},${so.request_quantity}`);
   }
   const blob = new Blob([rows.join('\n')],{type:'text/csv'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'assignment_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.download = 'assign_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 }
+
+// ── INIT ───────────────────────────────────────────────────────
+loadData();
+setInterval(loadData, 10 * 60 * 1000); // auto refresh 10 menit
+setInterval(checkReset, 60 * 1000);    // cek reset jam 3 pagi tiap 1 menit
 </script>
 </body>
 </html>

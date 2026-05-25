@@ -601,22 +601,23 @@ function renderAssignResult(target){
     <div class="as-card"><div class="as-label">Avg Qty</div><div class="as-val">${fmt(avgQty)}</div></div>
   </div>`;
 
-  const sorted=[...pickers].sort((a,b)=>(assignResult[b.name]?.soList.reduce((x,s)=>x+s.request_quantity,0)||0)-(assignResult[a.name]?.soList.reduce((x,s)=>x+s.request_quantity,0)||0));
+  const sorted=Object.values(assignResult).sort((a,b)=>b.soList.reduce((x,s)=>x+s.request_quantity,0)-a.soList.reduce((x,s)=>x+s.request_quantity,0));
 
-  sorted.forEach((p,idx)=>{
-    const d=assignResult[p.name]; if(!d) return;
+  sorted.forEach((d,idx)=>{
     const aqty=d.soList.reduce((a,s)=>a+s.request_quantity,0);
     const totalSKU=d.soList.reduce((a,s)=>a+(s.sku_count||0),0);
     const pc=Math.min(100,Math.round(aqty/target*100));
     const over=aqty>target*1.05;
     const barColor=over?'var(--red)':d.color;
+    const byZone={};
+    d.soList.forEach(so=>{ const z=so.picking_zone||'—'; if(!byZone[z])byZone[z]=[]; byZone[z].push(so); });
     const byWave={};
     d.soList.forEach(so=>{ const w=so.WAVE||'Other'; if(!byWave[w])byWave[w]=[]; byWave[w].push(so); });
 
     html+=`<div class="pc" id="pc-${idx}">
       <div class="pc-head" onclick="document.getElementById('pc-${idx}').classList.toggle('open')">
-        <div class="pc-avatar" style="background:${d.color}22;color:${d.color}">${initials(p.name)}</div>
-        <div class="pc-info"><div class="pc-name">${p.name}</div><div class="pc-meta">${d.soList.length} SO · ${totalSKU} SKU</div></div>
+        <div class="pc-avatar" style="background:${d.color}22;color:${d.color}">${initials(d.picker)}</div>
+        <div class="pc-info"><div class="pc-name">${d.picker}</div><div class="pc-meta">${d.soList.length} SO · ${totalSKU} SKU</div></div>
         <div class="pc-right">
           <div><div class="pc-qty" style="color:${barColor}">${fmt(aqty)}</div><div class="pc-pct">${pc}% target</div></div>
           <div class="chevron">▼</div>
@@ -632,15 +633,15 @@ function renderAssignResult(target){
           <div class="pc-ds"><div class="pc-ds-label">Total SO</div><div class="pc-ds-val">${d.soList.length}</div></div>
           <div class="pc-ds"><div class="pc-ds-label">Total SKU</div><div class="pc-ds-val">${totalSKU}</div></div>
         </div>
-        ${Object.keys(byWave).sort((a,b)=>(WAVE_ORDER[a]||9)-(WAVE_ORDER[b]||9)).map(wave=>{
-          const wso=byWave[wave]; const wqty=wso.reduce((a,s)=>a+s.request_quantity,0);
+        ${Object.keys(byZone).sort().map(zone=>{
+          const zso=byZone[zone]; const zqty=zso.reduce((a,s)=>a+s.request_quantity,0);
           return `<div class="wave-section">
-            <div class="wave-hdr"><span class="badge ${waveClass(wave)}">${wave}</span><span style="color:var(--text3)">${wso.length} SO · ${fmt(wqty)} qty</span></div>
-            <table class="so-tbl"><thead><tr><th>SO Number</th><th>Tujuan</th><th>Type</th><th>Zone</th><th style="text-align:right">Qty</th><th style="text-align:right">SKU</th></tr></thead>
-            <tbody>${wso.map(so=>`<tr>
+            <div class="wave-hdr"><span class="badge" style="background:#e0e4f0;color:var(--text2);border:1px solid var(--border2)">${zone}</span><span style="color:var(--text3)">${zso.length} SO · ${fmt(zqty)} qty</span></div>
+            <table class="so-tbl"><thead><tr><th>SO Number</th><th>Tujuan</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th><th style="text-align:right">SKU</th></tr></thead>
+            <tbody>${zso.map(so=>`<tr>
               <td class="mono">${so.so_number}</td><td>${so.destination_name}</td>
+              <td><span class="badge ${waveClass(so.WAVE)}">${so.WAVE||'—'}</span></td>
               <td><span class="badge ${typeClass(so.type)}">${so.type}</span></td>
-              <td class="mono">${so.picking_zone||'—'}</td>
               <td style="text-align:right;font-family:var(--mono)">${fmt(so.request_quantity)}</td>
               <td style="text-align:right;font-family:var(--mono)">${so.sku_count||0}</td>
             </tr>`).join('')}</tbody></table>
@@ -710,7 +711,7 @@ function renderDashboard(json){
 function downloadCSV(){
   if(!Object.keys(assignResult).length){ alert('Jalankan assign dulu.'); return; }
   let rows=['Picker,SO Number,Destination,Wave,Type,Zone,SKU Count,Qty'];
-  for(const p of pickers){ const d=assignResult[p.name]; if(!d) continue;
+  for(const d of Object.values(assignResult)){ if(!d) continue;
     for(const so of d.soList) rows.push(`"${p.name}","${so.so_number}","${so.destination_name}","${so.WAVE||''}","${so.type||''}","${so.picking_zone||''}",${so.sku_count||0},${so.request_quantity}`); }
   for(const so of unassignedSO) rows.push(`"UNASSIGNED","${so.so_number}","${so.destination_name}","${so.WAVE||''}","${so.type||''}","${so.picking_zone||''}",${so.sku_count||0},${so.request_quantity}`);
   const blob=new Blob([rows.join('\n')],{type:'text/csv'});

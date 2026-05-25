@@ -577,7 +577,7 @@ function renderResult(target){
   document.getElementById('result-area').style.display = 'block';
 
   const assigned = Object.values(assignResult).reduce((a,b)=>a+b.soList.length,0);
-  const totalQty = Object.values(assignResult).reduce((a,b)=>a+b.totalQty,0);
+  const totalQty = Object.values(assignResult).reduce((a,b)=>a+(b.totalQty - b.existingQty),0);
   const avgQty   = pickers.length > 0 ? totalQty / pickers.length : 0;
 
   document.getElementById('r-assigned').textContent = fmt(assigned);
@@ -637,7 +637,7 @@ function renderResult(target){
         </div>
         <div class="picker-stats">
           <div>
-            <div class="picker-qty-val" style="color:${barColor}">${fmt(d.totalQty)}</div>
+            <div class="picker-qty-val" style="color:${barColor}">${fmt(d.totalQty - d.existingQty)}</div>
             <div class="picker-so-ct">${pct}% target</div>
           </div>
           <div class="chevron">▼</div>
@@ -654,7 +654,7 @@ function renderResult(target){
         <div class="detail-summary">
           <div class="detail-stat">
             <div class="detail-stat-label">Total Qty</div>
-            <div class="detail-stat-val" style="color:${color}">${fmt(d.totalQty)}</div>
+            <div class="detail-stat-val" style="color:${color}">${fmt(d.totalQty - d.existingQty)}</div>
           </div>
           <div class="detail-stat">
             <div class="detail-stat-label">Total SO</div>

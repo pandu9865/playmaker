@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Playmaker STL</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -182,6 +183,12 @@ tr:hover td{background:var(--bg3)}
 .unassigned-hdr{padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--amber-dim)}
 .unassigned-hdr:hover{opacity:.9}
 
+/* DASHBOARD */
+.as-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+.as-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.as-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text)}
+.as-sub{font-size:10px;color:var(--text2);margin-top:1px}
+
 /* scrollbar */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
@@ -261,10 +268,78 @@ tr:hover td{background:var(--bg3)}
 
   <!-- TABS -->
   <div class="main-tabs">
+    <div class="main-tab" onclick="switchTab('dashboard',this)">Dashboard</div>
     <div class="main-tab active" onclick="switchTab('so',this)">Data SO <span class="tab-badge" id="tab-so-ct">0</span></div>
     <div class="main-tab" onclick="switchTab('assign',this)">Hasil Assign <span class="tab-badge" id="tab-assign-ct">0</span></div>
   </div>
 
+  <!-- TAB: DASHBOARD -->
+  <div id="tab-dashboard" class="table-area" style="display:none;overflow-y:auto;padding:14px;gap:12px;flex-direction:column">
+    <!-- KPI Row -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+      <div class="as-card" style="text-align:center">
+        <div class="as-label">Ratio SO</div>
+        <div class="as-val" id="d-ratio">—</div>
+        <div class="as-sub">qty/SO</div>
+      </div>
+      <div class="as-card" style="text-align:center">
+        <div class="as-label">Total Qty</div>
+        <div class="as-val" id="d-qty">—</div>
+        <div class="as-sub">request qty</div>
+      </div>
+      <div class="as-card" style="text-align:center">
+        <div class="as-label">Total SO</div>
+        <div class="as-val" id="d-so">—</div>
+        <div class="as-sub">unique SO</div>
+      </div>
+      <div class="as-card" style="text-align:center;border-color:#2563eb44;background:#dbeafe">
+        <div class="as-label">Outbound Progress</div>
+        <div class="as-val" id="d-progress" style="color:#1d4ed8">—</div>
+        <div class="as-sub">qty picked / total</div>
+      </div>
+      <div class="as-card" style="text-align:center;border-color:#16a34a44;background:#dcfce7">
+        <div class="as-label">%FR</div>
+        <div class="as-val" id="d-fr" style="color:#15803d">—</div>
+        <div class="as-sub">inc / req picked</div>
+      </div>
+    </div>
+    <!-- Charts Row 1 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div class="as-card">
+        <div style="font-weight:600;font-size:12px;margin-bottom:10px;color:var(--text2)">Progress Wave by SO</div>
+        <canvas id="chart-wave-so" height="180"></canvas>
+      </div>
+      <div class="as-card">
+        <div style="font-weight:600;font-size:12px;margin-bottom:10px;color:var(--text2)">Progress Wave by Qty</div>
+        <canvas id="chart-wave-qty" height="180"></canvas>
+      </div>
+      <div class="as-card">
+        <div style="font-weight:600;font-size:12px;margin-bottom:10px;color:var(--text2)">SO Remarks</div>
+        <canvas id="chart-remarks" height="180"></canvas>
+      </div>
+    </div>
+    <!-- Picker Summary -->
+    <div class="as-card">
+      <div style="font-weight:600;font-size:12px;margin-bottom:10px;color:var(--text2)">Summary Picker</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:6px 10px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3)">Picker</th>
+              <th style="text-align:right;padding:6px 10px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3)">Total SO</th>
+              <th style="text-align:right;padding:6px 10px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3)">Ratio SO</th>
+              <th style="text-align:right;padding:6px 10px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3)">Prod Qty</th>
+              <th style="text-align:right;padding:6px 10px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3)">Target</th>
+              <th style="text-align:right;padding:6px 10px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3)">Achievement</th>
+            </tr>
+          </thead>
+          <tbody id="picker-summary-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SO TABLE -->
   <!-- TAB: SO TABLE -->
   <div id="tab-so" class="table-area">
     <div class="table-toolbar">
@@ -418,6 +493,7 @@ async function loadData(){
     document.getElementById('tab-so-ct').textContent = soData.length;
 
     renderTable();
+    renderDashboard(json);
     document.getElementById('loading-overlay').style.display = 'none';
 
   } catch(e) {
@@ -677,8 +753,105 @@ function switchTab(name, el){
   activeTab = name;
   document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+  document.getElementById('tab-dashboard').style.display = name==='dashboard' ? 'flex' : 'none';
   document.getElementById('tab-so').style.display = name==='so' ? 'flex' : 'none';
   document.getElementById('tab-assign').style.display = name==='assign' ? 'flex' : 'none';
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+let chartWaveSO = null, chartWaveQty = null, chartRemarks = null;
+
+function renderDashboard(json){
+  if(!json) return;
+
+  // KPI
+  const fmt0 = n => Math.round(n).toLocaleString('id-ID');
+  const pct  = n => (n*100).toFixed(1) + '%';
+
+  document.getElementById('d-ratio').textContent    = fmt0(json.ratioSO||0);
+  document.getElementById('d-qty').textContent      = fmt0(json.totalQty||0);
+  document.getElementById('d-so').textContent       = fmt0(json.totalSO||0);
+  document.getElementById('d-progress').textContent = pct(json.progress||0);
+  document.getElementById('d-fr').textContent       = pct(json.fr||0);
+
+  // Wave charts
+  const waves = ['WAVE 1','WAVE 2','WAVE 3','WAVE 4'];
+  const wStats = json.waveStats || {};
+  const statuses = ['NEW','IN PROGRESS','ON DELIVERY','COMPLETED'];
+  const statColors = {'NEW':'#3b82f6','IN PROGRESS':'#f59e0b','ON DELIVERY':'#a855f7','COMPLETED':'#22c55e'};
+
+  const waveSoDatasets = statuses.map(st => ({
+    label: st,
+    data: waves.map(w => (wStats[w]?.statCounts?.[st]||0)),
+    backgroundColor: statColors[st],
+    borderRadius: 3,
+  }));
+  const waveQtyDatasets = statuses.map(st => ({
+    label: st,
+    data: waves.map(w => (wStats[w]?.statQty?.[st]||0)),
+    backgroundColor: statColors[st],
+    borderRadius: 3,
+  }));
+
+  const chartOpts = (yFmt) => ({
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ position:'bottom', labels:{ font:{size:9}, boxWidth:10, padding:8 } } },
+    scales:{
+      x:{ stacked:false, ticks:{ font:{size:9} }, grid:{ display:false } },
+      y:{ stacked:false, ticks:{ font:{size:9}, callback: yFmt }, grid:{ color:'#e8ebf5' } }
+    }
+  });
+
+  if(chartWaveSO) chartWaveSO.destroy();
+  chartWaveSO = new Chart(document.getElementById('chart-wave-so'), {
+    type:'bar', data:{ labels:waves, datasets:waveSoDatasets },
+    options: chartOpts(v => v)
+  });
+
+  if(chartWaveQty) chartWaveQty.destroy();
+  chartWaveQty = new Chart(document.getElementById('chart-wave-qty'), {
+    type:'bar', data:{ labels:waves, datasets:waveQtyDatasets },
+    options: chartOpts(v => v>=1000 ? (v/1000).toFixed(0)+'K' : v)
+  });
+
+  // Remarks donut
+  const remarksMap = json.remarksMap || {};
+  const rLabels = Object.keys(remarksMap).sort((a,b)=>remarksMap[b]-remarksMap[a]);
+  const rData   = rLabels.map(k=>remarksMap[k]);
+  const rColors = ['#3b82f6','#f59e0b','#22c55e','#ef4444','#a855f7','#14b8a6','#f97316','#06b6d4','#84cc16','#ec4899'];
+
+  if(chartRemarks) chartRemarks.destroy();
+  chartRemarks = new Chart(document.getElementById('chart-remarks'), {
+    type:'doughnut',
+    data:{ labels:rLabels, datasets:[{ data:rData, backgroundColor:rColors, borderWidth:1, borderColor:'#fff' }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'bottom', labels:{ font:{size:9}, boxWidth:10, padding:6 } },
+        tooltip:{ callbacks:{ label: ctx => ctx.label+': '+fmt0(ctx.raw) } }
+      }
+    }
+  });
+
+  // Picker summary table
+  const target = parseInt(document.getElementById('target-qty').value)||2400;
+  const pickers = json.pickerSummary || [];
+  const tbody = document.getElementById('picker-summary-tbody');
+  if(!tbody) return;
+
+  tbody.innerHTML = pickers.map((p,i) => {
+    const ach = target > 0 ? p.qty/target : 0;
+    const achColor = ach >= 1 ? '#15803d' : ach >= 0.8 ? '#b45309' : '#b91c1c';
+    const bg = i%2===0 ? '' : 'background:#f5f6fa';
+    return `<tr style="${bg}">
+      <td style="padding:6px 10px;border-bottom:1px solid var(--border);font-weight:500">${p.name}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono)">${p.so}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono)">${fmt0(p.ratio)}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-weight:600">${fmt0(p.qty)}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);color:var(--text3)">${fmt0(target)}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-weight:700;color:${achColor}">${(ach*100).toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
 }
 
 // ── DOWNLOAD ───────────────────────────────────────────────────

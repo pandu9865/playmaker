@@ -335,10 +335,12 @@ tr:hover td{background:var(--blue-dim)!important}
     <div class="toolbar">
       <input type="text" class="search" id="so-search" placeholder="Cari SO / tujuan..." oninput="renderTable()">
       <div class="pill on" onclick="setF('ALL',this)">Semua</div>
-      <div class="pill" onclick="setF('NEW',this)">Baru</div>
-      <div class="pill" onclick="setF('IN PROGRESS',this)">In Progress</div>
-      <div class="pill" onclick="setF('COMPLETED',this)">Selesai</div>
-      <div class="pill" onclick="setF('ON DELIVERY',this)">Delivery</div>
+      <div class="pill" onclick="setF('NEW',this)">New</div>
+      <div class="pill" onclick="setF('PICKING',this)">Picking</div>
+      <div class="pill" onclick="setF('PACKING',this)">Packing</div>
+      <div class="pill" onclick="setF('STAGING',this)">Staging</div>
+      <div class="pill" onclick="setF('LOADING',this)">Loading</div>
+      <div class="pill" onclick="setF('READY TO SHIP',this)">Ready Ship</div>
       <div class="tbl-ct" id="tbl-ct">0 SO</div>
     </div>
     <div class="tbl-wrap">
@@ -415,7 +417,7 @@ const pct=n=>(n*100).toFixed(1)+'%';
 const ini=n=>n.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
 function getWave(d){for(const[k,v]of Object.entries(WAVE_MAP))if(d.includes(k))return v;return'Other';}
 function getType(d){for(const k of KEPALA)if(d.includes(k))return'Kepala';for(const k of BADAN)if(d.includes(k))return'Badan';for(const k of EKOR)if(d.includes(k))return'Ekor';return'Other';}
-function sBadge(s){const u=(s||'').toUpperCase();if(u==='NEW')return's-new';if(u==='IN PROGRESS')return's-prog';if(u==='COMPLETED')return's-done';if(u==='ON DELIVERY')return's-del';return's-oth';}
+function sBadge(s){const u=(s||'').toUpperCase();if(u==='NEW')return's-new';if(u==='PICKING')return's-prog';if(u==='PACKING')return's-prog';if(u==='STAGING')return's-del';if(u==='LOADING')return's-del';if(u==='READY TO SHIP')return's-done';return's-oth';}
 function wBadge(w){if(w==='WAVE 1')return'w1';if(w==='WAVE 2')return'w2';if(w==='WAVE 3')return'w3';if(w==='WAVE 4')return'w4';return'oth';}
 function tBadge(t){if(t==='Kepala')return'kepala';if(t==='Badan')return'badan';if(t==='Ekor')return'ekor';return'oth';}
 

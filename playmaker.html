@@ -550,7 +550,10 @@ async function loadData(){
   const txt = document.getElementById('sync-txt');
   dot.className='dot ok'; txt.innerText='Syncing...';
   try{
-    const r = await fetch(GAS + '?action=so');
+    const r = await fetch(GAS + '?action=so&t=' + Date.now(), {
+      method: 'GET',
+      cache: 'no-store'
+    });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const res = await r.json();
     
@@ -833,7 +836,11 @@ async function submitToGoogle(){
   btn.innerText = 'Uploading...'; btn.style.opacity = '0.6'; btn.disabled = true;
 
   try{
-    const r = await fetch(GAS, { method: 'POST', body: JSON.stringify({ action: 'assign', data: payload }) });
+    const r = await fetch(GAS + '?t=' + Date.now(), {
+      method: 'POST',
+      cache: 'no-store',
+      body: JSON.stringify({ action: 'assign', data: payload })
+    });
     const res = await r.json();
     if(res.status === 'success'){
       alert('Mantap! Data alokasi berhasil disimpan ke Google Sheets.');
@@ -843,7 +850,7 @@ async function submitToGoogle(){
           <div class="empty-txt" style="color:var(--green)"><strong>UPLOAD BERHASIL!</strong><br>Data picker sudah masuk ke Google Sheets.</div>
         </div>`;
       if (!isPreviewSandbox()) {
-        loadData();
+        setTimeout(loadData, 1200);
       } else {
         setPreviewModeUI();
       }
@@ -1006,8 +1013,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-add-picker').addEventListener('click', addPicker);
   document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
   
-  loadData();
-  setInterval(loadData, 10*60*1000);
+  if (isPreviewSandbox()) {
+    setPreviewModeUI();
+  } else {
+    loadData();
+    setInterval(loadData, 60*1000);
+  }
 
   setInterval(()=>{
     const now = new Date();
@@ -1022,7 +1033,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="empty-icon">🎯</div>
           <div class="empty-txt">Set filter & picker di panel kiri<br>lalu klik <strong>ASSIGN SEKARANG</strong></div>
         </div>`;
-      loadData();
+      if (!isPreviewSandbox()) {
+        loadData();
+      } else {
+        setPreviewModeUI();
+      }
     }
   }, 60000);
 });

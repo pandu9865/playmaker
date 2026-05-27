@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Playmaker STL</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -113,7 +114,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .sum-sub{font-size:10px;color:var(--text2);margin-top:1px}
 
 /* picker cards */
-.pc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.pc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px}
 .pc-head{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:.15s}
 .pc-head:hover{background:var(--bg3)}
 .pc-av{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:var(--mono);flex-shrink:0}
@@ -207,7 +208,7 @@ tr:hover td{background:var(--blue-dim)!important}
 /* CONTROL PANEL NEW */
 .control-panel-new{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 6px -1px #0000000d}
 .panel-section-title{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.05em;margin-bottom:6px}
-.target-input-wrapper{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+.target-input-wrapper {display:flex;justify-content:space-between;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
 .target-input-wrapper input{width:90px;padding:5px 8px;border-radius:6px;border:1px solid var(--border2);font-family:var(--mono);font-size:14px;font-weight:600;text-align:right;background:var(--bg2);color:var(--text);outline:none}
 .target-input-wrapper input:focus{border-color:var(--blue)}
 .filter-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
@@ -239,7 +240,6 @@ tr:hover td{background:var(--blue-dim)!important}
 <body>
 <div class="app">
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="logo">PLAY<span>MAKER</span></div>
   <nav class="nav">
@@ -253,17 +253,13 @@ tr:hover td{background:var(--blue-dim)!important}
   </div>
 </div>
 
-<!-- PAGES -->
 <div class="pages">
 
-  <!-- ASSIGN PAGE -->
   <div id="page-assign" class="page active">
     <div class="assign-page">
 
-      <!-- LEFT PANEL -->
       <div class="ap-left" style="padding:12px">
 
-        <!-- Overview -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
           <div style="background:var(--blue-dim);border:1px solid var(--blue-light);border-radius:8px;padding:10px">
             <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:2px">Total SO</div>
@@ -281,21 +277,19 @@ tr:hover td{background:var(--blue-dim)!important}
 
         <div class="control-panel-new">
 
-          <!-- Picker Input -->
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
               <div class="panel-section-title" style="margin-bottom:0">👥 Picker Shift Ini</div>
-              <button onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">✕ Clear All</button>
+              <button class="btn-ghost" onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear All</button>
             </div>
             <div class="picker-inp-row">
               <input type="text" id="mp-inp" class="inp" placeholder="Nama picker (Enter)">
-              <button class="btn-plus" onclick="addPicker()">+</button>
+              <button class="btn-plus" id="btn-add-picker">+</button>
             </div>
             <div class="tags" id="mp-tags"></div>
             <div class="picker-ct" id="mp-ct">0 picker</div>
           </div>
 
-          <!-- Target -->
           <div>
             <div class="panel-section-title">🎯 Target Qty / Picker</div>
             <div class="target-input-wrapper">
@@ -304,7 +298,6 @@ tr:hover td{background:var(--blue-dim)!important}
             </div>
           </div>
 
-          <!-- Wave Filter -->
           <div>
             <div class="panel-section-title">🌊 Filter Wave</div>
             <div class="filter-grid-2">
@@ -315,7 +308,6 @@ tr:hover td{background:var(--blue-dim)!important}
             </div>
           </div>
 
-          <!-- Type Filter -->
           <div>
             <div class="panel-section-title">📦 Filter Type</div>
             <div class="filter-grid-2">
@@ -326,25 +318,22 @@ tr:hover td{background:var(--blue-dim)!important}
             </div>
           </div>
 
-          <!-- Zone Filter -->
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
               <div class="panel-section-title" style="margin-bottom:0">📍 Filter Zone</div>
               <div style="display:flex;gap:6px">
-                <button onclick="selectAllZones()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">✓ All</button>
-                <button onclick="clearAllZones()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">✕ Clear</button>
+                <button class="btn-ghost" onclick="selectAllZones()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✓ All</button>
+                <button class="btn-ghost" onclick="clearAllZones()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear</button>
               </div>
             </div>
             <div class="zone-wrap" id="fz" style="display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto"></div>
           </div>
 
-          <!-- SO Count -->
           <div class="counter-box-highlight">
             <div class="big-num" id="f-count">0</div>
             <div class="sub-label" id="f-qty">0 qty tersedia</div>
           </div>
 
-          <!-- CTA -->
           <div style="display:flex;flex-direction:column;gap:8px">
             <button class="btn-mega-assign" onclick="confirmAssign()">🚀 ASSIGN SEKARANG</button>
             <button class="btn-secondary-download" onclick="downloadCSV()">📥 Download CSV</button>
@@ -353,8 +342,7 @@ tr:hover td{background:var(--blue-dim)!important}
         </div>
       </div>
 
-      <!-- RIGHT PANEL -->
-      <div id="ap-right" style="flex:1;overflow-y:auto;padding:14px;min-height:0">
+      <div id="ap-right" class="ap-right">
         <div class="empty">
           <div class="empty-icon">🎯</div>
           <div class="empty-txt">Set filter & picker di panel kiri<br>lalu klik <strong>ASSIGN SEKARANG</strong></div>
@@ -364,7 +352,6 @@ tr:hover td{background:var(--blue-dim)!important}
     </div>
   </div>
 
-  <!-- DATA SO PAGE -->
   <div id="page-so" class="page so-page">
     <div class="toolbar">
       <input type="text" class="search" id="so-search" placeholder="Cari SO / tujuan..." oninput="renderTable()">
@@ -392,7 +379,7 @@ tr:hover td{background:var(--blue-dim)!important}
       <select id="sf-picker" onchange="renderTable()" style="padding:5px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:11px;font-family:var(--mono);outline:none">
         <option value="">Picker (Semua)</option>
       </select>
-      <button onclick="resetSOFilter()" style="padding:5px 10px;border-radius:5px;background:var(--red-dim);border:1px solid var(--red-light);color:var(--red);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s" onmouseover="this.style.background='var(--red-light)'" onmouseout="this.style.background='var(--red-dim)'">✕ Reset Filter</button>
+      <button onclick="resetSOFilter()" style="padding:5px 10px;border-radius:5px;background:var(--red-dim);border:1px solid var(--red-light);color:var(--red);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s">✕ Reset Filter</button>
       <div id="active-filter-badge" style="font-family:var(--mono);font-size:10px;color:var(--blue);display:none">● Filter aktif</div>
     </div>
     <div class="tbl-wrap">
@@ -406,7 +393,6 @@ tr:hover td{background:var(--blue-dim)!important}
     </div>
   </div>
 
-  <!-- DASHBOARD PAGE -->
   <div id="page-dashboard" class="page dash-page">
     <div class="dash-body">
       <div class="kpi-row">
@@ -435,7 +421,6 @@ tr:hover td{background:var(--blue-dim)!important}
 
 </div>
 
-<!-- CONFIRM MODAL -->
 <div class="modal-bg" id="modal">
   <div class="modal">
     <div class="modal-title">Konfirmasi Assign</div>
@@ -452,400 +437,514 @@ const GAS = 'https://script.google.com/macros/s/AKfycbzBbgxinr4KIgCiZbT3ii3e84qV
 const COLORS = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0d9488','#ea580c','#0891b2','#65a30d','#db2777'];
 const WAVE_ORDER = {'WAVE 1':1,'WAVE 2':2,'WAVE 3':3,'WAVE 4':4};
 const TYPE_BATCHES = ['Kepala','Badan','Ekor','Other'];
-const WAVE_MAP={APR:'WAVE 1',KJT:'WAVE 1',BSX:'WAVE 1',BGS:'WAVE 1',ASA:'WAVE 1',PBT:'WAVE 1',PKC:'WAVE 1',SRP:'WAVE 1',BRY:'WAVE 1',TDN:'WAVE 1',GPL:'WAVE 1',PPN:'WAVE 1',PPL:'WAVE 1',FTW:'WAVE 1',CLN:'WAVE 2',PIN:'WAVE 2',LBB:'WAVE 2',CPT:'WAVE 2',KGS:'WAVE 2',RDS:'WAVE 2',MRY:'WAVE 2',DST:'WAVE 2',MSB:'WAVE 2',SAL:'WAVE 2',CWG:'WAVE 2',TGX:'WAVE 2',BS9:'WAVE 2',JBG:'WAVE 2',JLB:'WAVE 3',DNS:'WAVE 3',KPM:'WAVE 3',CT2:'WAVE 3',SMN:'WAVE 3',MGR:'WAVE 3',MTG:'WAVE 3',GMD:'WAVE 3',CSA:'WAVE 4',BDC:'WAVE 4',KLD:'WAVE 4',TSY:'WAVE 4',MRG:'WAVE 4',SWG:'WAVE 4',CNR:'WAVE 4',PSG:'WAVE 4',PAM:'WAVE 4'};
-const KEPALA=['KJT','ASA','SRP','GPL','FTW','CPT','MRY','CWG','JBG','JLB','SMN','GMD','KLD','SWG','PAM'];
-const BADAN=['APR','BGS','PKC','TDN','PPL','LBB','PIN','RDS','SAL','MSB','BS9','CT2','KPM','MTG','BDC','MRG','PSG'];
-const EKOR=['BSX','PBT','BRY','PPN','CLN','KGS','DST','TGX','DNS','MGR','CSA','TSY','CNR'];
 
-let soData=[], pickers=[], assignResult={}, unassigned=[];
-let fWave=new Set(['WAVE 1','WAVE 2','WAVE 3','WAVE 4']);
-let fType=new Set(['Kepala','Badan','Ekor','Other']);
-let fZone=new Set(); let allZones=[];
-let soFilter='ALL'; let lastJson=null;
-// SO page filters
-let soFWave=new Set(); let soFType=new Set(); let soFZone=''; let soFPicker='';
-let cWaveSO=null,cWaveQty=null,cRemarks=null;
+const WAVE_MAP={APR:'WAVE 1',KJT:'WAVE 1',BSX:'WAVE 1',BGS:'WAVE 1',ASA:'WAVE 1',PBT:'WAVE 1',PKC:'WAVE 1',SRP:'WAVE 1',BRY:'WAVE 1',TDN:'WAVE 1',GPL:'WAVE 1',PPN:'WAVE 1',PPL:'WAVE 1',FTW:'WAVE 1',CLN:'WAVE 2',PIN:'WAVE 2',LBB:'WAVE 2',CPT:'WAVE 2',KGS:'WAVE 2',RDS:'WAVE 2',MRY:'WAVE 2',DST:'WAVE 2',MSB:'WAVE 2',SAL:'WAVE 2',CWG:'WAVE 2',TGX:'WAVE 2',BS9:'WAVE 2',JBG:'WAVE 2',JLB:'WAVE 3',DNS:'WAVE 3',KPM:'WAVE 3',CT2:'WAVE 3',SMN:'WAVE 3',MGR:'WAVE 3',MTG:'WAVE 3',GMD:'WAVE 3',CSA:'WAVE 4',BDC:'WAVE 4',KLD:'WAVE 4',KLI:'WAVE 4',TGR:'WAVE 4',CKR:'WAVE 4',SBC:'WAVE 4',SRE:'WAVE 4',AMR:'WAVE 4',CST:'WAVE 4',PRG:'WAVE 4',BBL:'WAVE 4'};
+const TYPE_MAP={KEPALA:'Kepala',KPL:'Kepala',BADAN:'Badan',BDN:'Badan',EKOR:'Ekor',EKR:'Ekor'};
 
-const fmt=n=>Math.round(n).toLocaleString('id-ID');
-const pct=n=>(n*100).toFixed(1)+'%';
-const ini=n=>n.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
-function getWave(d){for(const[k,v]of Object.entries(WAVE_MAP))if(d.includes(k))return v;return'Other';}
-function getType(d){for(const k of KEPALA)if(d.includes(k))return'Kepala';for(const k of BADAN)if(d.includes(k))return'Badan';for(const k of EKOR)if(d.includes(k))return'Ekor';return'Other';}
-function sBadge(s){const u=(s||'').toUpperCase();if(u==='NEW')return's-new';if(u==='PICKING')return's-prog';if(u==='PACKING')return's-prog';if(u==='STAGING')return's-del';if(u==='LOADING')return's-del';if(u==='READY TO SHIP')return's-done';return's-oth';}
-function wBadge(w){if(w==='WAVE 1')return'w1';if(w==='WAVE 2')return'w2';if(w==='WAVE 3')return'w3';if(w==='WAVE 4')return'w4';return'oth';}
-function tBadge(t){if(t==='Kepala')return'kepala';if(t==='Badan')return'badan';if(t==='Ekor')return'ekor';return'oth';}
+let soData = [];
+let fWave = new Set(['WAVE 1','WAVE 2','WAVE 3','WAVE 4']);
+let fType = new Set(['Kepala','Badan','Ekor','Other']);
+let fZone = new Set();
+let myPickers = new Set();
+let assignResult = {};
+let tblStatus = 'ALL';
+let charts = {};
+let lastResetDate = '';
 
-// PAGE NAV
-function showPage(name,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  el.classList.add('active');
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
-// LOAD DATA
+function showPage(p,btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  btn.classList.add('active');
+}
+
 async function loadData(){
-  const dot=document.getElementById('dot');
-  dot.className='dot';
+  const dot = document.getElementById('dot');
+  const txt = document.getElementById('sync-txt');
+  dot.className='dot ok'; txt.innerText='Syncing...';
   try{
-    const r=await fetch(GAS+'?action=so');
-    const j=await r.json();
-    if(j.error)throw new Error(j.error);
-    lastJson=j;
-    soData=(j.rows||[]).map(s=>({...s,WAVE:s.WAVE||getWave(s.destination_name||''),type:s.TYPE||getType(s.destination_name||'')}));
-    document.getElementById('s-total').textContent=fmt(j.totalSO||0);
-    document.getElementById('s-new').textContent=fmt(j.newSO||0);
-    document.getElementById('sync-txt').textContent='Sync '+(j.lastUpdated||'').slice(11,16)+' WIB';
-    dot.className='dot ok';
-    // zones from col W (PICKING ZONE)
-    allZones=[...new Set(soData.map(s=>s.picking_zone||'').filter(Boolean))].sort();
-    fZone=new Set(allZones);
-    renderZones();
-    renderFilterCount();
-    // Populate SO page dropdowns
-    const sfz=document.getElementById('sf-zone');
-    if(sfz){sfz.innerHTML='<option value="">Zone (Semua)</option>'+allZones.map(z=>`<option>${z}</option>`).join('');}
-    const sfp=document.getElementById('sf-picker');
-    const allPickers=[...new Set(soData.map(s=>s.Picker||'').filter(Boolean))].sort();
-    if(sfp){sfp.innerHTML='<option value="">Picker (Semua)</option>'+allPickers.map(p=>`<option>${p}</option>`).join('');}
+    const r = await fetch(GAS);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const res = await r.json();
+    
+    soData = (res.data || []).map(s => {
+      s.request_quantity = Number(s.request_quantity || 0);
+      s.sku_count = Number(s.sku_count || 0);
+      return s;
+    });
+
+    const allZones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
+    
+    if(fZone.size === 0) {
+      fZone = new Set(allZones);
+    } else {
+      const intersection = allZones.filter(z => fZone.has(z));
+      fZone = new Set(intersection.length > 0 ? intersection : allZones);
+    }
+
+    renderZoneChips(allZones);
+    updateFilterCount();
     renderTable();
-    renderDash(j);
+    renderDashboard();
+    
+    dot.className='dot ok';
+    txt.innerText = 'Online: ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }catch(e){
-    dot.className='dot err';
-    document.getElementById('sync-txt').textContent='Error';
+    console.error(e);
+    dot.className='dot err'; txt.innerText='Offline / Error';
   }
 }
 
-// ZONES
-function renderZones(){
-  document.getElementById('fz').innerHTML=allZones.map(z=>
-    `<div class="chip zon on" onclick="toggleF('zone','${z}',this)">${z}</div>`
-  ).join('');
+function getWave(dest){
+  if(!dest) return 'Other';
+  const match = dest.match(/\b([A-Z0-9]{3})\b/);
+  if(match && WAVE_MAP[match[1]]) return WAVE_MAP[match[1]];
+  for(let k in WAVE_MAP) if(dest.toUpperCase().includes(k)) return WAVE_MAP[k];
+  return 'Other';
 }
 
-// FILTER TOGGLE
-function toggleF(dim,val,el){
-  const map={wave:fWave,type:fType,zone:fZone};
-  const s=map[dim];
-  if(s.has(val))s.delete(val);else s.add(val);
-  el.classList.toggle('on');
-  renderFilterCount();
+function getType(dest){
+  if(!dest) return 'Other';
+  const up = dest.toUpperCase();
+  for(let k in TYPE_MAP) if(up.includes(k)) return TYPE_MAP[k];
+  return 'Other';
 }
 
-function getFiltered(){
-  const allZoneSelected = fZone.size === allZones.length;
-  return soData.filter(s=>(s.status||'').toUpperCase()==='NEW'&&!s.Picker&&fWave.has(s.WAVE)&&fType.has(s.type)&&(allZoneSelected||fZone.has(s.picking_zone||'')));
+function renderZoneChips(all){
+  const div = document.getElementById('fz');
+  div.innerHTML = all.map(z=>`<div class="chip zon ${fZone.has(z)?'on':''}" onclick="toggleZone('${z}',this)">${esc(z)}</div>`).join('');
 }
 
-function renderFilterCount(){
-  const f=getFiltered();
-  const q=f.reduce((a,s)=>a+s.request_quantity,0);
-  document.getElementById('f-count').textContent=fmt(f.length);
-  document.getElementById('f-qty').textContent=fmt(q)+' qty tersedia';
+function toggleF(type,val,el){
+  const set = type==='wave'?fWave:fType;
+  if(set.has(val)){ set.delete(val); el.classList.remove('on'); }
+  else{ set.add(val); el.classList.add('on'); }
+  updateFilterCount();
 }
 
-// PICKER
-document.getElementById('mp-inp').addEventListener('keydown',e=>{if(e.key==='Enter')addPicker();});
-document.getElementById('mp-inp').addEventListener('paste',e=>{
-  const t=(e.clipboardData||window.clipboardData).getData('text');
-  const ns=t.split(/[\n\r,;]+/).map(n=>n.trim()).filter(Boolean);
-  if(ns.length>1){e.preventDefault();ns.forEach(n=>{if(n&&!pickers.find(p=>p.name===n))pickers.push({name:n});});renderPickers();}
-});
+function toggleZone(z,el){
+  if(fZone.has(z)){ fZone.delete(z); el.classList.remove('on'); }
+  else{ fZone.add(z); el.classList.add('on'); }
+  updateFilterCount();
+}
+
+function selectAllZones(){
+  document.querySelectorAll('#fz .chip').forEach(c=>c.classList.add('on'));
+  fZone = new Set([...new Set(soData.map(s=>s.picking_zone).filter(Boolean))]);
+  updateFilterCount();
+}
+
+function clearAllZones(){
+  document.querySelectorAll('#fz .chip').forEach(c=>c.classList.remove('on'));
+  fZone.clear();
+  updateFilterCount();
+}
+
+function updateFilterCount(){
+  let c=0, q=0, unassignedCount=0;
+  soData.forEach(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    const z = s.picking_zone;
+    if(s.status === 'NEW' || !s.Picker) {
+      unassignedCount++;
+    }
+    if(s.status==='NEW' && fWave.has(w) && fType.has(t) && fZone.has(z) && (!s.Picker)){
+      c++; q += s.request_quantity;
+    }
+  });
+  document.getElementById('s-total').innerText = soData.length;
+  document.getElementById('s-new').innerText = unassignedCount;
+  document.getElementById('f-count').innerText = c;
+  document.getElementById('f-qty').innerText = q.toLocaleString('id-ID') + ' qty tersedia';
+}
+
 function addPicker(){
-  const el=document.getElementById('mp-inp');
-  const n=el.value.trim();
-  if(!n||pickers.find(p=>p.name===n)){el.value='';return;}
-  pickers.push({name:n});el.value='';renderPickers();
-}
-function removePicker(n){pickers=pickers.filter(p=>p.name!==n);renderPickers();}
-function renderPickers(){
-  document.getElementById('mp-tags').innerHTML=pickers.map((p,i)=>
-    `<span class="tag" style="background:${COLORS[i%COLORS.length]}18;border-color:${COLORS[i%COLORS.length]}44;color:${COLORS[i%COLORS.length]}">${p.name}<span class="tag-x" onclick="removePicker('${p.name.replace(/'/g,"\\'")}')">×</span></span>`
-  ).join('');
-  document.getElementById('mp-ct').textContent=pickers.length+' picker';
+  const inp = document.getElementById('mp-inp');
+  const v = inp.value.trim();
+  if(!v) return;
+  myPickers.add(v); inp.value=''; renderPickerTags();
 }
 
-// CONFIRM MODAL
+function removePicker(v){ myPickers.delete(v); renderPickerTags(); }
+function clearAllPickers(){ myPickers.clear(); renderPickerTags(); }
+
+function renderPickerTags(){
+  const tags = document.getElementById('mp-tags');
+  tags.innerHTML = [...myPickers].map(p=>`<div class="tag" style="background:var(--blue-dim);border-color:var(--blue-light);color:var(--blue)"><span>${esc(p)}</span><span class="tag-x" onclick="removePicker('${esc(p)}')">×</span></div>`).join('');
+  document.getElementById('mp-ct').innerText = myPickers.size + ' picker';
+}
+
 function confirmAssign(){
-  if(!pickers.length){alert('Tambahkan picker dulu.');return;}
-  const f=getFiltered();
-  if(!f.length){alert('Tidak ada SO yang sesuai filter.');return;}
-  const target=parseInt(document.getElementById('target').value)||2400;
-  const q=f.reduce((a,s)=>a+s.request_quantity,0);
-  document.getElementById('modal-body').innerHTML=
-    `Assign <strong>${fmt(f.length)} SO</strong> (${fmt(q)} qty) ke <strong>${pickers.length} picker</strong>?<br><br>Target: <strong>${fmt(target)} qty/picker</strong>`;
+  if(!myPickers.size){ alert('Isi minimal 1 nama picker dulu, bro!'); return; }
+  let c=0;
+  soData.forEach(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    if(s.status==='NEW' && fWave.has(w) && fType.has(t) && fZone.has(s.picking_zone) && (!s.Picker)) c++;
+  });
+  if(!c){ alert('Gak ada SO NEW yang lolos filter buat di-assign.'); return; }
+  
+  document.getElementById('modal-body').innerHTML = `Sistem akan membagi rata <strong>${c} SO</strong> ke <strong>${myPickers.size} picker</strong> berdasarkan target beban berjalan. Lanjutkan?`;
   document.getElementById('modal').classList.add('open');
 }
-function closeModal(){document.getElementById('modal').classList.remove('open');}
 
-// ASSIGN
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
 function runAssign(){
   closeModal();
-  const target=parseInt(document.getElementById('target').value)||2400;
-  const soToAssign=getFiltered();
-  assignResult={};unassigned=[];
-
-  // Hitung initialQty dari data existing (SO yang sudah ada picker & bukan NEW)
-  pickers.forEach((p,i)=>{
-    const initialQty=soData
-      .filter(s=>s.Picker===p.name && (s.status||'').toUpperCase()!=='NEW')
-      .reduce((a,s)=>a+s.request_quantity,0);
-    assignResult[p.name]={
-      picker:p.name,
-      color:COLORS[i%COLORS.length],
-      soList:[],
-      initialQty,       // qty existing dari shift berjalan
-      totalQty:initialQty  // start dari existing, bukan 0
-    };
+  const targetQty = Number(document.getElementById('target').value) || 2400;
+  const pList = [...myPickers];
+  
+  let initialWorkload = {};
+  pList.forEach(p=> initialWorkload[p] = 0);
+  soData.forEach(s=>{
+    if(s.Picker && initialWorkload[s.Picker] !== undefined){
+      initialWorkload[s.Picker] += s.request_quantity;
+    }
   });
 
-  // Sort: Kepala→Badan→Ekor→Other, Wave 1→4, qty desc
-  const soSorted=[];
-  for(const tb of TYPE_BATCHES){
-    const batch=soToAssign.filter(s=>s.type===tb)
-      .sort((a,b)=>{
-        const w=(WAVE_ORDER[a.WAVE]||9)-(WAVE_ORDER[b.WAVE]||9);
-        return w||b.request_quantity-a.request_quantity;
-      });
-    soSorted.push(...batch);
-  }
+  assignResult = {};
+  pList.forEach(p=>{
+    assignResult[p] = { picker: p, initialQty: initialWorkload[p], newQty: 0, totalQty: initialWorkload[p], soList: [] };
+  });
 
-  for(const so of soSorted){
-    const names=Object.keys(assignResult);
-    const below=names.filter(n=>assignResult[n].totalQty<target);
-    const cands=below.length?below:names;
-    const pick=cands.reduce((a,b)=>assignResult[a].totalQty<=assignResult[b].totalQty?a:b);
-    assignResult[pick].soList.push(so);
-    assignResult[pick].totalQty+=so.request_quantity;
-  }
+  let pool = [];
+  soData.forEach(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    if(s.status==='NEW' && fWave.has(w) && fType.has(t) && fZone.has(s.picking_zone) && (!s.Picker)){
+      pool.push(s);
+    }
+  });
+  pool.sort((a,b)=> b.request_quantity - a.request_quantity);
 
-  renderResult(target);
-  showPage('assign',document.querySelectorAll('.nav-btn')[2]);
+  pool.forEach(s=>{
+    pList.sort((a,b)=> assignResult[a].totalQty - assignResult[b].totalQty);
+    const bestPicker = pList[0];
+    
+    assignResult[bestPicker].soList.push(s);
+    assignResult[bestPicker].newQty += s.request_quantity;
+    assignResult[bestPicker].totalQty += s.request_quantity;
+  });
+
+  renderResultCards(targetQty);
 }
 
-function renderResult(target){
-  const vals=Object.values(assignResult);
-  if(!vals.length)return;
-  const assigned=vals.reduce((a,d)=>a+d.soList.length,0);
-  const totalQ=vals.reduce((a,d)=>a+d.soList.reduce((x,s)=>x+s.request_quantity,0),0);
-  const avgQ=pickers.length?totalQ/pickers.length:0;
+function renderResultCards(targetQty){
+  const container = document.getElementById('ap-right');
+  const arr = Object.values(assignResult);
+  if(!arr.length) return;
 
-  // Build zone options from all SO in result
-  const resultZones=[...new Set(vals.flatMap(d=>d.soList.map(s=>s.picking_zone||'—')))].sort();
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div style="font-weight:600;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
+    <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">💾 Simpan & Upload ke Google Sheets</button>
+  </div><div style="display:flex;flex-direction:column;gap:8px" id="picker-grid">`;
 
-  let html=`<div class="sum-row">
-    <div class="sum-card"><div class="sum-label">SO Assigned</div><div class="sum-val">${fmt(assigned)}</div></div>
-    <div class="sum-card"><div class="sum-label">Unassigned</div><div class="sum-val" style="color:${unassigned.length?'var(--amber)':'var(--green)'}">${fmt(unassigned.length)}</div></div>
-    <div class="sum-card"><div class="sum-label">Picker</div><div class="sum-val">${pickers.length}</div></div>
-    <div class="sum-card"><div class="sum-label">Avg Qty</div><div class="sum-val">${fmt(avgQ)}</div></div>
-  </div>
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
-    <input type="text" id="result-search" placeholder="🔍 Cari nama picker..." oninput="filterResultCards()" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;font-family:var(--mono);outline:none;flex:1;min-width:150px">
-    <select id="result-zone" onchange="filterResultCards()" style="padding:6px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;font-family:var(--mono);outline:none">
-      <option value="">Zone (Semua)</option>
-      ${resultZones.map(z=>`<option>${z}</option>`).join('')}
-    </select>
-    <button onclick="document.getElementById('result-search').value='';document.getElementById('result-zone').value='';filterResultCards()" style="padding:5px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono)">↺ Reset</button>
-  </div>`;
+  arr.forEach((d,idx)=>{
+    const pct = Math.min(100, Math.round((d.totalQty / targetQty) * 100));
+    const isOver = d.totalQty > targetQty;
+    const barColor = isOver ? 'var(--red)' : (pct > 80 ? 'var(--amber)' : 'var(--green)');
+    
+    let zoneSet = new Set(d.soList.map(s=>s.picking_zone).filter(Boolean));
+    let zonesStr = [...zoneSet].join(', ');
 
-  let pickerCards='';
-  vals.sort((a,b)=>b.soList.reduce((x,s)=>x+s.request_quantity,0)-a.soList.reduce((x,s)=>x+s.request_quantity,0))
-  .forEach((d,idx)=>{
-    const aqty=d.soList.reduce((a,s)=>a+s.request_quantity,0);
-    const sku=d.soList.reduce((a,s)=>a+(s.sku_count||0),0);
-    const pc=Math.min(100,Math.round(aqty/target*100));
-    const over=aqty>target*1.05;
-    const bc=over?'var(--red)':d.color;
-    // group by zone (col W)
-    const byZone={};
-    d.soList.forEach(s=>{const z=s.picking_zone||'—';if(!byZone[z])byZone[z]=[];byZone[z].push(s);});
-
-    pickerCards+=`<div class="pc" id="pc${idx}" data-picker="${d.picker.toLowerCase()}" data-zones="${[...new Set(d.soList.map(s=>s.picking_zone||'—'))].join(',')}">
-      <div class="pc-head" onclick="document.getElementById('pc${idx}').classList.toggle('open')">
-        <div class="pc-av" style="background:${d.color}18;color:${d.color}">${ini(d.picker)}</div>
-        <div class="pc-info"><div class="pc-name">${d.picker}</div><div class="pc-meta">${d.soList.length} SO · ${sku} SKU</div></div>
+    html += `
+    <div class="pc" data-picker="${esc(d.picker)}" data-zones="${esc(zonesStr)}">
+      <div class="pc-head" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pc-av" style="background:${COLORS[idx % COLORS.length]}22;color:${COLORS[idx % COLORS.length]}">${esc(d.picker.slice(0,2).toUpperCase())}</div>
+        <div class="pc-info">
+          <div class="pc-name">${esc(d.picker)}</div>
+          <div class="pc-meta">${d.soList.length} SO baru | Area: ${esc(zonesStr || '-')}</div>
+        </div>
         <div class="pc-right">
-          <div><div class="pc-qty" style="color:${bc}">${fmt(aqty)}</div><div class="pc-pct">${pc}% target</div></div>
+          <div style="text-align:right">
+            <div class="pc-qty">${d.totalQty.toLocaleString('id-ID')} Qty</div>
+            <div class="pc-pct" style="color:${barColor};font-weight:600">${pct}% dari target</div>
+          </div>
           <div class="chevron">▼</div>
         </div>
       </div>
-      <div class="pc-bar"><div class="bar-bg"><div class="bar-fg" style="width:${pc}%;background:${bc}"></div></div>
-        <div class="bar-lbl" style="color:${bc}">${pc>=100?(over?'over '+fmt(aqty-target):'✓ on target'):'sisa '+fmt(target-aqty)}</div>
+      <div class="pc-bar">
+        <div class="bar-bg"><div class="bar-fg" style="width:${pct}%;background:${barColor}"></div></div>
+        <div class="bar-lbl">(Beban Shift: ${d.initialQty.toLocaleString('id-ID')} | Baru: +${d.newQty.toLocaleString('id-ID')})</div>
       </div>
-      <div class="pc-detail">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border)">
-          <div style="padding:8px 14px;text-align:center;border-right:1px solid var(--border)"><div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase">Total Qty</div><div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${d.color}">${fmt(aqty)}</div></div>
-          <div style="padding:8px 14px;text-align:center;border-right:1px solid var(--border)"><div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase">Total SO</div><div style="font-family:var(--mono);font-size:16px;font-weight:700">${d.soList.length}</div></div>
-          <div style="padding:8px 14px;text-align:center"><div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase">Total SKU</div><div style="font-family:var(--mono);font-size:16px;font-weight:700">${sku}</div></div>
-        </div>
-        ${Object.keys(byZone).sort().map((zone,zi)=>{
-          const zso=byZone[zone];
-          const zq=zso.reduce((a,s)=>a+s.request_quantity,0);
-          const soNums=zso.map(s=>s.so_number).join('\n');
-          return`<div class="zone-sec">
-            <div class="zone-hdr">
-              <div class="zone-hdr-left">
-                <span class="zone-badge">${zone}</span>
-                <span style="color:var(--text3)">${zso.length} SO · ${fmt(zq)} qty</span>
+      <div class="pc-detail">`;
+
+      let grouped = {};
+      d.soList.forEach(s=>{
+        if(!grouped[s.picking_zone]) grouped[s.picking_zone]=[];
+        grouped[s.picking_zone].push(s);
+      });
+
+      for(let zone in grouped){
+        let soInZone = grouped[zone];
+        let copyTextData = soInZone.map(s=>s.so_number).join('\n');
+        html += `
+        <div class="zone-sec">
+          <div class="zone-hdr">
+            <div class="zone-hdr-left"><span class="zone-badge">${esc(zone)}</span> <span>${soInZone.length} SO</span></div>
+            <button class="copy-btn" onclick="copyText(this,\`${esc(copyTextData)}\`,event)">📋 Copy Semua SO</button>
+          </div>
+          <div class="so-list">`;
+          soInZone.forEach(s=>{
+            const w = s.WAVE || getWave(s.destination_name);
+            const t = s.type || getType(s.destination_name);
+            html += `
+            <div class="so-item">
+              <div class="so-num">${esc(s.so_number)}</div>
+              <div class="so-dest">${esc(s.destination_name)}</div>
+              <div class="so-tags">
+                <span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span>
+                <span class="badge ${t.toLowerCase()}">${esc(t)}</span>
               </div>
-              <button class="copy-btn" id="cp-${idx}-${zi}" onclick="copyZone('${idx}-${zi}',\`${soNums.replace(/`/g,'\\`')}\`)">📋 Copy SO</button>
-            </div>
-            <div class="so-list">
-              ${zso.map(so=>`<div class="so-item">
-                <span class="so-num">${so.so_number}</span>
-                <span class="so-dest">${so.destination_name}</span>
-                <div class="so-tags">
-                  <span class="badge ${wBadge(so.WAVE)}">${so.WAVE||'—'}</span>
-                  <span class="badge ${tBadge(so.type)}">${so.type}</span>
-                </div>
-                <span class="so-qty">${fmt(so.request_quantity)}</span>
-              </div>`).join('')}
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
+              <div class="so-qty">${s.request_quantity} Qty</div>
+            </div>`;
+          });
+          html += `</div></div>`;
+      }
+    html += `</div></div>`;
   });
-
-  // Wrap picker cards in 2-col grid
-  const gridHtml=`<div id="picker-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:0">${pickerCards}</div>`;
-  document.getElementById('ap-right').innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'+html+gridHtml+'</div>';
+  html += `</div>`;
+  container.innerHTML = html;
+  
+  anime({ targets: '#picker-grid .pc', opacity: [0, 1], translateY: [10, 0], delay: anime.stagger(60), easing: 'easeOutQuad', duration: 400 });
 }
 
-function copyZone(id, text){
-  navigator.clipboard.writeText(text).then(()=>{
-    const btn=document.getElementById('cp-'+id);
-    btn.textContent='✓ Copied!';btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='📋 Copy SO';btn.classList.remove('copied');},2000);
+function copyText(btn, txt, e){
+  e.stopPropagation();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => markCopied(btn)).catch(() => fallbackCopy(btn, txt));
+  } else {
+    fallbackCopy(btn, txt);
+  }
+}
+
+function fallbackCopy(btn, txt) {
+  const t = document.createElement('textarea');
+  t.value = txt; t.style.position = 'fixed'; document.body.appendChild(t);
+  t.focus(); t.select();
+  try { document.execCommand('copy'); markCopied(btn); } catch (err) { alert('Gagal copy text.'); }
+  document.body.removeChild(t);
+}
+
+function markCopied(btn){
+  btn.innerText = '✓ Copied!'; btn.classList.add('copied');
+  setTimeout(()=>{ btn.innerText = '📋 Copy Semua SO'; btn.classList.remove('copied'); }, 1500);
+}
+
+async function submitToGoogle(){
+  let payload = [];
+  Object.values(assignResult).forEach(d => {
+    d.soList.forEach(s => { payload.push({ so_number: s.so_number, picker: d.picker }); });
   });
+  if(!payload.length) return;
+
+  const btn = document.querySelector('[onclick="submitToGoogle()"]');
+  const oldTxt = btn.innerText;
+  btn.innerText = 'Uploading...'; btn.style.opacity = '0.6'; btn.disabled = true;
+
+  try{
+    const r = await fetch(GAS, { method: 'POST', body: JSON.stringify({ action: 'assign', data: payload }) });
+    const res = await r.json();
+    if(res.status === 'success'){
+      alert('Mantap! Data alokasi berhasil disimpan ke Google Sheets.');
+      document.getElementById('ap-right').innerHTML = `
+        <div class="empty">
+          <div class="empty-icon" style="color:var(--green); opacity:1">✓</div>
+          <div class="empty-txt" style="color:var(--green)"><strong>UPLOAD BERHASIL!</strong><br>Data picker sudah masuk ke Google Sheets.</div>
+        </div>`;
+      loadData();
+    } else {
+      alert('Gagal: ' + res.message);
+      btn.innerText = oldTxt; btn.style.opacity = '1'; btn.disabled = false;
+    }
+  }catch(e){
+    alert('Koneksi terputus atau GSheets error.');
+    btn.innerText = oldTxt; btn.style.opacity = '1'; btn.disabled = false;
+  }
 }
 
-// DATA SO TABLE
-function setF(f,el){soFilter=f;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');renderTable();}
-function renderTable(){
-  const q=(document.getElementById('so-search').value||'').toLowerCase();
-  const sfWave=document.getElementById('sf-wave')?.value||'';
-  const sfType=document.getElementById('sf-type')?.value||'';
-  const sfZone=document.getElementById('sf-zone')?.value||'';
-  const sfPicker=document.getElementById('sf-picker')?.value||'';
-  const hasFilter=sfWave||sfType||sfZone||sfPicker;
-  const badge=document.getElementById('active-filter-badge');
-  if(badge)badge.style.display=hasFilter?'block':'none';
-  const f=soData.filter(s=>{
-    if(soFilter!=='ALL'&&(s.status||'').toUpperCase()!==soFilter)return false;
-    if(q&&!s.so_number.toLowerCase().includes(q)&&!(s.destination_name||'').toLowerCase().includes(q))return false;
-    if(sfWave&&s.WAVE!==sfWave)return false;
-    if(sfType&&s.type!==sfType)return false;
-    if(sfZone&&(s.picking_zone||'')!==sfZone)return false;
-    if(sfPicker&&(s.Picker||'')!==sfPicker)return false;
-    return true;
-  });
-  document.getElementById('tbl-ct').textContent=fmt(f.length)+' SO';
-  document.getElementById('so-tbody').innerHTML=f.map(s=>`<tr>
-    <td class="mono">${s.so_number}</td>
-    <td>${s.destination_name||'—'}</td>
-    <td><span class="badge ${wBadge(s.WAVE)}">${s.WAVE||'—'}</span></td>
-    <td><span class="badge ${tBadge(s.type)}">${s.type||'—'}</span></td>
-    <td class="mono">${s.picking_zone||'—'}</td>
-    <td><span class="badge ${sBadge(s.status)}">${s.status||'—'}</span></td>
-    <td style="color:var(--text2);font-size:11px">${s.Picker||'—'}</td>
-    <td style="text-align:right;font-family:var(--mono)">${fmt(s.request_quantity)}</td>
-    <td style="text-align:right;font-family:var(--mono)">${s.sku_count||0}</td>
-  </tr>`).join('');
+function setF(status, el){
+  tblStatus = status;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on'); renderTable();
 }
 
-// DASHBOARD
-function renderDash(j){
-  if(!j)return;
-  document.getElementById('d-ratio').textContent=fmt(j.ratioSO||0);
-  document.getElementById('d-qty').textContent=fmt(j.totalQty||0);
-  document.getElementById('d-so').textContent=fmt(j.totalSO||0);
-  document.getElementById('d-prog').textContent=pct(j.progress||0);
-  document.getElementById('d-fr').textContent=pct(j.fr||0);
-  const waves=['WAVE 1','WAVE 2','WAVE 3','WAVE 4'];
-  const ws=j.waveStats||{};
-  const stats=['NEW','IN PROGRESS','ON DELIVERY','COMPLETED'];
-  const sc={'NEW':'#3b82f6','IN PROGRESS':'#f59e0b','ON DELIVERY':'#a855f7','COMPLETED':'#22c55e'};
-  const opts=(yf)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10,padding:6}}},scales:{x:{ticks:{font:{size:9}},grid:{display:false}},y:{ticks:{font:{size:9},callback:yf},grid:{color:'#f1f5f9'}}}});
-  if(cWaveSO)cWaveSO.destroy();
-  cWaveSO=new Chart(document.getElementById('c-wave-so'),{type:'bar',data:{labels:waves,datasets:stats.map(st=>({label:st,data:waves.map(w=>ws[w]?.statCounts?.[st]||0),backgroundColor:sc[st],borderRadius:3}))},options:opts(v=>v)});
-  if(cWaveQty)cWaveQty.destroy();
-  cWaveQty=new Chart(document.getElementById('c-wave-qty'),{type:'bar',data:{labels:waves,datasets:stats.map(st=>({label:st,data:waves.map(w=>ws[w]?.statQty?.[st]||0),backgroundColor:sc[st],borderRadius:3}))},options:opts(v=>v>=1000?(v/1000).toFixed(0)+'K':v)});
-  const rm=j.remarksMap||{};
-  const rl=Object.keys(rm).sort((a,b)=>rm[b]-rm[a]);
-  const rc=['#2563eb','#d97706','#16a34a','#dc2626','#7c3aed','#0d9488','#ea580c','#0891b2'];
-  if(cRemarks)cRemarks.destroy();
-  cRemarks=new Chart(document.getElementById('c-remarks'),{type:'doughnut',data:{labels:rl,datasets:[{data:rl.map(k=>rm[k]),backgroundColor:rc,borderWidth:1,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10,padding:6}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmt(ctx.raw)}}}}});
-  const target=parseInt(document.getElementById('target').value)||2400;
-  document.getElementById('picker-tbody').innerHTML=(j.pickerSummary||[]).map((p,i)=>{
-    const a=target>0?p.qty/target:0;
-    const ac=a>=1?'#15803d':a>=0.8?'#b45309':'#b91c1c';
-    return`<tr><td style="padding:6px 12px;border-bottom:1px solid var(--border);font-weight:500">${p.name}</td>
-    <td style="padding:6px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono)">${p.so}</td>
-    <td style="padding:6px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono)">${fmt(p.ratio)}</td>
-    <td style="padding:6px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-weight:600">${fmt(p.qty)}</td>
-    <td style="padding:6px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);color:var(--text3)">${fmt(target)}</td>
-    <td style="padding:6px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-weight:700;color:${ac}">${(a*100).toFixed(1)}%</td></tr>`;
-  }).join('');
-}
-
-// RESET SO FILTER
 function resetSOFilter(){
-  document.getElementById('sf-wave').value='';
-  document.getElementById('sf-type').value='';
-  document.getElementById('sf-zone').value='';
-  document.getElementById('sf-picker').value='';
-  document.getElementById('so-search').value='';
-  soFilter='ALL';
-  document.querySelectorAll('.pill').forEach((p,i)=>{p.classList.toggle('on',i===0);});
+  document.getElementById('so-search').value = '';
+  document.getElementById('sf-wave').value = '';
+  document.getElementById('sf-type').value = '';
+  document.getElementById('sf-zone').value = '';
+  document.getElementById('sf-picker').value = '';
   renderTable();
 }
 
-// CLEAR ALL PICKERS
-function clearAllPickers(){
-  pickers=[];renderPickers();
+function renderTable(){
+  const tbody = document.getElementById('so-tbody');
+  const q = (document.getElementById('so-search').value || '').toLowerCase();
+  const waveSel = document.getElementById('sf-wave').value;
+  const typeSel = document.getElementById('sf-type').value;
+  const zoneSel = document.getElementById('sf-zone').value;
+  const pickSel = document.getElementById('sf-picker').value;
+
+  const zones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
+  const picks = [...new Set(soData.map(s=>s.Picker).filter(Boolean))].sort();
+  
+  const zDropdown = document.getElementById('sf-zone');
+  const curZone = zDropdown.value;
+  zDropdown.innerHTML = '<option value="">Zone (Semua)</option>' + zones.map(z=>`<option ${z===curZone?'selected':''}>${esc(z)}</option>`).join('');
+  
+  const pDropdown = document.getElementById('sf-picker');
+  const curPick = pDropdown.value;
+  pDropdown.innerHTML = '<option value="">Picker (Semua)</option>' + picks.map(p=>`<option ${p===curPick?'selected':''}>${esc(p)}</option>`).join('');
+
+  let filtered = soData.filter(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    const matchStat = tblStatus==='ALL' || s.status===tblStatus;
+    const matchSearch = !q || (s.so_number||'').toLowerCase().includes(q) || (s.destination_name||'').toLowerCase().includes(q);
+    const matchWave = !waveSel || w === waveSel;
+    const matchType = !typeSel || t === typeSel;
+    const matchZone = !zoneSel || s.picking_zone === zoneSel;
+    const matchPick = !pickSel || s.Picker === pickSel;
+    return matchStat && matchSearch && matchWave && matchType && matchZone && matchPick;
+  });
+
+  const hasActiveFilter = q || waveSel || typeSel || zoneSel || pickSel;
+  document.getElementById('active-filter-badge').style.display = hasActiveFilter ? 'block' : 'none';
+  document.getElementById('tbl-ct').innerText = filtered.length + ' SO terfilter';
+
+  tbody.innerHTML = filtered.map(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    let stClass = 's-oth';
+    if(s.status==='NEW') stClass='s-new';
+    else if(s.status==='PICKING') stClass='s-prog';
+    else if(['PACKING','STAGING','LOADING'].includes(s.status)) stClass='s-done';
+    else if(s.status==='READY TO SHIP') stClass='s-del';
+
+    return `<tr>
+      <td class="mono">${esc(s.so_number)}</td>
+      <td style="font-weight:500">${esc(s.destination_name)}</td>
+      <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
+      <td><span class="badge ${t.toLowerCase()}">${esc(t)}</span></td>
+      <td><span class="badge s-new" style="background:none;color:var(--text)">${esc(s.picking_zone || '-')}</span></td>
+      <td><span class="badge ${stClass}">${esc(s.status)}</span></td>
+      <td class="mono" style="font-weight:600;color:var(--blue)">${esc(s.Picker || '-')}</td>
+      <td class="mono" style="text-align:right;font-weight:600">${s.request_quantity}</td>
+      <td class="mono" style="text-align:right;color:var(--text3)">${s.sku_count}</td>
+    </tr>`;
+  }).join('');
 }
 
-// ZONE SELECT/CLEAR ALL
-function selectAllZones(){
-  fZone=new Set(allZones);
-  document.querySelectorAll('#fz .chip').forEach(el=>el.classList.add('on'));
-  renderFilterCount();
-}
-function clearAllZones(){
-  fZone=new Set();
-  document.querySelectorAll('#fz .chip').forEach(el=>el.classList.remove('on'));
-  renderFilterCount();
+function renderDashboard(){
+  if(!soData.length) return;
+  let totQty=0, pickedQty=0, uniqueSO=soData.length, incQty=0;
+  let waveSO={}, waveQty={}, remarksCount={};
+
+  soData.forEach(s=>{
+    totQty += s.request_quantity;
+    if(s.status !== 'NEW') pickedQty += s.request_quantity;
+    if(['PACKING','STAGING','LOADING','READY TO SHIP'].includes(s.status)) incQty += s.request_quantity;
+
+    const w = s.WAVE || getWave(s.destination_name);
+    waveSO[w] = (waveSO[w]||0)+1;
+    waveQty[w] = (waveQty[w]||0)+s.request_quantity;
+
+    const rem = s.status || 'NEW';
+    remarksCount[rem] = (remarksCount[rem]||0)+1;
+  });
+
+  document.getElementById('d-ratio').innerText = Math.round(totQty / uniqueSO) || 0;
+  document.getElementById('d-qty').innerText = totQty.toLocaleString('id-ID');
+  document.getElementById('d-so').innerText = uniqueSO;
+  document.getElementById('d-prog').innerText = (Math.round((pickedQty/totQty)*100)||0) + '%';
+  document.getElementById('d-fr').innerText = (Math.round((incQty/totQty)*100)||0) + '%';
+
+  buildChart('c-wave-so','bar',Object.keys(waveSO),Object.values(waveSO),'SO Count','#2563eb');
+  buildChart('c-wave-qty','line',Object.keys(waveQty),Object.values(waveQty),'Qty Pcs','#16a34a');
+  buildChart('c-remarks','doughnut',Object.keys(remarksCount),Object.values(remarksCount),'',COLORS);
+
+  let pMap = {};
+  soData.forEach(s=>{
+    if(!s.Picker) return;
+    if(!pMap[s.Picker]) pMap[s.Picker] = { so:0, qty:0 };
+    pMap[s.Picker].so++;
+    pMap[s.Picker].qty += s.request_quantity;
+  });
+
+  const pTbody = document.getElementById('picker-tbody');
+  pTbody.innerHTML = Object.keys(pMap).map(p=>{
+    const d = pMap[p];
+    return `<tr>
+      <td style="font-weight:600">${esc(p)}</td>
+      <td class="mono" style="text-align:right">${d.so}</td>
+      <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
+      <td class="mono" style="text-align:right;font-weight:600;color:var(--green)">${d.qty.toLocaleString('id-ID')}</td>
+      <td class="mono" style="text-align:right;color:var(--text3)">2.400</td>
+      <td class="mono" style="text-align:right;font-weight:600;color:var(--blue)">${Math.round((d.qty/2400)*100)}%</td>
+    </tr>`;
+  }).join('');
 }
 
-// FILTER RESULT CARDS
-function filterResultCards(){
-  const q=(document.getElementById('result-search')?.value||'').toLowerCase();
-  const z=(document.getElementById('result-zone')?.value||'').toLowerCase();
-  document.querySelectorAll('#picker-grid .pc').forEach(card=>{
-    const name=card.dataset.picker||'';
-    const zones=(card.dataset.zones||'').toLowerCase();
-    const matchName=!q||name.includes(q);
-    const matchZone=!z||zones.includes(z);
-    card.style.display=(matchName&&matchZone)?'':'none';
+function buildChart(id,type,labels,data,label,colors){
+  if(charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx,{
+    type: type,
+    data: { labels:labels, datasets:[{ label:label, data:data, backgroundColor:colors, borderColor:Array.isArray(colors)?'#fff':colors, borderWidth:1, fill:type==='line'?'start':false, tension:0.3 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:type==='doughnut', position:'right', labels:{ boxWidth:10, font:{ size:10 } } } }, scales: type==='doughnut'?{}:{ x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
   });
 }
 
-// DOWNLOAD
 function downloadCSV(){
   if(!Object.keys(assignResult).length){alert('Jalankan assign dulu.');return;}
   let rows=['Picker,SO Number,Destination,Wave,Type,Zone,Qty'];
   Object.values(assignResult).forEach(d=>{
-    d.soList.forEach(s=>rows.push(`"${d.picker}","${s.so_number}","${s.destination_name}","${s.WAVE||''}","${s.type||''}","${s.picking_zone||''}",${s.request_quantity}`));
+    d.soList.forEach(s=>rows.push(`"${esc(d.picker)}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(s.WAVE||'')}","${esc(s.type||'')}","${esc(s.picking_zone||'')}","${s.request_quantity}`));
   });
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
   a.download='assign_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
-loadData();
-setInterval(loadData,10*60*1000);
-setInterval(()=>{const n=new Date();const w=new Date(n.toLocaleString('en-US',{timeZone:'Asia/Jakarta'}));if(w.getHours()===3&&w.getMinutes()<10){assignResult={};document.getElementById('ap-right').innerHTML='<div class="empty"><div class="empty-icon">🔄</div><div class="empty-txt">Reset jam 3 pagi</div></div>';}},60*1000);
+// Setup Event Listeners secara aman
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-add-picker').addEventListener('click', addPicker);
+  document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
+  
+  loadData();
+  setInterval(loadData, 10*60*1000);
+
+  setInterval(()=>{
+    const now = new Date();
+    const curTime = now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    const curDate = now.toDateString();
+    
+    if(curTime >= '03:00' && curTime <= '03:09' && lastResetDate !== curDate){
+      lastResetDate = curDate;
+      clearAllPickers();
+      document.getElementById('ap-right').innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🎯</div>
+          <div class="empty-txt">Set filter & picker di panel kiri<br>lalu klik <strong>ASSIGN SEKARANG</strong></div>
+        </div>`;
+      loadData();
+    }
+  }, 60000);
+});
 </script>
+</div>
 </body>
 </html>

@@ -551,18 +551,41 @@ function runAssign(){
   const target=parseInt(document.getElementById('target').value)||2400;
   const soToAssign=getFiltered();
   assignResult={};unassigned=[];
-  pickers.forEach((p,i)=>{assignResult[p.name]={picker:p.name,color:COLORS[i%COLORS.length],soList:[],totalQty:0};});
+
+  // Hitung initialQty dari data existing (SO yang sudah ada picker & bukan NEW)
+  pickers.forEach((p,i)=>{
+    const initialQty=soData
+      .filter(s=>s.Picker===p.name && (s.status||'').toUpperCase()!=='NEW')
+      .reduce((a,s)=>a+s.request_quantity,0);
+    assignResult[p.name]={
+      picker:p.name,
+      color:COLORS[i%COLORS.length],
+      soList:[],
+      initialQty,       // qty existing dari shift berjalan
+      totalQty:initialQty  // start dari existing, bukan 0
+    };
+  });
+
+  // Sort: Kepala→Badan→Ekor→Other, Wave 1→4, qty desc
+  const soSorted=[];
   for(const tb of TYPE_BATCHES){
-    const batch=soToAssign.filter(s=>s.type===tb).sort((a,b)=>{const w=(WAVE_ORDER[a.WAVE]||9)-(WAVE_ORDER[b.WAVE]||9);return w||b.request_quantity-a.request_quantity;});
-    for(const so of batch){
-      const names=Object.keys(assignResult);
-      const below=names.filter(n=>assignResult[n].totalQty<target);
-      const cands=below.length?below:names;
-      const pick=cands.reduce((a,b)=>assignResult[a].totalQty<=assignResult[b].totalQty?a:b);
-      assignResult[pick].soList.push(so);
-      assignResult[pick].totalQty+=so.request_quantity;
-    }
+    const batch=soToAssign.filter(s=>s.type===tb)
+      .sort((a,b)=>{
+        const w=(WAVE_ORDER[a.WAVE]||9)-(WAVE_ORDER[b.WAVE]||9);
+        return w||b.request_quantity-a.request_quantity;
+      });
+    soSorted.push(...batch);
   }
+
+  for(const so of soSorted){
+    const names=Object.keys(assignResult);
+    const below=names.filter(n=>assignResult[n].totalQty<target);
+    const cands=below.length?below:names;
+    const pick=cands.reduce((a,b)=>assignResult[a].totalQty<=assignResult[b].totalQty?a:b);
+    assignResult[pick].soList.push(so);
+    assignResult[pick].totalQty+=so.request_quantity;
+  }
+
   renderResult(target);
   showPage('assign',document.querySelectorAll('.nav-btn')[2]);
 }

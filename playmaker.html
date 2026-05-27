@@ -519,6 +519,20 @@ function normalizeSO(raw){
   const zone = firstValue(raw, ['picking_zone','PICKING ZONE','Picking Zone','zone','Zone'], '');
   const reqQty = Number(String(firstValue(raw, ['request_quantity','Request Quantity','request_qty','Req Qty','qty','Qty'], 0)).replace(/,/g,'')) || 0;
   const skuCount = Number(String(firstValue(raw, ['sku_count','SKU Count','sku','SKU'], 0)).replace(/,/g,'')) || 0;
+  const incomingQty = Number(String(firstValue(raw, [
+    'incoming_quantity',
+    'Incoming Quantity',
+    'incoming qty',
+    'Incoming Qty',
+    'incoming_quantity_sum',
+    'sum_incoming_quantity',
+    'inc_qty',
+    'Inc Qty',
+    'received_quantity',
+    'Received Quantity',
+    'received_qty',
+    'Received Qty'
+  ], 0)).replace(/,/g,'')) || 0;
   const wave = firstValue(raw, ['WAVE','wave','Wave'], '') || getWave(destination);
   const type = firstValue(raw, ['type','TYPE','Type'], '') || getType(destination);
 
@@ -530,6 +544,7 @@ function normalizeSO(raw){
     Picker: picker,
     picking_zone: zone,
     request_quantity: reqQty,
+    incoming_quantity: incomingQty,
     sku_count: skuCount,
     WAVE: wave,
     type
@@ -943,13 +958,19 @@ function renderDashboard(){
   let waveSO={}, waveQty={}, remarksCount={};
 
   soData.forEach(s=>{
-    totQty += s.request_quantity;
-    if(s.status !== 'NEW') pickedQty += s.request_quantity;
-    if(['PACKING','STAGING','LOADING','READY TO SHIP'].includes(s.status)) incQty += s.request_quantity;
+    const req = Number(s.request_quantity || 0);
+    const inc = Number(s.incoming_quantity || 0);
+
+    totQty += req;
+    incQty += inc;
+
+    // Progress tetap based on SO yang sudah bukan NEW.
+    // FR% khusus based on Incoming Qty / Request Qty.
+    if(s.status !== 'NEW') pickedQty += req;
 
     const w = s.WAVE || getWave(s.destination_name);
     waveSO[w] = (waveSO[w]||0)+1;
-    waveQty[w] = (waveQty[w]||0)+s.request_quantity;
+    waveQty[w] = (waveQty[w]||0)+req;
 
     const rem = s.status || 'NEW';
     remarksCount[rem] = (remarksCount[rem]||0)+1;
@@ -958,8 +979,8 @@ function renderDashboard(){
   document.getElementById('d-ratio').innerText = Math.round(totQty / uniqueSO) || 0;
   document.getElementById('d-qty').innerText = totQty.toLocaleString('id-ID');
   document.getElementById('d-so').innerText = uniqueSO;
-  document.getElementById('d-prog').innerText = (Math.round((pickedQty/totQty)*100)||0) + '%';
-  document.getElementById('d-fr').innerText = (Math.round((incQty/totQty)*100)||0) + '%';
+  document.getElementById('d-prog').innerText = (totQty ? Math.round((pickedQty/totQty)*100) : 0) + '%';
+  document.getElementById('d-fr').innerText = (totQty ? ((incQty/totQty)*100).toFixed(1) : '0.0') + '%';
 
   buildChart('c-wave-so','bar',Object.keys(waveSO),Object.values(waveSO),'SO Count','#2563eb');
   buildChart('c-wave-qty','line',Object.keys(waveQty),Object.values(waveQty),'Qty Pcs','#16a34a');

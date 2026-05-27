@@ -473,7 +473,7 @@ async function loadData(){
   const txt = document.getElementById('sync-txt');
   dot.className='dot ok'; txt.innerText='Syncing...';
   try{
-    const r = await fetch(GAS);
+    const r = await fetch(GAS + '?action=so');
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const res = await r.json();
     

@@ -195,6 +195,28 @@ tr:hover td{background:var(--blue-dim)!important}
 /* ── DASHBOARD PAGE ── */
 .dash-page{flex-direction:column;overflow-y:auto}
 .dash-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+/* DASHBOARD FILTER + DARK MODE */
+body.dark-theme{
+  --bg:#020617;--bg2:#0f172a;--bg3:#111827;--bg4:#1e293b;--bg5:#334155;
+  --text:#e5e7eb;--text2:#cbd5e1;--text3:#64748b;
+  --border:#1e293b;--border2:#334155;
+  --blue-dim:#172554;--blue-light:#1d4ed8;
+  --green-dim:#052e16;--green-light:#166534;
+  --amber-dim:#451a03;--amber-light:#92400e;
+  --red-dim:#450a0a;--red-light:#991b1b;
+  --purple-light:#3b0764;--teal-light:#134e4a;--coral-light:#7c2d12;
+}
+.dash-control-row{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dash-control-title{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-right:4px}
+.dash-control-row select{padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;font-family:var(--mono);outline:none}
+.dash-control-row select:focus{border-color:var(--blue)}
+.dash-filter-badge{font-family:var(--mono);font-size:10px;color:var(--blue);margin-left:auto}
+.theme-toggle{padding:6px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono)}
+.theme-toggle:hover{background:var(--bg4);color:var(--text)}
+.ach-good{color:var(--green)!important}
+.ach-watch{color:var(--amber)!important}
+.ach-bad{color:var(--red)!important}
+.ach-over{color:var(--blue)!important}
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .kpi{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-align:center}
 .kpi-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
@@ -445,6 +467,27 @@ tr:hover td{background:var(--blue-dim)!important}
 
   <div id="page-dashboard" class="page dash-page">
     <div class="dash-body">
+      <div class="dash-control-row">
+        <div class="dash-control-title">Quick Filter</div>
+        <select id="dash-wave" onchange="renderDashboard()">
+          <option value="">Wave semua</option>
+          <option>WAVE 1</option><option>WAVE 2</option><option>WAVE 3</option><option>WAVE 4</option>
+        </select>
+        <select id="dash-type" onchange="renderDashboard()">
+          <option value="">Type semua</option>
+          <option>Kepala</option><option>Badan</option><option>Ekor</option><option>Other</option>
+        </select>
+        <select id="dash-zone" onchange="renderDashboard()">
+          <option value="">Zone semua</option>
+        </select>
+        <select id="dash-status" onchange="renderDashboard()">
+          <option value="">Status semua</option>
+          <option>NEW</option><option>PICKING</option><option>PACKING</option><option>STAGING</option><option>LOADING</option><option>READY TO SHIP</option>
+        </select>
+        <button class="btn-ghost" onclick="resetDashboardFilters()">✕ Reset</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">🌙 Dark</button>
+        <div class="dash-filter-badge" id="dash-filter-badge">All data</div>
+      </div>
       <div class="kpi-row">
         <div class="kpi"><div class="kpi-label">Ratio SO</div><div class="kpi-val" id="d-ratio">0</div><div class="kpi-sub">qty/SO</div></div>
         <div class="kpi"><div class="kpi-label">Total Qty</div><div class="kpi-val" id="d-qty">0</div><div class="kpi-sub">request qty</div></div>
@@ -582,6 +625,7 @@ let assignResult = {};
 let tblStatus = 'ALL';
 let charts = {};
 let lastResetDate = '';
+let dashboardFiltersReady = false;
 
 function esc(str) {
   if (!str) return '';
@@ -691,6 +735,85 @@ function getApiRows(res){
   return [];
 }
 
+function getDashboardFilteredData(){
+  const waveSel = document.getElementById('dash-wave')?.value || '';
+  const typeSel = document.getElementById('dash-type')?.value || '';
+  const zoneSel = document.getElementById('dash-zone')?.value || '';
+  const statusSel = document.getElementById('dash-status')?.value || '';
+
+  return soData.filter(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    const z = s.picking_zone || '';
+    const st = String(s.status || '').toUpperCase().trim();
+
+    return (!waveSel || w === waveSel) &&
+           (!typeSel || t === typeSel) &&
+           (!zoneSel || z === zoneSel) &&
+           (!statusSel || st === statusSel);
+  });
+}
+
+function populateDashboardFilters(){
+  const zSel = document.getElementById('dash-zone');
+  if(!zSel) return;
+
+  const currentZone = zSel.value;
+  const zones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
+
+  zSel.innerHTML = '<option value="">Zone semua</option>' +
+    zones.map(z=>`<option ${z===currentZone?'selected':''}>${esc(z)}</option>`).join('');
+
+  if(currentZone && !zones.includes(currentZone)) zSel.value = '';
+  dashboardFiltersReady = true;
+}
+
+function resetDashboardFilters(){
+  ['dash-wave','dash-type','dash-zone','dash-status'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  renderDashboard();
+}
+
+function updateDashboardFilterBadge(total, filtered){
+  const badge = document.getElementById('dash-filter-badge');
+  if(!badge) return;
+
+  const waveSel = document.getElementById('dash-wave')?.value || '';
+  const typeSel = document.getElementById('dash-type')?.value || '';
+  const zoneSel = document.getElementById('dash-zone')?.value || '';
+  const statusSel = document.getElementById('dash-status')?.value || '';
+  const active = [waveSel,typeSel,zoneSel,statusSel].filter(Boolean);
+
+  badge.textContent = active.length
+    ? `Filtered: ${filtered.toLocaleString('id-ID')} / ${total.toLocaleString('id-ID')} SO`
+    : `All data: ${total.toLocaleString('id-ID')} SO`;
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('dark-theme');
+  const dark = document.body.classList.contains('dark-theme');
+  localStorage.setItem('playmaker-theme', dark ? 'dark' : 'light');
+  const btn = document.getElementById('theme-toggle');
+  if(btn) btn.textContent = dark ? '☀️ Light' : '🌙 Dark';
+  renderDashboard();
+}
+
+function applySavedTheme(){
+  const saved = localStorage.getItem('playmaker-theme');
+  if(saved === 'dark') document.body.classList.add('dark-theme');
+  const btn = document.getElementById('theme-toggle');
+  if(btn) btn.textContent = document.body.classList.contains('dark-theme') ? '☀️ Light' : '🌙 Dark';
+}
+
+function achievementClass(pct){
+  if(pct >= 120) return 'ach-over';
+  if(pct >= 100) return 'ach-good';
+  if(pct >= 80) return 'ach-watch';
+  return 'ach-bad';
+}
+
 
 async function loadData(){
   const dot = document.getElementById('dot');
@@ -720,6 +843,7 @@ async function loadData(){
     renderZoneChips(allZones);
     updateFilterCount();
     renderTable();
+    populateDashboardFilters();
     renderDashboard();
     
     dot.className='dot ok';
@@ -1110,7 +1234,7 @@ function getQtyPerSku(s){
 
 function showSOClassDetail(className){
   detailClassName = className;
-  detailRows = soData.filter(s => classifySO(s) === className)
+  detailRows = getDashboardFilteredData().filter(s => classifySO(s) === className)
     .sort((a,b) => {
       const q = (Number(b.request_quantity||0) - Number(a.request_quantity||0));
       return q || String(a.so_number||'').localeCompare(String(b.so_number||''));
@@ -1386,14 +1510,38 @@ function renderDashboard(){
     addLog('No SO data returned from GAS.', 'warn');
     return;
   }
-  let totQty=0, pickedQty=0, uniqueSO=soData.length, incQty=0, totalSku=0;
+
+  if(!dashboardFiltersReady) populateDashboardFilters();
+
+  const dashData = getDashboardFilteredData();
+  updateDashboardFilterBadge(soData.length, dashData.length);
+
+  if(!dashData.length){
+    ['d-ratio','d-qty','d-so','d-prog','d-fr','d-bulky','d-eceran','d-normal'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.innerText = id === 'd-fr' ? '0.0%' : (id === 'd-prog' ? '0%' : '0');
+    });
+    document.getElementById('d-risk-zone').innerText = '-';
+    document.getElementById('d-risk-zone-sub').innerText = '0 qty';
+    document.getElementById('d-avg-sku').innerText = '0.0';
+    document.getElementById('d-avg-qty').innerText = '0 avg qty/SO';
+    buildChart('c-wave-so','bar',['No Data'],[0],'SO Count','#2563eb');
+    buildChart('c-wave-qty','line',['No Data'],[0],'Qty Pcs','#16a34a');
+    buildChart('c-zone-workload','bar',['No Data'],[0],'Total Qty','#7c3aed');
+    buildChart('c-remarks','doughnut',['No Data'],[1],'',COLORS);
+    document.getElementById('picker-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Tidak ada data sesuai dashboard filter</td></tr>`;
+    addLog('Dashboard filter returned no data.', 'warn');
+    return;
+  }
+
+  let totQty=0, pickedQty=0, uniqueSO=dashData.length, incQty=0, totalSku=0;
   let waveSO={'WAVE 1':0,'WAVE 2':0,'WAVE 3':0,'WAVE 4':0};
   let waveQty={'WAVE 1':0,'WAVE 2':0,'WAVE 3':0,'WAVE 4':0};
   let remarksCount={};
   let zoneWorkload={};
   let soClass={Bulky:0,Eceran:0,Normal:0};
 
-  soData.forEach(s=>{
+  dashData.forEach(s=>{
     const req = Number(s.request_quantity || 0);
     const inc = Number(s.incoming_quantity || 0);
     const sku = Number(s.sku_count || 0);
@@ -1445,7 +1593,7 @@ function renderDashboard(){
   buildChart('c-remarks','doughnut',Object.keys(remarksCount),Object.values(remarksCount),'',COLORS);
 
   let pMap = {};
-  soData.forEach(s=>{
+  dashData.forEach(s=>{
     if(!s.Picker) return;
     if(!pMap[s.Picker]) pMap[s.Picker] = { so:0, qty:0 };
     pMap[s.Picker].so++;
@@ -1454,21 +1602,29 @@ function renderDashboard(){
 
   const pTbody = document.getElementById('picker-tbody');
   if(Object.keys(pMap).length === 0){
-    pTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Belum ada data picker shift ini</td></tr>`;
+    pTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Belum ada data picker pada filter ini</td></tr>`;
   } else {
-    pTbody.innerHTML = Object.keys(pMap).map(p=>{
-      const d = pMap[p];
-      return `<tr>
-        <td style="font-weight:600">${esc(p)}</td>
-        <td class="mono" style="text-align:right">${d.so}</td>
-        <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
-        <td class="mono" style="text-align:right;font-weight:600;color:var(--green)">${d.qty.toLocaleString('id-ID')}</td>
-        <td class="mono" style="text-align:right;color:var(--text3)">2.400</td>
-        <td class="mono" style="text-align:right;font-weight:600;color:var(--blue)">${Math.round((d.qty/2400)*100)}%</td>
-      </tr>`;
-    }).join('');
+    pTbody.innerHTML = Object.keys(pMap)
+      .sort((a,b)=>pMap[b].qty-pMap[a].qty)
+      .map(p=>{
+        const d = pMap[p];
+        const achievement = Math.round((d.qty/2400)*100);
+        const achClass = achievementClass(achievement);
+        const achLabel = achievement >= 120 ? `${achievement}% · overload` :
+                         achievement >= 100 ? `${achievement}% · good` :
+                         achievement >= 80 ? `${achievement}% · watch` :
+                         `${achievement}% · low`;
+        return `<tr>
+          <td style="font-weight:600">${esc(p)}</td>
+          <td class="mono" style="text-align:right">${d.so}</td>
+          <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
+          <td class="mono" style="text-align:right;font-weight:600;color:var(--green)">${d.qty.toLocaleString('id-ID')}</td>
+          <td class="mono" style="text-align:right;color:var(--text3)">2.400</td>
+          <td class="mono ${achClass}" style="text-align:right;font-weight:700">${achLabel}</td>
+        </tr>`;
+      }).join('');
   }
-  addLog(`Dashboard rendered · bulky:${soClass.Bulky} eceran:${soClass.Eceran} normal:${soClass.Normal}`, 'info');
+  addLog(`Dashboard rendered · filtered:${dashData.length}/${soData.length} · bulky:${soClass.Bulky} eceran:${soClass.Eceran} normal:${soClass.Normal}`, 'info');
 }
 
 function buildChart(id,type,labels,data,label,colors){
@@ -1495,6 +1651,7 @@ function downloadCSV(){
 
 // Setup Event Listeners secara aman
 document.addEventListener('DOMContentLoaded', () => {
+  applySavedTheme();
   document.getElementById('btn-add-picker').addEventListener('click', addPicker);
   document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') { closeSkuModal(); closeDetailModal(); closeModal(); } });

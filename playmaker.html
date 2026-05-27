@@ -249,7 +249,7 @@ tr:hover td{background:var(--blue-dim)!important}
   </nav>
   <div class="topbar-right">
     <div class="sync-badge"><div class="dot" id="dot"></div><span id="sync-txt">Loading...</span></div>
-    <button class="btn-ghost" onclick="loadData()">↻ Refresh</button>
+    <button class="btn-ghost" onclick="refreshData()">↻ Refresh</button>
   </div>
 </div>
 
@@ -468,6 +468,83 @@ function showPage(p,btn){
   btn.classList.add('active');
 }
 
+
+function isPreviewSandbox(){
+  const host = (location.hostname || '').toLowerCase();
+  let isFramed = false;
+  try { isFramed = window.self !== window.top; } catch(e) { isFramed = true; }
+
+  return (
+    isFramed ||
+    location.protocol === 'file:' ||
+    host === 'localhost' ||
+    host === '127.0.0.1' ||
+    host.includes('preview') ||
+    host.includes('sandbox') ||
+    host.includes('chatgpt') ||
+    host.includes('openai') ||
+    host.includes('oaiusercontent') ||
+    host.includes('usercontent')
+  );
+}
+
+function setPreviewModeUI(){
+  const dot = document.getElementById('dot');
+  const txt = document.getElementById('sync-txt');
+  if(dot) dot.className = 'dot';
+  if(txt) txt.innerText = 'Preview mode - buka Vercel untuk sync';
+}
+
+function refreshData(){
+  if(isPreviewSandbox()){
+    setPreviewModeUI();
+    alert('Preview mode: auto-sync ke Google Apps Script dimatikan supaya popup akses jaringan tidak muncul. Buka URL Vercel untuk sync data.');
+    return;
+  }
+  loadData();
+}
+
+function firstValue(obj, keys, fallback=''){
+  for(const k of keys){
+    if(obj && obj[k] !== undefined && obj[k] !== null && obj[k] !== '') return obj[k];
+  }
+  return fallback;
+}
+
+function normalizeSO(raw){
+  const soNumber = firstValue(raw, ['so_number','SO Number','SO_NUMBER','so','SO','order_number','order_no']);
+  const destination = firstValue(raw, ['destination_name','Destination','destination','Tujuan','tujuan','store_name']);
+  const status = String(firstValue(raw, ['status','Status','remarks','Remarks'], 'NEW')).trim().toUpperCase();
+  const picker = firstValue(raw, ['Picker','picker','picker_name','Picker Name'], '');
+  const zone = firstValue(raw, ['picking_zone','PICKING ZONE','Picking Zone','zone','Zone'], '');
+  const reqQty = Number(String(firstValue(raw, ['request_quantity','Request Quantity','request_qty','Req Qty','qty','Qty'], 0)).replace(/,/g,'')) || 0;
+  const skuCount = Number(String(firstValue(raw, ['sku_count','SKU Count','sku','SKU'], 0)).replace(/,/g,'')) || 0;
+  const wave = firstValue(raw, ['WAVE','wave','Wave'], '') || getWave(destination);
+  const type = firstValue(raw, ['type','TYPE','Type'], '') || getType(destination);
+
+  return {
+    ...raw,
+    so_number: soNumber,
+    destination_name: destination,
+    status,
+    Picker: picker,
+    picking_zone: zone,
+    request_quantity: reqQty,
+    sku_count: skuCount,
+    WAVE: wave,
+    type
+  };
+}
+
+function getApiRows(res){
+  if(Array.isArray(res)) return res;
+  if(Array.isArray(res.rows)) return res.rows;
+  if(Array.isArray(res.data)) return res.data;
+  if(Array.isArray(res.result)) return res.result;
+  return [];
+}
+
+
 async function loadData(){
   const dot = document.getElementById('dot');
   const txt = document.getElementById('sync-txt');
@@ -477,11 +554,8 @@ async function loadData(){
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const res = await r.json();
     
-    soData = (res.data || []).map(s => {
-      s.request_quantity = Number(s.request_quantity || 0);
-      s.sku_count = Number(s.sku_count || 0);
-      return s;
-    });
+    const apiRows = getApiRows(res);
+    soData = apiRows.map(normalizeSO);
 
     const allZones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
     
@@ -744,6 +818,10 @@ function markCopied(btn){
 }
 
 async function submitToGoogle(){
+  if(isPreviewSandbox()){
+    alert('Preview mode: upload ke Google Sheets dimatikan di preview supaya tidak muncul popup akses jaringan. Jalankan dari URL Vercel.');
+    return;
+  }
   let payload = [];
   Object.values(assignResult).forEach(d => {
     d.soList.forEach(s => { payload.push({ so_number: s.so_number, picker: d.picker }); });
@@ -764,7 +842,11 @@ async function submitToGoogle(){
           <div class="empty-icon" style="color:var(--green); opacity:1">✓</div>
           <div class="empty-txt" style="color:var(--green)"><strong>UPLOAD BERHASIL!</strong><br>Data picker sudah masuk ke Google Sheets.</div>
         </div>`;
-      loadData();
+      if (!isPreviewSandbox()) {
+        loadData();
+      } else {
+        setPreviewModeUI();
+      }
     } else {
       alert('Gagal: ' + res.message);
       btn.innerText = oldTxt; btn.style.opacity = '1'; btn.disabled = false;
@@ -912,7 +994,7 @@ function downloadCSV(){
   if(!Object.keys(assignResult).length){alert('Jalankan assign dulu.');return;}
   let rows=['Picker,SO Number,Destination,Wave,Type,Zone,Qty'];
   Object.values(assignResult).forEach(d=>{
-    d.soList.forEach(s=>rows.push(`"${esc(d.picker)}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(s.WAVE||'')}","${esc(s.type||'')}","${esc(s.picking_zone||'')}","${s.request_quantity}`));
+    d.soList.forEach(s=>rows.push(`"${esc(d.picker)}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(s.WAVE||'')}","${esc(s.type||'')}","${esc(s.picking_zone||'')}","${s.request_quantity}"`));
   });
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));

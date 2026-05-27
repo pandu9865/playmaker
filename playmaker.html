@@ -204,6 +204,22 @@ tr:hover td{background:var(--blue-dim)!important}
 .chart-title{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:10px}
 .chart-wrap{position:relative;height:180px}
 
+/* CONTROL PANEL NEW */
+.control-panel-new{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 6px -1px #0000000d}
+.panel-section-title{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.05em;margin-bottom:6px}
+.target-input-wrapper{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+.target-input-wrapper input{width:90px;padding:5px 8px;border-radius:6px;border:1px solid var(--border2);font-family:var(--mono);font-size:14px;font-weight:600;text-align:right;background:var(--bg2);color:var(--text);outline:none}
+.target-input-wrapper input:focus{border-color:var(--blue)}
+.filter-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.counter-box-highlight{background:var(--blue-dim);border:1px solid var(--blue-light);border-radius:10px;padding:14px;text-align:center}
+.counter-box-highlight .big-num{font-size:28px;font-weight:700;color:var(--blue);font-family:var(--mono);line-height:1}
+.counter-box-highlight .sub-label{font-size:11px;color:var(--text2);margin-top:4px}
+.btn-mega-assign{background:var(--green);color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-shadow:0 4px 12px #16a34a33;transition:all .2s ease;font-family:var(--mono)}
+.btn-mega-assign:hover{background:#15803d;transform:translateY(-1px);box-shadow:0 6px 16px #16a34a44}
+.btn-mega-assign:active{transform:scale(.98)}
+.btn-secondary-download{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:9px;font-size:12px;font-weight:500;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;font-family:var(--mono)}
+.btn-secondary-download:hover{background:var(--bg3)}
+
 /* modal confirm */
 .modal-bg{position:fixed;inset:0;background:#00000066;z-index:200;display:none;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
@@ -245,79 +261,87 @@ tr:hover td{background:var(--blue-dim)!important}
     <div class="assign-page">
 
       <!-- LEFT PANEL -->
-      <div class="ap-left">
+      <div class="ap-left" style="padding:12px">
 
-        <div class="ap-section">
-          <div class="ap-label">Overview</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-            <div style="background:var(--blue-dim);border:1px solid var(--blue-light);border-radius:6px;padding:8px 10px">
-              <div style="font-family:var(--mono);font-size:9px;color:var(--text3)">Total SO</div>
-              <div style="font-family:var(--mono);font-size:18px;font-weight:700" id="s-total">
-                <div class="skel" style="height:22px;width:50px;margin-top:2px"></div>
-              </div>
+        <!-- Overview -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+          <div style="background:var(--blue-dim);border:1px solid var(--blue-light);border-radius:8px;padding:10px">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:2px">Total SO</div>
+            <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--blue)" id="s-total">
+              <div class="skel" style="height:24px;width:50px;margin-top:2px"></div>
             </div>
-            <div style="background:var(--green-dim);border:1px solid var(--green-light);border-radius:6px;padding:8px 10px">
-              <div style="font-family:var(--mono);font-size:9px;color:var(--text3)">Unassigned</div>
-              <div style="font-family:var(--mono);font-size:18px;font-weight:700" id="s-new">
-                <div class="skel" style="height:22px;width:40px;margin-top:2px"></div>
-              </div>
+          </div>
+          <div style="background:var(--green-dim);border:1px solid var(--green-light);border-radius:8px;padding:10px">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:2px">Unassigned</div>
+            <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--green)" id="s-new">
+              <div class="skel" style="height:24px;width:40px;margin-top:2px"></div>
             </div>
           </div>
         </div>
 
-        <div class="ap-section">
-          <div class="ap-label">Filter Wave</div>
-          <div class="chips" id="fw">
-            <div class="chip w1 on" onclick="toggleF('wave','WAVE 1',this)">W1</div>
-            <div class="chip w2 on" onclick="toggleF('wave','WAVE 2',this)">W2</div>
-            <div class="chip w3 on" onclick="toggleF('wave','WAVE 3',this)">W3</div>
-            <div class="chip w4 on" onclick="toggleF('wave','WAVE 4',this)">W4</div>
+        <div class="control-panel-new">
+
+          <!-- Picker Input -->
+          <div>
+            <div class="panel-section-title">👥 Picker Shift Ini</div>
+            <div class="picker-inp-row">
+              <input type="text" id="mp-inp" class="inp" placeholder="Nama picker (Enter)">
+              <button class="btn-plus" onclick="addPicker()">+</button>
+            </div>
+            <div class="tags" id="mp-tags"></div>
+            <div class="picker-ct" id="mp-ct">0 picker</div>
           </div>
-        </div>
 
-        <div class="ap-section">
-          <div class="ap-label">Filter Type</div>
-          <div class="chips">
-            <div class="chip kepala on" onclick="toggleF('type','Kepala',this)">Kepala</div>
-            <div class="chip badan on" onclick="toggleF('type','Badan',this)">Badan</div>
-            <div class="chip ekor on" onclick="toggleF('type','Ekor',this)">Ekor</div>
-            <div class="chip oth on" onclick="toggleF('type','Other',this)">Other</div>
+          <!-- Target -->
+          <div>
+            <div class="panel-section-title">🎯 Target Qty / Picker</div>
+            <div class="target-input-wrapper">
+              <span style="font-size:12px;color:var(--text2)">Qty per picker</span>
+              <input type="number" id="target" value="2400" min="100" step="100">
+            </div>
           </div>
-        </div>
 
-        <div class="ap-section">
-          <div class="ap-label">Filter Zone</div>
-          <div class="zone-wrap chips" id="fz" style="gap:4px"></div>
-        </div>
-
-        <div class="ap-section">
-          <div class="ap-label">Picker Shift Ini</div>
-          <div class="picker-inp-row">
-            <input type="text" id="mp-inp" class="inp" placeholder="Nama picker (Enter)">
-            <button class="btn-plus" onclick="addPicker()">+</button>
+          <!-- Wave Filter -->
+          <div>
+            <div class="panel-section-title">🌊 Filter Wave</div>
+            <div class="filter-grid-2">
+              <div class="chip w1 on" onclick="toggleF('wave','WAVE 1',this)">Wave 1</div>
+              <div class="chip w2 on" onclick="toggleF('wave','WAVE 2',this)">Wave 2</div>
+              <div class="chip w3 on" onclick="toggleF('wave','WAVE 3',this)">Wave 3</div>
+              <div class="chip w4 on" onclick="toggleF('wave','WAVE 4',this)">Wave 4</div>
+            </div>
           </div>
-          <div class="tags" id="mp-tags"></div>
-          <div class="picker-ct" id="mp-ct">0 picker</div>
-        </div>
 
-        <div class="ap-section">
-          <div class="ap-label">Target Qty / Picker</div>
-          <div class="target-row">
-            <input type="number" id="target" class="target-inp" value="2400" min="100" step="100">
-            <span style="font-size:11px;color:var(--text3)">qty/picker</span>
+          <!-- Type Filter -->
+          <div>
+            <div class="panel-section-title">📦 Filter Type</div>
+            <div class="filter-grid-2">
+              <div class="chip kepala on" onclick="toggleF('type','Kepala',this)">Kepala</div>
+              <div class="chip badan on" onclick="toggleF('type','Badan',this)">Badan</div>
+              <div class="chip ekor on" onclick="toggleF('type','Ekor',this)">Ekor</div>
+              <div class="chip oth on" onclick="toggleF('type','Other',this)">Other</div>
+            </div>
           </div>
-        </div>
 
-        <div class="ap-section">
-          <div class="so-count-box">
-            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">SO Filtered</div>
-            <div class="so-count-num" id="f-count">0</div>
-            <div class="so-count-sub" id="f-qty">0 qty tersedia</div>
+          <!-- Zone Filter -->
+          <div>
+            <div class="panel-section-title">📍 Filter Zone</div>
+            <div class="zone-wrap" id="fz" style="display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto"></div>
           </div>
-          <button class="btn-assign" onclick="confirmAssign()" style="margin-top:10px">▶ ASSIGN SEKARANG</button>
-          <button class="btn-dl" onclick="downloadCSV()">⬇ Download CSV</button>
-        </div>
 
+          <!-- SO Count -->
+          <div class="counter-box-highlight">
+            <div class="big-num" id="f-count">0</div>
+            <div class="sub-label" id="f-qty">0 qty tersedia</div>
+          </div>
+
+          <!-- CTA -->
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn-mega-assign" onclick="confirmAssign()">🚀 ASSIGN SEKARANG</button>
+            <button class="btn-secondary-download" onclick="downloadCSV()">📥 Download CSV</button>
+          </div>
+
+        </div>
       </div>
 
       <!-- RIGHT PANEL -->

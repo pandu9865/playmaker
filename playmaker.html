@@ -200,10 +200,25 @@ tr:hover td{background:var(--blue-dim)!important}
 .kpi-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .kpi-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--text)}
 .kpi-sub{font-size:10px;color:var(--text2);margin-top:2px}
-.charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.charts-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:1400px){.charts-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.charts-row{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}}
 .chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
 .chart-title{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:10px}
 .chart-wrap{position:relative;height:180px}
+
+.tactical-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.tactical-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.tactical-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.tactical-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text)}
+.tactical-sub{font-size:10px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.terminal-card{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px 14px;color:#cbd5e1;font-family:var(--mono)}
+.terminal-title{display:flex;align-items:center;justify-content:space-between;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:8px}
+.terminal-log{height:105px;overflow:auto;background:#020617;border:1px solid #1e293b;border-radius:6px;padding:8px;font-size:10px;line-height:1.55}
+.terminal-line{white-space:pre-wrap;color:#cbd5e1}
+.terminal-line.ok{color:#86efac}.terminal-line.warn{color:#fde68a}.terminal-line.err{color:#fca5a5}.terminal-line.info{color:#93c5fd}
+@media(max-width:1200px){.tactical-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.tactical-row{grid-template-columns:1fr}}
 
 /* CONTROL PANEL NEW */
 .control-panel-new{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 6px -1px #0000000d}
@@ -405,7 +420,15 @@ tr:hover td{background:var(--blue-dim)!important}
       <div class="charts-row">
         <div class="chart-card"><div class="chart-title">Progress Wave by SO</div><div class="chart-wrap"><canvas id="c-wave-so"></canvas></div></div>
         <div class="chart-card"><div class="chart-title">Progress Wave by Qty</div><div class="chart-wrap"><canvas id="c-wave-qty"></canvas></div></div>
+        <div class="chart-card"><div class="chart-title">Top Zone Workload</div><div class="chart-wrap"><canvas id="c-zone-workload"></canvas></div></div>
         <div class="chart-card"><div class="chart-title">SO Remarks</div><div class="chart-wrap"><canvas id="c-remarks"></canvas></div></div>
+      </div>
+      <div class="tactical-row">
+        <div class="tactical-card"><div class="tactical-label">Bulky SO</div><div class="tactical-val" id="d-bulky">0</div><div class="tactical-sub">qty besar · SKU rendah</div></div>
+        <div class="tactical-card"><div class="tactical-label">Eceran SO</div><div class="tactical-val" id="d-eceran">0</div><div class="tactical-sub">SKU banyak · qty kecil</div></div>
+        <div class="tactical-card"><div class="tactical-label">Normal SO</div><div class="tactical-val" id="d-normal">0</div><div class="tactical-sub">beban standar</div></div>
+        <div class="tactical-card"><div class="tactical-label">Zona Terberat</div><div class="tactical-val" id="d-risk-zone">-</div><div class="tactical-sub" id="d-risk-zone-sub">0 qty</div></div>
+        <div class="tactical-card"><div class="tactical-label">Avg SKU / SO</div><div class="tactical-val" id="d-avg-sku">0</div><div class="tactical-sub" id="d-avg-qty">0 avg qty/SO</div></div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px">
         <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:10px">Summary Picker</div>
@@ -415,6 +438,10 @@ tr:hover td{background:var(--blue-dim)!important}
             <th style="text-align:right">Prod Qty</th><th style="text-align:right">Target</th><th style="text-align:right">Achievement</th>
           </tr></thead><tbody id="picker-tbody"></tbody></table>
         </div>
+      </div>
+      <div class="terminal-card">
+        <div class="terminal-title"><span>Live Sync Terminal</span><span id="log-count">0 logs</span></div>
+        <div class="terminal-log" id="live-log"><div class="terminal-line info">[boot] Dashboard ready. Waiting for first sync...</div></div>
       </div>
     </div>
   </div>
@@ -574,6 +601,7 @@ async function loadData(){
     
     const apiRows = getApiRows(res);
     soData = apiRows.map(normalizeSO);
+    addLog(`GAS sync OK · ${soData.length.toLocaleString('id-ID')} SO loaded`, 'ok');
 
     const allZones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
     
@@ -593,6 +621,7 @@ async function loadData(){
     txt.innerText = 'Online: ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }catch(e){
     console.error(e);
+    addLog('GAS sync failed: ' + (e.message || e), 'err');
     dot.className='dot err'; txt.innerText='Offline / Error';
   }
 }
@@ -859,6 +888,7 @@ async function submitToGoogle(){
     const res = await r.json();
     if(res.status === 'success'){
       alert('Mantap! Data alokasi berhasil disimpan ke Google Sheets.');
+      addLog(`Assign upload OK · ${payload.length.toLocaleString('id-ID')} SO sent to Google Sheets`, 'ok');
       document.getElementById('ap-right').innerHTML = `
         <div class="empty">
           <div class="empty-icon" style="color:var(--green); opacity:1">✓</div>
@@ -870,10 +900,12 @@ async function submitToGoogle(){
         setPreviewModeUI();
       }
     } else {
+      addLog('Assign upload failed: ' + (res.message || 'unknown error'), 'err');
       alert('Gagal: ' + res.message);
       btn.innerText = oldTxt; btn.style.opacity = '1'; btn.disabled = false;
     }
   }catch(e){
+    addLog('Assign upload connection error: ' + (e.message || e), 'err');
     alert('Koneksi terputus atau GSheets error.');
     btn.innerText = oldTxt; btn.style.opacity = '1'; btn.disabled = false;
   }
@@ -952,29 +984,73 @@ function renderTable(){
   }).join('');
 }
 
+
+function classifySO(s){
+  const qty = Number(s.request_quantity || 0);
+  const sku = Number(s.sku_count || 0);
+  const qtyPerSku = sku ? qty / sku : qty;
+  if ((qty >= 120 && sku <= 4) || qtyPerSku >= 35) return 'Bulky';
+  if (sku >= 8 && qtyPerSku <= 8) return 'Eceran';
+  return 'Normal';
+}
+
+function addLog(message, type='info'){
+  const box = document.getElementById('live-log');
+  if(!box) return;
+  const time = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const line = document.createElement('div');
+  line.className = 'terminal-line ' + type;
+  line.textContent = `[${time}] ${message}`;
+  box.appendChild(line);
+  while(box.children.length > 50) box.removeChild(box.firstChild);
+  box.scrollTop = box.scrollHeight;
+  const cnt = document.getElementById('log-count');
+  if(cnt) cnt.textContent = box.children.length + ' logs';
+}
+
 function renderDashboard(){
-  if(!soData.length) return;
-  let totQty=0, pickedQty=0, uniqueSO=soData.length, incQty=0;
-  let waveSO={}, waveQty={}, remarksCount={};
+  if(!soData.length){
+    addLog('No SO data returned from GAS.', 'warn');
+    return;
+  }
+  let totQty=0, pickedQty=0, uniqueSO=soData.length, incQty=0, totalSku=0;
+  let waveSO={'WAVE 1':0,'WAVE 2':0,'WAVE 3':0,'WAVE 4':0};
+  let waveQty={'WAVE 1':0,'WAVE 2':0,'WAVE 3':0,'WAVE 4':0};
+  let remarksCount={};
+  let zoneWorkload={};
+  let soClass={Bulky:0,Eceran:0,Normal:0};
 
   soData.forEach(s=>{
     const req = Number(s.request_quantity || 0);
     const inc = Number(s.incoming_quantity || 0);
+    const sku = Number(s.sku_count || 0);
+    const status = String(s.status || 'NEW').toUpperCase().trim();
 
     totQty += req;
     incQty += inc;
+    totalSku += sku;
 
-    // Progress tetap based on SO yang sudah bukan NEW.
-    // FR% khusus based on Incoming Qty / Request Qty.
-    if(s.status !== 'NEW') pickedQty += req;
+    // Progress = SO yang sudah bergerak dari NEW.
+    // FR% = incoming_quantity / request_quantity.
+    if(status !== 'NEW') pickedQty += req;
 
     const w = s.WAVE || getWave(s.destination_name);
     waveSO[w] = (waveSO[w]||0)+1;
     waveQty[w] = (waveQty[w]||0)+req;
 
-    const rem = s.status || 'NEW';
-    remarksCount[rem] = (remarksCount[rem]||0)+1;
+    const zone = s.picking_zone || 'UNZONED';
+    zoneWorkload[zone] = (zoneWorkload[zone]||0)+req;
+
+    const cls = classifySO(s);
+    soClass[cls] = (soClass[cls]||0)+1;
+
+    remarksCount[status] = (remarksCount[status]||0)+1;
   });
+
+  const sortedZones = Object.keys(zoneWorkload).sort((a,b)=>zoneWorkload[b]-zoneWorkload[a]).slice(0,6);
+  const sortedZoneValues = sortedZones.map(z=>zoneWorkload[z]);
+  const riskZone = sortedZones[0] || '-';
+  const riskQty = riskZone === '-' ? 0 : zoneWorkload[riskZone];
 
   document.getElementById('d-ratio').innerText = Math.round(totQty / uniqueSO) || 0;
   document.getElementById('d-qty').innerText = totQty.toLocaleString('id-ID');
@@ -982,8 +1058,17 @@ function renderDashboard(){
   document.getElementById('d-prog').innerText = (totQty ? Math.round((pickedQty/totQty)*100) : 0) + '%';
   document.getElementById('d-fr').innerText = (totQty ? ((incQty/totQty)*100).toFixed(1) : '0.0') + '%';
 
+  document.getElementById('d-bulky').innerText = soClass.Bulky.toLocaleString('id-ID');
+  document.getElementById('d-eceran').innerText = soClass.Eceran.toLocaleString('id-ID');
+  document.getElementById('d-normal').innerText = soClass.Normal.toLocaleString('id-ID');
+  document.getElementById('d-risk-zone').innerText = riskZone;
+  document.getElementById('d-risk-zone-sub').innerText = riskQty.toLocaleString('id-ID') + ' qty';
+  document.getElementById('d-avg-sku').innerText = uniqueSO ? (totalSku/uniqueSO).toFixed(1) : '0.0';
+  document.getElementById('d-avg-qty').innerText = (Math.round(totQty / uniqueSO) || 0).toLocaleString('id-ID') + ' avg qty/SO';
+
   buildChart('c-wave-so','bar',Object.keys(waveSO),Object.values(waveSO),'SO Count','#2563eb');
   buildChart('c-wave-qty','line',Object.keys(waveQty),Object.values(waveQty),'Qty Pcs','#16a34a');
+  buildChart('c-zone-workload','bar',sortedZones,sortedZoneValues,'Total Qty','#7c3aed');
   buildChart('c-remarks','doughnut',Object.keys(remarksCount),Object.values(remarksCount),'',COLORS);
 
   let pMap = {};
@@ -991,30 +1076,61 @@ function renderDashboard(){
     if(!s.Picker) return;
     if(!pMap[s.Picker]) pMap[s.Picker] = { so:0, qty:0 };
     pMap[s.Picker].so++;
-    pMap[s.Picker].qty += s.request_quantity;
+    pMap[s.Picker].qty += Number(s.request_quantity || 0);
   });
 
   const pTbody = document.getElementById('picker-tbody');
-  pTbody.innerHTML = Object.keys(pMap).map(p=>{
-    const d = pMap[p];
-    return `<tr>
-      <td style="font-weight:600">${esc(p)}</td>
-      <td class="mono" style="text-align:right">${d.so}</td>
-      <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
-      <td class="mono" style="text-align:right;font-weight:600;color:var(--green)">${d.qty.toLocaleString('id-ID')}</td>
-      <td class="mono" style="text-align:right;color:var(--text3)">2.400</td>
-      <td class="mono" style="text-align:right;font-weight:600;color:var(--blue)">${Math.round((d.qty/2400)*100)}%</td>
-    </tr>`;
-  }).join('');
+  if(Object.keys(pMap).length === 0){
+    pTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px">Belum ada data picker shift ini</td></tr>`;
+  } else {
+    pTbody.innerHTML = Object.keys(pMap).sort().map(p=>{
+      const d = pMap[p];
+      return `<tr>
+        <td style="font-weight:600">${esc(p)}</td>
+        <td class="mono" style="text-align:right">${d.so}</td>
+        <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
+        <td class="mono" style="text-align:right;font-weight:600;color:var(--green)">${d.qty.toLocaleString('id-ID')}</td>
+        <td class="mono" style="text-align:right;color:var(--text3)">2.400</td>
+        <td class="mono" style="text-align:right;font-weight:600;color:var(--blue)">${Math.round((d.qty/2400)*100)}%</td>
+      </tr>`;
+    }).join('');
+  }
+
+  addLog(`Charts rendered · ${uniqueSO.toLocaleString('id-ID')} SO · ${totQty.toLocaleString('id-ID')} qty · top zone ${riskZone}`, 'ok');
 }
 
 function buildChart(id,type,labels,data,label,colors){
+  const el = document.getElementById(id);
+  if(!el) return;
   if(charts[id]) charts[id].destroy();
-  const ctx = document.getElementById(id).getContext('2d');
+  const ctx = el.getContext('2d');
+  const isZone = id === 'c-zone-workload';
   charts[id] = new Chart(ctx,{
     type: type,
-    data: { labels:labels, datasets:[{ label:label, data:data, backgroundColor:colors, borderColor:Array.isArray(colors)?'#fff':colors, borderWidth:1, fill:type==='line'?'start':false, tension:0.3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:type==='doughnut', position:'right', labels:{ boxWidth:10, font:{ size:10 } } } }, scales: type==='doughnut'?{}:{ x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
+    data: {
+      labels: labels,
+      datasets:[{
+        label: label,
+        data: data,
+        backgroundColor: colors,
+        borderColor: Array.isArray(colors) ? '#fff' : colors,
+        borderWidth: 1,
+        fill: type === 'line' ? 'start' : false,
+        tension: 0.3
+      }]
+    },
+    options: {
+      indexAxis: isZone ? 'y' : 'x',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: type === 'doughnut', position: 'right', labels: { boxWidth: 10, font: { size: 10 } } }
+      },
+      scales: type === 'doughnut' ? {} : {
+        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+        y: { grid: { display: !isZone }, ticks: { font: { size: 10 } } }
+      }
+    }
   });
 }
 
@@ -1033,6 +1149,7 @@ function downloadCSV(){
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-add-picker').addEventListener('click', addPicker);
   document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
+  addLog('Dashboard initialized. Auto-refresh every 60s on Vercel.', 'info');
   
   if (isPreviewSandbox()) {
     setPreviewModeUI();

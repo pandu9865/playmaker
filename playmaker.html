@@ -56,17 +56,18 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 
 /* chips */
 .chips{display:flex;flex-wrap:wrap;gap:4px}
-.chip{padding:3px 9px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;transition:.15s;font-family:var(--mono)}
-.chip:hover{border-color:var(--blue);color:var(--blue)}
-.chip.on{font-weight:600}
-.chip.w1.on{background:var(--blue-light);border-color:#93c5fd;color:#1d4ed8}
-.chip.w2.on{background:var(--green-light);border-color:#86efac;color:#15803d}
-.chip.w3.on{background:var(--amber-light);border-color:#fcd34d;color:#b45309}
-.chip.w4.on{background:var(--red-light);border-color:#fca5a5;color:#b91c1c}
-.chip.kepala.on{background:var(--purple-light);border-color:#c4b5fd;color:#6d28d9}
-.chip.badan.on{background:var(--teal-light);border-color:#5eead4;color:#0f766e}
-.chip.ekor.on{background:var(--coral-light);border-color:#fdba74;color:#c2410c}
-.chip.zon.on{background:var(--blue-light);border-color:#93c5fd;color:#1d4ed8}
+.chip{padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text3);font-size:11px;cursor:pointer;transition:all .2s ease;font-family:var(--mono)}
+.chip:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-dim)}
+.chip.on{font-weight:600;box-shadow:0 1px 4px #0001}
+.chip.w1.on{background:#2563eb;border-color:#2563eb;color:#fff}
+.chip.w2.on{background:#16a34a;border-color:#16a34a;color:#fff}
+.chip.w3.on{background:#d97706;border-color:#d97706;color:#fff}
+.chip.w4.on{background:#dc2626;border-color:#dc2626;color:#fff}
+.chip.kepala.on{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.chip.badan.on{background:#0d9488;border-color:#0d9488;color:#fff}
+.chip.ekor.on{background:#ea580c;border-color:#ea580c;color:#fff}
+.chip.oth.on{background:#475569;border-color:#475569;color:#fff}
+.chip.zon.on{background:#2563eb;border-color:#2563eb;color:#fff}
 
 /* zone scroll */
 .zone-wrap{max-height:90px;overflow-y:auto}
@@ -343,6 +344,24 @@ tr:hover td{background:var(--blue-dim)!important}
       <div class="pill" onclick="setF('READY TO SHIP',this)">Ready Ship</div>
       <div class="tbl-ct" id="tbl-ct">0 SO</div>
     </div>
+    <div class="toolbar" style="gap:6px;border-top:none;padding-top:6px;padding-bottom:8px;background:var(--bg3)">
+      <select id="sf-wave" onchange="renderTable()" style="padding:5px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:11px;font-family:var(--mono);outline:none">
+        <option value="">Wave (Semua)</option>
+        <option>WAVE 1</option><option>WAVE 2</option><option>WAVE 3</option><option>WAVE 4</option>
+      </select>
+      <select id="sf-type" onchange="renderTable()" style="padding:5px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:11px;font-family:var(--mono);outline:none">
+        <option value="">Type (Semua)</option>
+        <option>Kepala</option><option>Badan</option><option>Ekor</option><option>Other</option>
+      </select>
+      <select id="sf-zone" onchange="renderTable()" style="padding:5px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:11px;font-family:var(--mono);outline:none">
+        <option value="">Zone (Semua)</option>
+      </select>
+      <select id="sf-picker" onchange="renderTable()" style="padding:5px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:11px;font-family:var(--mono);outline:none">
+        <option value="">Picker (Semua)</option>
+      </select>
+      <button onclick="resetSOFilter()" style="padding:5px 10px;border-radius:5px;background:var(--red-dim);border:1px solid var(--red-light);color:var(--red);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s" onmouseover="this.style.background='var(--red-light)'" onmouseout="this.style.background='var(--red-dim)'">✕ Reset Filter</button>
+      <div id="active-filter-badge" style="font-family:var(--mono);font-size:10px;color:var(--blue);display:none">● Filter aktif</div>
+    </div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
@@ -410,6 +429,8 @@ let fWave=new Set(['WAVE 1','WAVE 2','WAVE 3','WAVE 4']);
 let fType=new Set(['Kepala','Badan','Ekor','Other']);
 let fZone=new Set(); let allZones=[];
 let soFilter='ALL'; let lastJson=null;
+// SO page filters
+let soFWave=new Set(); let soFType=new Set(); let soFZone=''; let soFPicker='';
 let cWaveSO=null,cWaveQty=null,cRemarks=null;
 
 const fmt=n=>Math.round(n).toLocaleString('id-ID');
@@ -448,6 +469,12 @@ async function loadData(){
     fZone=new Set(allZones);
     renderZones();
     renderFilterCount();
+    // Populate SO page dropdowns
+    const sfz=document.getElementById('sf-zone');
+    if(sfz){sfz.innerHTML='<option value="">Zone (Semua)</option>'+allZones.map(z=>`<option>${z}</option>`).join('');}
+    const sfp=document.getElementById('sf-picker');
+    const allPickers=[...new Set(soData.map(s=>s.Picker||'').filter(Boolean))].sort();
+    if(sfp){sfp.innerHTML='<option value="">Picker (Semua)</option>'+allPickers.map(p=>`<option>${p}</option>`).join('');}
     renderTable();
     renderDash(j);
   }catch(e){
@@ -473,7 +500,8 @@ function toggleF(dim,val,el){
 }
 
 function getFiltered(){
-  return soData.filter(s=>(s.status||'').toUpperCase()==='NEW'&&!s.Picker&&fWave.has(s.WAVE)&&fType.has(s.type)&&(fZone.size===0||fZone.has(s.picking_zone||'')));
+  const allZoneSelected = fZone.size === allZones.length;
+  return soData.filter(s=>(s.status||'').toUpperCase()==='NEW'&&!s.Picker&&fWave.has(s.WAVE)&&fType.has(s.type)&&(allZoneSelected||fZone.has(s.picking_zone||'')));
 }
 
 function renderFilterCount(){
@@ -626,9 +654,20 @@ function copyZone(id, text){
 function setF(f,el){soFilter=f;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');renderTable();}
 function renderTable(){
   const q=(document.getElementById('so-search').value||'').toLowerCase();
+  const sfWave=document.getElementById('sf-wave')?.value||'';
+  const sfType=document.getElementById('sf-type')?.value||'';
+  const sfZone=document.getElementById('sf-zone')?.value||'';
+  const sfPicker=document.getElementById('sf-picker')?.value||'';
+  const hasFilter=sfWave||sfType||sfZone||sfPicker;
+  const badge=document.getElementById('active-filter-badge');
+  if(badge)badge.style.display=hasFilter?'block':'none';
   const f=soData.filter(s=>{
     if(soFilter!=='ALL'&&(s.status||'').toUpperCase()!==soFilter)return false;
     if(q&&!s.so_number.toLowerCase().includes(q)&&!(s.destination_name||'').toLowerCase().includes(q))return false;
+    if(sfWave&&s.WAVE!==sfWave)return false;
+    if(sfType&&s.type!==sfType)return false;
+    if(sfZone&&(s.picking_zone||'')!==sfZone)return false;
+    if(sfPicker&&(s.Picker||'')!==sfPicker)return false;
     return true;
   });
   document.getElementById('tbl-ct').textContent=fmt(f.length)+' SO';
@@ -678,6 +717,18 @@ function renderDash(j){
     <td style="padding:6px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);color:var(--text3)">${fmt(target)}</td>
     <td style="padding:6px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono);font-weight:700;color:${ac}">${(a*100).toFixed(1)}%</td></tr>`;
   }).join('');
+}
+
+// RESET SO FILTER
+function resetSOFilter(){
+  document.getElementById('sf-wave').value='';
+  document.getElementById('sf-type').value='';
+  document.getElementById('sf-zone').value='';
+  document.getElementById('sf-picker').value='';
+  document.getElementById('so-search').value='';
+  soFilter='ALL';
+  document.querySelectorAll('.pill').forEach((p,i)=>{p.classList.toggle('on',i===0);});
+  renderTable();
 }
 
 // DOWNLOAD

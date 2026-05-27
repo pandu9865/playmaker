@@ -283,7 +283,10 @@ tr:hover td{background:var(--blue-dim)!important}
 
           <!-- Picker Input -->
           <div>
-            <div class="panel-section-title">👥 Picker Shift Ini</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <div class="panel-section-title" style="margin-bottom:0">👥 Picker Shift Ini</div>
+              <button onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">✕ Clear All</button>
+            </div>
             <div class="picker-inp-row">
               <input type="text" id="mp-inp" class="inp" placeholder="Nama picker (Enter)">
               <button class="btn-plus" onclick="addPicker()">+</button>
@@ -325,7 +328,13 @@ tr:hover td{background:var(--blue-dim)!important}
 
           <!-- Zone Filter -->
           <div>
-            <div class="panel-section-title">📍 Filter Zone</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <div class="panel-section-title" style="margin-bottom:0">📍 Filter Zone</div>
+              <div style="display:flex;gap:6px">
+                <button onclick="selectAllZones()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">✓ All</button>
+                <button onclick="clearAllZones()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">✕ Clear</button>
+              </div>
+            </div>
             <div class="zone-wrap" id="fz" style="display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto"></div>
           </div>
 
@@ -621,13 +630,25 @@ function renderResult(target){
   const totalQ=vals.reduce((a,d)=>a+d.soList.reduce((x,s)=>x+s.request_quantity,0),0);
   const avgQ=pickers.length?totalQ/pickers.length:0;
 
+  // Build zone options from all SO in result
+  const resultZones=[...new Set(vals.flatMap(d=>d.soList.map(s=>s.picking_zone||'—')))].sort();
+
   let html=`<div class="sum-row">
     <div class="sum-card"><div class="sum-label">SO Assigned</div><div class="sum-val">${fmt(assigned)}</div></div>
     <div class="sum-card"><div class="sum-label">Unassigned</div><div class="sum-val" style="color:${unassigned.length?'var(--amber)':'var(--green)'}">${fmt(unassigned.length)}</div></div>
     <div class="sum-card"><div class="sum-label">Picker</div><div class="sum-val">${pickers.length}</div></div>
     <div class="sum-card"><div class="sum-label">Avg Qty</div><div class="sum-val">${fmt(avgQ)}</div></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+    <input type="text" id="result-search" placeholder="🔍 Cari nama picker..." oninput="filterResultCards()" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;font-family:var(--mono);outline:none;flex:1;min-width:150px">
+    <select id="result-zone" onchange="filterResultCards()" style="padding:6px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:12px;font-family:var(--mono);outline:none">
+      <option value="">Zone (Semua)</option>
+      ${resultZones.map(z=>`<option>${z}</option>`).join('')}
+    </select>
+    <button onclick="document.getElementById('result-search').value='';document.getElementById('result-zone').value='';filterResultCards()" style="padding:5px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono)">↺ Reset</button>
   </div>`;
 
+  let pickerCards='';
   vals.sort((a,b)=>b.soList.reduce((x,s)=>x+s.request_quantity,0)-a.soList.reduce((x,s)=>x+s.request_quantity,0))
   .forEach((d,idx)=>{
     const aqty=d.soList.reduce((a,s)=>a+s.request_quantity,0);
@@ -639,7 +660,7 @@ function renderResult(target){
     const byZone={};
     d.soList.forEach(s=>{const z=s.picking_zone||'—';if(!byZone[z])byZone[z]=[];byZone[z].push(s);});
 
-    html+=`<div class="pc" id="pc${idx}">
+    pickerCards+=`<div class="pc" id="pc${idx}" data-picker="${d.picker.toLowerCase()}" data-zones="${[...new Set(d.soList.map(s=>s.picking_zone||'—'))].join(',')}">
       <div class="pc-head" onclick="document.getElementById('pc${idx}').classList.toggle('open')">
         <div class="pc-av" style="background:${d.color}18;color:${d.color}">${ini(d.picker)}</div>
         <div class="pc-info"><div class="pc-name">${d.picker}</div><div class="pc-meta">${d.soList.length} SO · ${sku} SKU</div></div>
@@ -686,7 +707,9 @@ function renderResult(target){
     </div>`;
   });
 
-  document.getElementById('ap-right').innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'+html+'</div>';
+  // Wrap picker cards in 2-col grid
+  const gridHtml=`<div id="picker-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:0">${pickerCards}</div>`;
+  document.getElementById('ap-right').innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'+html+gridHtml+'</div>';
 }
 
 function copyZone(id, text){
@@ -776,6 +799,36 @@ function resetSOFilter(){
   soFilter='ALL';
   document.querySelectorAll('.pill').forEach((p,i)=>{p.classList.toggle('on',i===0);});
   renderTable();
+}
+
+// CLEAR ALL PICKERS
+function clearAllPickers(){
+  pickers=[];renderPickers();
+}
+
+// ZONE SELECT/CLEAR ALL
+function selectAllZones(){
+  fZone=new Set(allZones);
+  document.querySelectorAll('#fz .chip').forEach(el=>el.classList.add('on'));
+  renderFilterCount();
+}
+function clearAllZones(){
+  fZone=new Set();
+  document.querySelectorAll('#fz .chip').forEach(el=>el.classList.remove('on'));
+  renderFilterCount();
+}
+
+// FILTER RESULT CARDS
+function filterResultCards(){
+  const q=(document.getElementById('result-search')?.value||'').toLowerCase();
+  const z=(document.getElementById('result-zone')?.value||'').toLowerCase();
+  document.querySelectorAll('#picker-grid .pc').forEach(card=>{
+    const name=card.dataset.picker||'';
+    const zones=(card.dataset.zones||'').toLowerCase();
+    const matchName=!q||name.includes(q);
+    const matchZone=!z||zones.includes(z);
+    card.style.display=(matchName&&matchZone)?'':'none';
+  });
 }
 
 // DOWNLOAD

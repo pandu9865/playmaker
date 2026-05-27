@@ -209,6 +209,8 @@ tr:hover td{background:var(--blue-dim)!important}
 
 .tactical-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .tactical-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.tactical-card.clickable{cursor:pointer;transition:.15s}
+.tactical-card.clickable:hover{transform:translateY(-1px);border-color:var(--blue);box-shadow:0 6px 16px #0f172a14;background:var(--blue-dim)}
 .tactical-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .tactical-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text)}
 .tactical-sub{font-size:10px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -217,6 +219,20 @@ tr:hover td{background:var(--blue-dim)!important}
 .terminal-log{height:105px;overflow:auto;background:#020617;border:1px solid #1e293b;border-radius:6px;padding:8px;font-size:10px;line-height:1.55}
 .terminal-line{white-space:pre-wrap;color:#cbd5e1}
 .terminal-line.ok{color:#86efac}.terminal-line.warn{color:#fde68a}.terminal-line.err{color:#fca5a5}.terminal-line.info{color:#93c5fd}
+
+.detail-modal{background:var(--bg2);border-radius:12px;max-width:1080px;width:94%;max-height:86vh;box-shadow:0 20px 60px #0003;display:flex;flex-direction:column;overflow:hidden}
+.detail-modal-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.detail-modal-title{font-weight:700;font-size:15px}
+.detail-modal-sub{font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:2px}
+.detail-modal-actions{display:flex;gap:8px;align-items:center}
+.detail-modal-body{padding:12px 18px 18px;overflow:auto}
+.detail-filter-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.detail-filter-row input,.detail-filter-row select{padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none}
+.detail-filter-row input{min-width:260px;flex:1}
+.detail-table-wrap{border:1px solid var(--border);border-radius:8px;overflow:auto;max-height:58vh}
+.detail-table th{position:sticky;top:0;z-index:1}
+.detail-empty{padding:24px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px}
+
 @media(max-width:1200px){.tactical-row{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.tactical-row{grid-template-columns:1fr}}
 
@@ -424,9 +440,9 @@ tr:hover td{background:var(--blue-dim)!important}
         <div class="chart-card"><div class="chart-title">SO Remarks</div><div class="chart-wrap"><canvas id="c-remarks"></canvas></div></div>
       </div>
       <div class="tactical-row">
-        <div class="tactical-card"><div class="tactical-label">Bulky SO</div><div class="tactical-val" id="d-bulky">0</div><div class="tactical-sub">qty besar · SKU rendah</div></div>
-        <div class="tactical-card"><div class="tactical-label">Eceran SO</div><div class="tactical-val" id="d-eceran">0</div><div class="tactical-sub">SKU banyak · qty kecil</div></div>
-        <div class="tactical-card"><div class="tactical-label">Normal SO</div><div class="tactical-val" id="d-normal">0</div><div class="tactical-sub">beban standar</div></div>
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Bulky')" title="Klik untuk lihat daftar SO Bulky"><div class="tactical-label">Bulky SO</div><div class="tactical-val" id="d-bulky">0</div><div class="tactical-sub">qty besar · SKU rendah</div></div>
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Eceran')" title="Klik untuk lihat daftar SO Eceran"><div class="tactical-label">Eceran SO</div><div class="tactical-val" id="d-eceran">0</div><div class="tactical-sub">SKU banyak · qty kecil</div></div>
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Normal')" title="Klik untuk lihat daftar SO Normal"><div class="tactical-label">Normal SO</div><div class="tactical-val" id="d-normal">0</div><div class="tactical-sub">beban standar</div></div>
         <div class="tactical-card"><div class="tactical-label">Zona Terberat</div><div class="tactical-val" id="d-risk-zone">-</div><div class="tactical-sub" id="d-risk-zone-sub">0 qty</div></div>
         <div class="tactical-card"><div class="tactical-label">Avg SKU / SO</div><div class="tactical-val" id="d-avg-sku">0</div><div class="tactical-sub" id="d-avg-qty">0 avg qty/SO</div></div>
       </div>
@@ -455,6 +471,40 @@ tr:hover td{background:var(--blue-dim)!important}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Batal</button>
       <button class="btn-confirm" onclick="runAssign()">Ya, Assign</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="detail-modal-bg">
+  <div class="detail-modal">
+    <div class="detail-modal-head">
+      <div>
+        <div class="detail-modal-title" id="detail-modal-title">Detail SO</div>
+        <div class="detail-modal-sub" id="detail-modal-sub">0 SO</div>
+      </div>
+      <div class="detail-modal-actions">
+        <button class="btn-ghost" onclick="copyDetailSO()">📋 Copy SO</button>
+        <button class="btn-ghost" onclick="downloadDetailCSV()">📥 CSV</button>
+        <button class="btn-cancel" onclick="closeDetailModal()">Tutup</button>
+      </div>
+    </div>
+    <div class="detail-modal-body">
+      <div class="detail-filter-row">
+        <input type="text" id="detail-search" placeholder="Cari SO / tujuan / zone / picker..." oninput="renderDetailModalTable()">
+        <select id="detail-wave" onchange="renderDetailModalTable()">
+          <option value="">Wave semua</option>
+          <option>WAVE 1</option><option>WAVE 2</option><option>WAVE 3</option><option>WAVE 4</option>
+        </select>
+        <select id="detail-zone" onchange="renderDetailModalTable()"><option value="">Zone semua</option></select>
+      </div>
+      <div class="detail-table-wrap">
+        <table class="detail-table">
+          <thead><tr>
+            <th>SO Number</th><th>Tujuan</th><th>Wave</th><th>Type</th><th>Zone</th><th>Status</th><th>Picker</th>
+            <th style="text-align:right">Req Qty</th><th style="text-align:right">SKU</th><th style="text-align:right">Qty/SKU</th>
+          </tr></thead>
+          <tbody id="detail-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -994,6 +1044,124 @@ function classifySO(s){
   return 'Normal';
 }
 
+let detailRows = [];
+let detailClassName = '';
+
+function getQtyPerSku(s){
+  const qty = Number(s.request_quantity || 0);
+  const sku = Number(s.sku_count || 0);
+  return sku ? qty / sku : qty;
+}
+
+function showSOClassDetail(className){
+  detailClassName = className;
+  detailRows = soData.filter(s => classifySO(s) === className)
+    .sort((a,b) => {
+      const q = (Number(b.request_quantity||0) - Number(a.request_quantity||0));
+      return q || String(a.so_number||'').localeCompare(String(b.so_number||''));
+    });
+
+  const zones = [...new Set(detailRows.map(s => s.picking_zone || '-').filter(Boolean))].sort();
+  const zSel = document.getElementById('detail-zone');
+  if(zSel) zSel.innerHTML = '<option value="">Zone semua</option>' + zones.map(z=>`<option>${esc(z)}</option>`).join('');
+
+  const search = document.getElementById('detail-search');
+  const wave = document.getElementById('detail-wave');
+  if(search) search.value = '';
+  if(wave) wave.value = '';
+
+  document.getElementById('detail-modal-bg').classList.add('open');
+  renderDetailModalTable();
+  addLog(`Opened ${className} SO detail · ${detailRows.length.toLocaleString('id-ID')} rows`, 'info');
+}
+
+function closeDetailModal(){
+  document.getElementById('detail-modal-bg').classList.remove('open');
+}
+
+function getFilteredDetailRows(){
+  const q = (document.getElementById('detail-search')?.value || '').toLowerCase();
+  const wv = document.getElementById('detail-wave')?.value || '';
+  const zn = document.getElementById('detail-zone')?.value || '';
+  return detailRows.filter(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const z = s.picking_zone || '-';
+    const matchQ = !q ||
+      String(s.so_number||'').toLowerCase().includes(q) ||
+      String(s.destination_name||'').toLowerCase().includes(q) ||
+      String(z||'').toLowerCase().includes(q) ||
+      String(s.Picker||'').toLowerCase().includes(q);
+    return matchQ && (!wv || w === wv) && (!zn || z === zn);
+  });
+}
+
+function renderDetailModalTable(){
+  const rows = getFilteredDetailRows();
+  const totalQty = rows.reduce((a,s)=>a + Number(s.request_quantity||0),0);
+  const totalSku = rows.reduce((a,s)=>a + Number(s.sku_count||0),0);
+  const title = document.getElementById('detail-modal-title');
+  const sub = document.getElementById('detail-modal-sub');
+  const tbody = document.getElementById('detail-tbody');
+  if(title) title.textContent = `Detail ${detailClassName} SO`;
+  if(sub) sub.textContent = `${rows.length.toLocaleString('id-ID')} SO · ${totalQty.toLocaleString('id-ID')} qty · ${totalSku.toLocaleString('id-ID')} SKU`;
+
+  if(!tbody) return;
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="10"><div class="detail-empty">Tidak ada SO yang match filter.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    const z = s.picking_zone || '-';
+    const qtyPerSku = getQtyPerSku(s);
+    let stClass = 's-oth';
+    if(s.status==='NEW') stClass='s-new';
+    else if(s.status==='PICKING') stClass='s-prog';
+    else if(['PACKING','STAGING','LOADING'].includes(s.status)) stClass='s-done';
+    else if(s.status==='READY TO SHIP') stClass='s-del';
+    return `<tr>
+      <td class="mono">${esc(s.so_number)}</td>
+      <td style="font-weight:500">${esc(s.destination_name)}</td>
+      <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
+      <td><span class="badge ${String(t).toLowerCase()}">${esc(t)}</span></td>
+      <td class="mono">${esc(z)}</td>
+      <td><span class="badge ${stClass}">${esc(s.status)}</span></td>
+      <td class="mono" style="font-weight:600;color:var(--blue)">${esc(s.Picker || '-')}</td>
+      <td class="mono" style="text-align:right;font-weight:600">${Number(s.request_quantity||0).toLocaleString('id-ID')}</td>
+      <td class="mono" style="text-align:right;color:var(--text3)">${Number(s.sku_count||0).toLocaleString('id-ID')}</td>
+      <td class="mono" style="text-align:right">${qtyPerSku.toFixed(1)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function copyDetailSO(){
+  const rows = getFilteredDetailRows();
+  const txt = rows.map(s=>s.so_number).join('\n');
+  if(!txt){ alert('Tidak ada SO untuk dicopy.'); return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>alert(`${rows.length} SO copied.`));
+  } else {
+    const t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert(`${rows.length} SO copied.`);
+  }
+}
+
+function downloadDetailCSV(){
+  const rows = getFilteredDetailRows();
+  if(!rows.length){ alert('Tidak ada SO untuk didownload.'); return; }
+  const csv = ['Class,SO Number,Destination,Wave,Type,Zone,Status,Picker,Req Qty,SKU,Qty per SKU'];
+  rows.forEach(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    csv.push(`"${detailClassName}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(w)}","${esc(t)}","${esc(s.picking_zone||'-')}","${esc(s.status)}","${esc(s.Picker||'-')}","${Number(s.request_quantity||0)}","${Number(s.sku_count||0)}","${getQtyPerSku(s).toFixed(1)}"`);
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+  a.download=`${detailClassName.toLowerCase()}_so_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
 function addLog(message, type='info'){
   const box = document.getElementById('live-log');
   if(!box) return;
@@ -1150,6 +1318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-add-picker').addEventListener('click', addPicker);
   document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
   addLog('Dashboard initialized. Auto-refresh every 60s on Vercel.', 'info');
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDetailModal(); });
   
   if (isPreviewSandbox()) {
     setPreviewModeUI();

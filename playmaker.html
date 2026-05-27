@@ -233,6 +233,25 @@ tr:hover td{background:var(--blue-dim)!important}
 .detail-table th{position:sticky;top:0;z-index:1}
 .detail-empty{padding:24px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px}
 
+.so-link{color:var(--blue);font-weight:700;cursor:pointer;text-decoration:none;border-bottom:1px dashed #93c5fd}
+.so-link:hover{color:#1d4ed8;background:var(--blue-dim)}
+.sku-modal{background:var(--bg2);border-radius:12px;max-width:1180px;width:96%;max-height:88vh;box-shadow:0 20px 60px #0003;display:flex;flex-direction:column;overflow:hidden}
+.sku-modal-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sku-modal-title{font-weight:700;font-size:15px}
+.sku-modal-sub{font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:2px}
+.sku-modal-actions{display:flex;gap:8px;align-items:center}
+.sku-modal-body{padding:12px 18px 18px;overflow:auto}
+.sku-summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.sku-summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.sku-summary-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px}
+.sku-summary-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text)}
+.sku-filter-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.sku-filter-row input,.sku-filter-row select{padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none}
+.sku-filter-row input{min-width:280px;flex:1}
+.sku-table-wrap{border:1px solid var(--border);border-radius:8px;overflow:auto;max-height:54vh}
+.sku-table th{position:sticky;top:0;z-index:1}
+.sku-empty{padding:24px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px}
+@media(max-width:800px){.sku-summary-row{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1200px){.tactical-row{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.tactical-row{grid-template-columns:1fr}}
 
@@ -503,6 +522,42 @@ tr:hover td{background:var(--blue-dim)!important}
             <th style="text-align:right">Req Qty</th><th style="text-align:right">SKU</th><th style="text-align:right">Qty/SKU</th>
           </tr></thead>
           <tbody id="detail-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="sku-modal-bg">
+  <div class="sku-modal">
+    <div class="sku-modal-head">
+      <div>
+        <div class="sku-modal-title" id="sku-modal-title">Detail SKU SO</div>
+        <div class="sku-modal-sub" id="sku-modal-sub">Klik SO number untuk lihat SKU, lokasi, dan qty.</div>
+      </div>
+      <div class="sku-modal-actions">
+        <button class="btn-ghost" onclick="copySkuDetail()">📋 Copy SKU</button>
+        <button class="btn-ghost" onclick="downloadSkuDetailCSV()">📥 CSV</button>
+        <button class="btn-cancel" onclick="closeSkuModal()">Tutup</button>
+      </div>
+    </div>
+    <div class="sku-modal-body">
+      <div class="sku-summary-row">
+        <div class="sku-summary-card"><div class="sku-summary-label">SKU Unique</div><div class="sku-summary-val" id="sku-sum-count">0</div></div>
+        <div class="sku-summary-card"><div class="sku-summary-label">Total Row</div><div class="sku-summary-val" id="sku-sum-row">0</div></div>
+        <div class="sku-summary-card"><div class="sku-summary-label">Request Qty</div><div class="sku-summary-val" id="sku-sum-req">0</div></div>
+        <div class="sku-summary-card"><div class="sku-summary-label">Incoming Qty</div><div class="sku-summary-val" id="sku-sum-inc">0</div></div>
+      </div>
+      <div class="sku-filter-row">
+        <input type="text" id="sku-search" placeholder="Cari SKU / deskripsi / lokasi..." oninput="renderSkuDetailTable()">
+        <select id="sku-location-filter" onchange="renderSkuDetailTable()"><option value="">Lokasi semua</option></select>
+      </div>
+      <div class="sku-table-wrap">
+        <table class="sku-table">
+          <thead><tr>
+            <th>SKU Number</th><th>Deskripsi</th><th>Location</th><th>Zone</th><th>Status</th><th>Picker</th>
+            <th style="text-align:right">Req Qty</th><th style="text-align:right">Inc Qty</th>
+          </tr></thead>
+          <tbody id="sku-detail-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -873,7 +928,7 @@ function renderResultCards(targetQty){
             const t = s.type || getType(s.destination_name);
             html += `
             <div class="so-item">
-              <div class="so-num">${esc(s.so_number)}</div>
+              <div class="so-num"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></div>
               <div class="so-dest">${esc(s.destination_name)}</div>
               <div class="so-tags">
                 <span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span>
@@ -1021,7 +1076,7 @@ function renderTable(){
     else if(s.status==='READY TO SHIP') stClass='s-del';
 
     return `<tr>
-      <td class="mono">${esc(s.so_number)}</td>
+      <td class="mono"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></td>
       <td style="font-weight:500">${esc(s.destination_name)}</td>
       <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
       <td><span class="badge ${t.toLowerCase()}">${esc(t)}</span></td>
@@ -1122,7 +1177,7 @@ function renderDetailModalTable(){
     else if(['PACKING','STAGING','LOADING'].includes(s.status)) stClass='s-done';
     else if(s.status==='READY TO SHIP') stClass='s-del';
     return `<tr>
-      <td class="mono">${esc(s.so_number)}</td>
+      <td class="mono"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></td>
       <td style="font-weight:500">${esc(s.destination_name)}</td>
       <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
       <td><span class="badge ${String(t).toLowerCase()}">${esc(t)}</span></td>
@@ -1159,6 +1214,156 @@ function downloadDetailCSV(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
   a.download=`${detailClassName.toLowerCase()}_so_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+let skuDetailRows = [];
+let currentSkuSO = '';
+
+async function openSkuDetail(soNumber, ev){
+  if(ev) ev.stopPropagation();
+  currentSkuSO = String(soNumber || '').trim();
+  if(!currentSkuSO){ alert('SO number kosong.'); return; }
+
+  const bg = document.getElementById('sku-modal-bg');
+  const title = document.getElementById('sku-modal-title');
+  const sub = document.getElementById('sku-modal-sub');
+  const tbody = document.getElementById('sku-detail-tbody');
+
+  if(title) title.textContent = 'Detail SKU · ' + currentSkuSO;
+  if(sub) sub.textContent = 'Loading SKU detail dari Google Apps Script...';
+  if(tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Loading detail SKU...</div></td></tr>`;
+  if(bg) bg.classList.add('open');
+
+  if(isPreviewSandbox()){
+    if(sub) sub.textContent = 'Preview mode: buka URL Vercel untuk fetch detail SKU.';
+    if(tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Preview mode: request GAS diblokir agar popup akses jaringan tidak muncul.</div></td></tr>`;
+    setPreviewModeUI();
+    return;
+  }
+
+  try{
+    const url = GAS + '?action=soDetail&so=' + encodeURIComponent(currentSkuSO) + '&t=' + Date.now();
+    const r = await fetch(url, { method:'GET', cache:'no-store' });
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const res = await r.json();
+
+    if(res.status === 'error' || res.error) throw new Error(res.error || 'GAS returned error');
+
+    skuDetailRows = Array.isArray(res.rows) ? res.rows : [];
+
+    const locs = [...new Set(skuDetailRows.map(x => x.location || x.origin_rack_name || x.picking_zone || '-').filter(Boolean))].sort();
+    const locSel = document.getElementById('sku-location-filter');
+    if(locSel) locSel.innerHTML = '<option value="">Lokasi semua</option>' + locs.map(l=>`<option>${esc(l)}</option>`).join('');
+
+    const search = document.getElementById('sku-search');
+    if(search) search.value = '';
+
+    if(sub){
+      const detected = res.detected_headers || {};
+      sub.textContent = `${Number(res.total_rows || skuDetailRows.length).toLocaleString('id-ID')} rows · desc:${detected.sku_description || '-'} · loc:${detected.location || '-'}`;
+    }
+
+    renderSkuDetailTable();
+    addLog(`SO detail loaded · ${currentSkuSO} · ${skuDetailRows.length.toLocaleString('id-ID')} SKU rows`, 'ok');
+  }catch(e){
+    console.error(e);
+    if(sub) sub.textContent = 'Gagal load detail SKU.';
+    if(tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Gagal load detail SKU: ${esc(e.message || e)}</div></td></tr>`;
+    addLog('SO detail load failed: ' + (e.message || e), 'err');
+  }
+}
+
+function closeSkuModal(){
+  document.getElementById('sku-modal-bg')?.classList.remove('open');
+}
+
+function getFilteredSkuRows(){
+  const q = (document.getElementById('sku-search')?.value || '').toLowerCase();
+  const loc = document.getElementById('sku-location-filter')?.value || '';
+  return skuDetailRows.filter(r=>{
+    const location = r.location || r.origin_rack_name || r.picking_zone || '-';
+    const matchQ = !q ||
+      String(r.sku_number || '').toLowerCase().includes(q) ||
+      String(r.sku_description || r.name || '').toLowerCase().includes(q) ||
+      String(location || '').toLowerCase().includes(q);
+    return matchQ && (!loc || location === loc);
+  });
+}
+
+function renderSkuDetailTable(){
+  const rows = getFilteredSkuRows();
+  const tbody = document.getElementById('sku-detail-tbody');
+  const skuSet = new Set(rows.map(r => r.sku_number).filter(Boolean));
+  const totalReq = rows.reduce((a,r)=>a + Number(r.request_quantity || 0),0);
+  const totalInc = rows.reduce((a,r)=>a + Number(r.incoming_quantity || 0),0);
+
+  const c = document.getElementById('sku-sum-count');
+  const row = document.getElementById('sku-sum-row');
+  const req = document.getElementById('sku-sum-req');
+  const inc = document.getElementById('sku-sum-inc');
+  if(c) c.textContent = skuSet.size.toLocaleString('id-ID');
+  if(row) row.textContent = rows.length.toLocaleString('id-ID');
+  if(req) req.textContent = totalReq.toLocaleString('id-ID');
+  if(inc) inc.textContent = totalInc.toLocaleString('id-ID');
+
+  if(!tbody) return;
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Tidak ada SKU detail yang match filter.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r=>{
+    const loc = r.location || r.origin_rack_name || '-';
+    let stClass = 's-oth';
+    const status = String(r.status || '').toUpperCase();
+    if(status==='NEW') stClass='s-new';
+    else if(status==='PICKING') stClass='s-prog';
+    else if(['PACKING','STAGING','LOADING'].includes(status)) stClass='s-done';
+    else if(status==='READY TO SHIP') stClass='s-del';
+
+    return `<tr>
+      <td class="mono" style="font-weight:700;color:var(--blue)">${esc(r.sku_number || '-')}</td>
+      <td style="font-weight:500">${esc(r.sku_description || r.name || '-')}</td>
+      <td class="mono">${esc(loc)}</td>
+      <td class="mono">${esc(r.picking_zone || '-')}</td>
+      <td><span class="badge ${stClass}">${esc(r.status || '-')}</span></td>
+      <td class="mono" style="font-weight:600;color:var(--blue)">${esc(r.Picker || '-')}</td>
+      <td class="mono" style="text-align:right;font-weight:700">${Number(r.request_quantity || 0).toLocaleString('id-ID')}</td>
+      <td class="mono" style="text-align:right;color:var(--text2)">${Number(r.incoming_quantity || 0).toLocaleString('id-ID')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function copySkuDetail(){
+  const rows = getFilteredSkuRows();
+  if(!rows.length){ alert('Tidak ada SKU untuk dicopy.'); return; }
+  const txt = rows.map(r => [
+    r.sku_number || '',
+    r.sku_description || r.name || '',
+    r.location || r.origin_rack_name || '',
+    r.request_quantity || 0
+  ].join('\t')).join('\n');
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>alert(`${rows.length} SKU rows copied.`));
+  } else {
+    const t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert(`${rows.length} SKU rows copied.`);
+  }
+}
+
+function downloadSkuDetailCSV(){
+  const rows = getFilteredSkuRows();
+  if(!rows.length){ alert('Tidak ada SKU untuk didownload.'); return; }
+
+  const csv = ['SO Number,SKU Number,Description,Location,Picking Zone,Status,Picker,Req Qty,Incoming Qty'];
+  rows.forEach(r=>{
+    csv.push(`"${esc(currentSkuSO)}","${esc(r.sku_number || '')}","${esc(r.sku_description || r.name || '')}","${esc(r.location || r.origin_rack_name || '')}","${esc(r.picking_zone || '')}","${esc(r.status || '')}","${esc(r.Picker || '')}","${Number(r.request_quantity || 0)}","${Number(r.incoming_quantity || 0)}"`);
+  });
+
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+  a.download=`sku_detail_${currentSkuSO.replace(/[^A-Za-z0-9]+/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
 
@@ -1232,7 +1437,7 @@ function renderDashboard(){
   document.getElementById('d-risk-zone').innerText = riskZone;
   document.getElementById('d-risk-zone-sub').innerText = riskQty.toLocaleString('id-ID') + ' qty';
   document.getElementById('d-avg-sku').innerText = uniqueSO ? (totalSku/uniqueSO).toFixed(1) : '0.0';
-  document.getElementById('d-avg-qty').innerText = (Math.round(totQty / uniqueSO) || 0).toLocaleString('id-ID') + ' avg qty/SO';
+  document.getElementById('d-avg-qty').innerText = (uniqueSO ? Math.round(totQty/uniqueSO) : 0).toLocaleString('id-ID') + ' avg qty/SO';
 
   buildChart('c-wave-so','bar',Object.keys(waveSO),Object.values(waveSO),'SO Count','#2563eb');
   buildChart('c-wave-qty','line',Object.keys(waveQty),Object.values(waveQty),'Qty Pcs','#16a34a');
@@ -1244,14 +1449,14 @@ function renderDashboard(){
     if(!s.Picker) return;
     if(!pMap[s.Picker]) pMap[s.Picker] = { so:0, qty:0 };
     pMap[s.Picker].so++;
-    pMap[s.Picker].qty += Number(s.request_quantity || 0);
+    pMap[s.Picker].qty += s.request_quantity;
   });
 
   const pTbody = document.getElementById('picker-tbody');
   if(Object.keys(pMap).length === 0){
-    pTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px">Belum ada data picker shift ini</td></tr>`;
+    pTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Belum ada data picker shift ini</td></tr>`;
   } else {
-    pTbody.innerHTML = Object.keys(pMap).sort().map(p=>{
+    pTbody.innerHTML = Object.keys(pMap).map(p=>{
       const d = pMap[p];
       return `<tr>
         <td style="font-weight:600">${esc(p)}</td>
@@ -1263,42 +1468,17 @@ function renderDashboard(){
       </tr>`;
     }).join('');
   }
-
-  addLog(`Charts rendered · ${uniqueSO.toLocaleString('id-ID')} SO · ${totQty.toLocaleString('id-ID')} qty · top zone ${riskZone}`, 'ok');
+  addLog(`Dashboard rendered · bulky:${soClass.Bulky} eceran:${soClass.Eceran} normal:${soClass.Normal}`, 'info');
 }
 
 function buildChart(id,type,labels,data,label,colors){
-  const el = document.getElementById(id);
-  if(!el) return;
   if(charts[id]) charts[id].destroy();
-  const ctx = el.getContext('2d');
+  const ctx = document.getElementById(id).getContext('2d');
   const isZone = id === 'c-zone-workload';
   charts[id] = new Chart(ctx,{
     type: type,
-    data: {
-      labels: labels,
-      datasets:[{
-        label: label,
-        data: data,
-        backgroundColor: colors,
-        borderColor: Array.isArray(colors) ? '#fff' : colors,
-        borderWidth: 1,
-        fill: type === 'line' ? 'start' : false,
-        tension: 0.3
-      }]
-    },
-    options: {
-      indexAxis: isZone ? 'y' : 'x',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: type === 'doughnut', position: 'right', labels: { boxWidth: 10, font: { size: 10 } } }
-      },
-      scales: type === 'doughnut' ? {} : {
-        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
-        y: { grid: { display: !isZone }, ticks: { font: { size: 10 } } }
-      }
-    }
+    data: { labels:labels, datasets:[{ label:label, data:data, backgroundColor:colors, borderColor:Array.isArray(colors)?'#fff':colors, borderWidth:1, fill:type==='line'?'start':false, tension:0.3 }] },
+    options: { indexAxis:isZone?'y':'x', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:type==='doughnut', position:'right', labels:{ boxWidth:10, font:{ size:10 } } } }, scales: type==='doughnut'?{}:{ x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
   });
 }
 
@@ -1317,11 +1497,11 @@ function downloadCSV(){
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-add-picker').addEventListener('click', addPicker);
   document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
-  addLog('Dashboard initialized. Auto-refresh every 60s on Vercel.', 'info');
-  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDetailModal(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') { closeSkuModal(); closeDetailModal(); closeModal(); } });
   
   if (isPreviewSandbox()) {
     setPreviewModeUI();
+    addLog('Preview sandbox detected. GAS sync disabled here.', 'warn');
   } else {
     loadData();
     setInterval(loadData, 60*1000);

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playmaker — SO Assignment</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c10;--bg2:#0d1117;--bg3:#141b22;--bg4:#1c2430;--bg5:#232d3a;
+  --text:#c9d1d9;--text2:#8b949e;--text3:#484f58;
+  --border:#21262d;--border2:#30363d;
+  --blue:#58a6ff;--blue-dim:#1f6feb33;
+  --green:#3fb950;--green-dim:#238636;
+  --amber:#d29922;--amber-dim:#9e6a0333;
+  --red:#f85149;--red-dim:#da363333;
+  --purple:#bc8cff;--purple-dim:#6e40c933;
+  --teal:#39d353;--teal-dim:#23863633;
+  --coral:#ffa657;--coral-dim:#9b4a1133;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+/* Layout */
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{padding:1.5rem;overflow-y:auto}
+
+/* Header */
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:.5rem}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#1f6feb,#58a6ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.logo-sub{font-size:11px;color:var(--text3);font-family:var(--mono)}
+
+/* Sections */
+.section-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Upload */
+.upload-zone{border:1px dashed var(--border2);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;transition:.2s;background:var(--bg3)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--blue);background:var(--blue-dim)}
+.upload-icon{font-size:24px;margin-bottom:.4rem;opacity:.6}
+.upload-label{font-size:12px;color:var(--text2);margin-bottom:.2rem}
+.upload-hint{font-size:10px;color:var(--text3)}
+.file-loaded{font-family:var(--mono);font-size:11px;color:var(--green);background:var(--green-dim);padding:4px 8px;border-radius:4px;margin-top:.5rem}
+
+/* Stats mini */
+.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:.5rem}
+.mini-stat{background:var(--bg4);border-radius:6px;padding:.5rem .75rem}
+.mini-stat-label{font-size:10px;color:var(--text3);margin-bottom:2px;font-family:var(--mono)}
+.mini-stat-val{font-size:16px;font-weight:600;color:var(--text);font-family:var(--mono)}
+
+/* Picker input */
+.inp{width:100%;padding:7px 10px;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:var(--sans)}
+.inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-dim)}
+.inp-row{display:flex;gap:6px;margin-bottom:.5rem}
+.btn{padding:7px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg4);color:var(--text);font-size:12px;cursor:pointer;transition:.15s;font-family:var(--sans);white-space:nowrap}
+.btn:hover{background:var(--bg5);border-color:var(--border2)}
+.btn-blue{background:var(--blue);border-color:var(--blue);color:#000;font-weight:600}
+.btn-blue:hover{opacity:.9}
+.btn-sm{padding:4px 8px;font-size:11px}
+
+/* Picker tags */
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.4rem;min-height:24px}
+.tag{display:inline-flex;align-items:center;gap:4px;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;padding:3px 8px;font-size:11px;font-family:var(--mono)}
+.tag.has-prod{border-color:var(--green);background:var(--teal-dim)}
+.tag-rm{cursor:pointer;color:var(--text3);font-size:14px;line-height:1}
+.tag-rm:hover{color:var(--red)}
+.tag-prod{font-size:10px;color:var(--green);margin-left:2px}
+
+/* Target input */
+.target-row{display:flex;align-items:center;gap:8px}
+.target-row label{font-size:12px;color:var(--text2);white-space:nowrap}
+.target-row input{width:90px;padding:6px 8px;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;outline:none;font-family:var(--mono)}
+.target-row input:focus{border-color:var(--blue)}
+
+/* Run button */
+.run-btn{width:100%;padding:10px;border-radius:8px;background:linear-gradient(135deg,#1f6feb,#58a6ff);border:none;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--mono);letter-spacing:.02em;transition:.2s;margin-top:.25rem}
+.run-btn:hover{opacity:.9;transform:translateY(-1px)}
+.run-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* Mode toggle */
+.mode-toggle{display:flex;gap:4px;background:var(--bg4);border-radius:6px;padding:3px}
+.mode-btn{flex:1;padding:5px 8px;border-radius:4px;border:none;background:none;color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s}
+.mode-btn.active{background:var(--bg5);color:var(--text);font-weight:600}
+
+/* === MAIN CONTENT === */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem}
+.page-title{font-family:var(--mono);font-size:16px;font-weight:700}
+.page-meta{font-size:12px;color:var(--text2);font-family:var(--mono)}
+
+/* Summary cards */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem}
+.sum-label{font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em}
+.sum-val{font-size:22px;font-weight:700;font-family:var(--mono);color:var(--text)}
+.sum-sub{font-size:10px;color:var(--text2);margin-top:1px}
+
+/* Picker cards */
+.picker-list{display:flex;flex-direction:column;gap:8px}
+.picker-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:.2s}
+.picker-card:hover{border-color:var(--border2)}
+.picker-header{display:flex;align-items:center;gap:12px;padding:.9rem 1rem;cursor:pointer;user-select:none}
+.picker-header:hover{background:var(--bg3)}
+.picker-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;font-family:var(--mono)}
+.picker-info{flex:1;min-width:0}
+.picker-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picker-meta{font-size:11px;color:var(--text2);font-family:var(--mono)}
+.picker-stats{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.picker-qty-val{font-family:var(--mono);font-size:15px;font-weight:700}
+.picker-so-ct{font-size:11px;color:var(--text2);font-family:var(--mono)}
+.chevron{color:var(--text3);font-size:12px;transition:transform .2s;flex-shrink:0}
+.picker-card.open .chevron{transform:rotate(180deg)}
+
+/* Progress bar */
+.picker-progress{padding:0 1rem .75rem;display:flex;align-items:center;gap:8px}
+.bar-wrap{flex:1;background:var(--bg4);border-radius:3px;height:4px;overflow:hidden}
+.bar-fill{height:4px;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.bar-pct{font-family:var(--mono);font-size:10px;color:var(--text2);min-width:36px;text-align:right}
+.bar-remaining{font-family:var(--mono);font-size:10px;min-width:60px;text-align:right}
+
+/* Picker dropdown detail */
+.picker-detail{display:none;border-top:1px solid var(--border);padding:0}
+.picker-card.open .picker-detail{display:block}
+.detail-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:.75rem 1rem;background:var(--bg3)}
+.detail-stat{text-align:center}
+.detail-stat-label{font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase}
+.detail-stat-val{font-size:16px;font-weight:700;font-family:var(--mono);color:var(--text)}
+
+/* Wave group inside detail */
+.wave-group{border-top:1px solid var(--border)}
+.wave-group-header{padding:.5rem 1rem;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;background:var(--bg3)}
+.so-table{width:100%;border-collapse:collapse;font-size:12px}
+.so-table th{text-align:left;padding:6px 1rem;font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg2)}
+.so-table td{padding:6px 1rem;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+.so-table tr:last-child td{border-bottom:none}
+.so-table tr:hover td{background:var(--bg3)}
+.so-num{font-family:var(--mono);font-size:11px;color:var(--text2)}
+
+/* Badges */
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono)}
+.w1{background:#1f3a5f;color:#58a6ff}
+.w2{background:#1a3a1a;color:#3fb950}
+.w3{background:#3a2e0a;color:#d29922}
+.w4{background:#3a1a1a;color:#f85149}
+.kepala{background:#2a1f5f;color:#bc8cff}
+.badan{background:#0a2e2e;color:#39d353}
+.ekor{background:#2e1a0a;color:#ffa657}
+.other{background:var(--bg4);color:var(--text3)}
+.status-new{background:var(--blue-dim);color:var(--blue)}
+.status-done{background:var(--green-dim);color:var(--green)}
+
+/* Unassigned */
+.unassigned-card{background:var(--bg2);border:1px solid var(--amber);border-radius:10px;overflow:hidden}
+.unassigned-header{padding:.9rem 1rem;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--amber-dim)}
+.unassigned-header:hover{opacity:.9}
+
+/* Empty state */
+.empty{text-align:center;padding:4rem 1rem;color:var(--text3)}
+.empty-icon{font-size:48px;margin-bottom:1rem;opacity:.3}
+.empty-text{font-family:var(--mono);font-size:13px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* Alert */
+.alert{padding:.6rem .9rem;border-radius:6px;font-size:12px;margin-bottom:.75rem;font-family:var(--mono)}
+.alert-info{background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue)}
+.alert-warn{background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber)}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:.75rem 0}
+
+@media(max-width:768px){
+  .app{grid-template-columns:1fr}
+  .sidebar{height:auto;position:static}
+  .summary-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div>
+    <div class="logo">
+      <div class="logo-mark">🎯</div>
+      <div>
+        <div class="logo-text">PLAYMAKER</div>
+        <div class="logo-sub">SO Assignment Tool</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode -->
+  <div>
+    <div class="section-label">Mode</div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-fresh" onclick="setMode('fresh')">Fresh Assign</button>
+      <button class="mode-btn" id="mode-reassign" onclick="setMode('reassign')">Re-assign</button>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-top:.4rem;font-family:var(--mono)" id="mode-hint">Upload CSV baru, assign dari awal</div>
+  </div>
+
+  <!-- Upload -->
+  <div>
+    <div class="section-label">CSV Data SO</div>
+    <div class="upload-zone" id="drop-area" onclick="document.getElementById('csv-input').click()">
+      <div class="upload-icon">📂</div>
+      <div class="upload-label" id="upload-label">Klik atau drag CSV</div>
+      <div class="upload-hint">so_number · destination_name · request_quantity · status · WAVE · Picker</div>
+    </div>
+    <input type="file" id="csv-input" accept=".csv" style="display:none">
+    <div class="mini-stats hidden" id="file-stats">
+      <div class="mini-stat"><div class="mini-stat-label">Total SO</div><div class="mini-stat-val" id="stat-so">0</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Unassigned</div><div class="mini-stat-val" id="stat-new">0</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Total Qty</div><div class="mini-stat-val" id="stat-qty">0</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Est/picker</div><div class="mini-stat-val" id="stat-est">—</div></div>
+    </div>
+  </div>
+
+  <!-- Pickers -->
+  <div>
+    <div class="section-label">Picker Shift Ini</div>
+    <div class="inp-row">
+      <input type="text" id="mp-name" class="inp" placeholder="Nama picker (Enter)">
+      <button class="btn btn-blue" onclick="addPicker()">+</button>
+    </div>
+    <div class="tags" id="mp-list"></div>
+    <div style="font-size:10px;color:var(--text3);font-family:var(--mono)" id="mp-count">0 picker</div>
+  </div>
+
+  <!-- Target -->
+  <div>
+    <div class="section-label">Parameter</div>
+    <div class="target-row" style="margin-bottom:.5rem">
+      <label>Target qty/picker</label>
+      <input type="number" id="target-qty" value="2400" min="100" step="100">
+    </div>
+    <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:.75rem">Assign merata sampai semua SO ter-cover</div>
+  </div>
+
+  <button class="run-btn" onclick="runAssign()" id="run-btn">▶ JALANKAN ASSIGN</button>
+
+  <div style="margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border)">
+    <button class="btn btn-sm" style="width:100%" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div id="empty-state" class="empty">
+    <div class="empty-icon">📋</div>
+    <div class="empty-text">Upload CSV & input picker,<br>lalu jalankan assign</div>
+  </div>
+
+  <div id="result-area" style="display:none">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Hasil Assignment</div>
+        <div class="page-meta" id="result-meta"></div>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="sum-card">
+        <div class="sum-label">SO Assigned</div>
+        <div class="sum-val" id="r-assigned">0</div>
+        <div class="sum-sub" id="r-assigned-sub"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">SO Unassigned</div>
+        <div class="sum-val" id="r-unassigned">0</div>
+        <div class="sum-sub" id="r-unassigned-sub"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Picker Aktif</div>
+        <div class="sum-val" id="r-pickers">0</div>
+        <div class="sum-sub" id="r-target-sub"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Total Qty</div>
+        <div class="sum-val" id="r-totalqty">0</div>
+        <div class="sum-sub" id="r-avg-sub"></div>
+      </div>
+    </div>
+
+    <div id="alert-area"></div>
+    <div class="picker-list" id="picker-list"></div>
+  </div>
+</main>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+let soData = [];
+let pickers = [];
+let assignResult = {};
+let unassignedSO = [];
+let mode = 'fresh'; // 'fresh' | 'reassign'
+
+const SKIP_STATUS = ['IN PROGRESS','COMPLETED','ON DELIVERY','UNLOADING'];
+const TYPE_ORDER  = {Kepala:1,Badan:2,Ekor:3,Other:4};
+const WAVE_ORDER  = {'WAVE 1':1,'WAVE 2':2,'WAVE 3':3,'WAVE 4':4};
+
+const WAVE_MAP = {
+  APR:'WAVE 1',KJT:'WAVE 1',BSX:'WAVE 1',BGS:'WAVE 1',ASA:'WAVE 1',PBT:'WAVE 1',PKC:'WAVE 1',
+  SRP:'WAVE 1',BRY:'WAVE 1',TDN:'WAVE 1',GPL:'WAVE 1',PPN:'WAVE 1',PPL:'WAVE 1',FTW:'WAVE 1',
+  CLN:'WAVE 2',PIN:'WAVE 2',LBB:'WAVE 2',CPT:'WAVE 2',KGS:'WAVE 2',RDS:'WAVE 2',MRY:'WAVE 2',
+  DST:'WAVE 2',MSB:'WAVE 2',SAL:'WAVE 2',CWG:'WAVE 2',TGX:'WAVE 2',BS9:'WAVE 2',JBG:'WAVE 2',
+  JLB:'WAVE 3',DNS:'WAVE 3',KPM:'WAVE 3',CT2:'WAVE 3',SMN:'WAVE 3',MGR:'WAVE 3',MTG:'WAVE 3',GMD:'WAVE 3',
+  CSA:'WAVE 4',BDC:'WAVE 4',KLD:'WAVE 4',TSY:'WAVE 4',MRG:'WAVE 4',SWG:'WAVE 4',CNR:'WAVE 4',PSG:'WAVE 4',PAM:'WAVE 4'
+};
+const KEPALA = ['KJT','ASA','SRP','GPL','FTW','CPT','MRY','CWG','JBG','JLB','SMN','GMD','KLD','SWG','PAM'];
+const BADAN  = ['APR','BGS','PKC','TDN','PPL','LBB','PIN','RDS','SAL','MSB','BS9','CT2','KPM','MTG','BDC','MRG','PSG'];
+const EKOR   = ['BSX','PBT','BRY','PPN','CLN','KGS','DST','TGX','DNS','MGR','CSA','TSY','CNR'];
+
+const COLORS = ['#58a6ff','#3fb950','#d29922','#f85149','#bc8cff','#ffa657','#39d353','#79c0ff','#56d364','#e3b341'];
+
+function getWave(dest){
+  for(const [k,v] of Object.entries(WAVE_MAP)) if(dest.includes(k)) return v;
+  return 'Other';
+}
+function getType(dest){
+  for(const k of KEPALA) if(dest.includes(k)) return 'Kepala';
+  for(const k of BADAN)  if(dest.includes(k)) return 'Badan';
+  for(const k of EKOR)   if(dest.includes(k)) return 'Ekor';
+  return 'Other';
+}
+function waveClass(w){ return w ? 'w'+w.replace('WAVE ','') : 'other'; }
+function typeClass(t){ return (t||'other').toLowerCase(); }
+function fmt(n){ return Math.round(n).toLocaleString('id-ID'); }
+function initials(name){ return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+
+// ── MODE ───────────────────────────────────────────────────────
+function setMode(m){
+  mode = m;
+  document.getElementById('mode-fresh').classList.toggle('active', m==='fresh');
+  document.getElementById('mode-reassign').classList.toggle('active', m==='reassign');
+  document.getElementById('mode-hint').textContent = m==='fresh'
+    ? 'Upload CSV baru, assign dari awal'
+    : 'Upload CSV terbaru, hitung sisa berdasarkan produktivitas existing picker';
+  updateStats();
+}
+
+// ── CSV UPLOAD ─────────────────────────────────────────────────
+document.getElementById('csv-input').addEventListener('change', e => {
+  const f = e.target.files[0]; if(!f) return; readFile(f);
+});
+const dropArea = document.getElementById('drop-area');
+dropArea.addEventListener('dragover', e=>{ e.preventDefault(); dropArea.classList.add('drag'); });
+dropArea.addEventListener('dragleave', ()=>dropArea.classList.remove('drag'));
+dropArea.addEventListener('drop', e=>{
+  e.preventDefault(); dropArea.classList.remove('drag');
+  const f = e.dataTransfer.files[0]; if(!f) return; readFile(f);
+});
+function readFile(f){
+  const r = new FileReader();
+  r.onload = ev => parseCSV(ev.target.result, f.name);
+  r.readAsText(f);
+}
+
+function parseCSVLine(line){
+  const result=[]; let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){inQ=!inQ;continue;}
+    if(c===','&&!inQ){result.push(cur.trim());cur='';continue;}
+    cur+=c;
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function parseCSV(text, fname){
+  const lines = text.trim().split(/\r?\n/);
+  const headers = parseCSVLine(lines[0]).map(h=>h.toLowerCase().trim());
+  const idx = {
+    so:      headers.findIndex(h=>h.includes('so_number')),
+    dest:    headers.findIndex(h=>h.includes('destination_name')),
+    qty:     headers.findIndex(h=>h.includes('request_quantity')),
+    inqty:   headers.findIndex(h=>h.includes('incoming_quantity')),
+    status:  headers.findIndex(h=>h==='status'),
+    wave:    headers.findIndex(h=>h==='wave'),
+    picker:  headers.findIndex(h=>h==='picker'),
+    sku:     headers.findIndex(h=>h.includes('sku_number')),
+    name:    headers.findIndex(h=>h==='name'),
+  };
+  if(idx.so<0||idx.dest<0||idx.qty<0){ alert('Kolom tidak ditemukan. Cek format CSV.'); return; }
+
+  const soMap = {};
+  for(let i=1;i<lines.length;i++){
+    if(!lines[i].trim()) continue;
+    const cols = parseCSVLine(lines[i]);
+    const soNum = (cols[idx.so]||'').trim();
+    if(!soNum) continue;
+    const qty = parseFloat((cols[idx.qty]||'0').replace(/,/g,''))||0;
+    const inQty = idx.inqty>=0 ? parseFloat((cols[idx.inqty]||'0').replace(/,/g,''))||0 : 0;
+    const pickerName = idx.picker>=0 ? (cols[idx.picker]||'').trim() : '';
+    const skuNum = idx.sku>=0 ? (cols[idx.sku]||'').trim() : '';
+    const skuName = idx.name>=0 ? (cols[idx.name]||'').trim() : '';
+    if(!soMap[soNum]){
+      soMap[soNum]={
+        so_number:soNum,
+        destination_name:(cols[idx.dest]||'').trim(),
+        qty:0, inQty:0,
+        status:(cols[idx.status]||'NEW').trim(),
+        wave:idx.wave>=0?(cols[idx.wave]||'').trim()||null:null,
+        existingPicker: pickerName,
+        skus:[], skuNames:[],
+      };
+    }
+    soMap[soNum].qty += qty;
+    soMap[soNum].inQty += inQty;
+    if(skuNum && !soMap[soNum].skus.includes(skuNum)) soMap[soNum].skus.push(skuNum);
+    if(skuName && !soMap[soNum].skuNames.includes(skuName)) soMap[soNum].skuNames.push(skuName);
+  }
+
+  soData = Object.values(soMap).map(s=>({
+    ...s,
+    wave: s.wave || getWave(s.destination_name),
+    type: getType(s.destination_name),
+  }));
+
+  document.getElementById('upload-label').textContent = '✓ ' + fname;
+  document.getElementById('file-stats').classList.remove('hidden');
+  updateStats();
+}
+
+function updateStats(){
+  const skip = SKIP_STATUS.map(s=>s.toUpperCase());
+
+  // In reassign mode: unassigned = SO that don't have existingPicker assigned AND not in SKIP status
+  // In fresh mode: unassigned = all non-skipped SO
+  let unassigned;
+  if(mode === 'reassign'){
+    unassigned = soData.filter(s=>!skip.includes((s.status||'').toUpperCase()) && !s.existingPicker);
+  } else {
+    unassigned = soData.filter(s=>!skip.includes((s.status||'').toUpperCase()));
+  }
+
+  const totalQty = unassigned.reduce((a,b)=>a+b.qty,0);
+  const n = pickers.length;
+  document.getElementById('stat-so').textContent = fmt(soData.length);
+  document.getElementById('stat-new').textContent = fmt(unassigned.length);
+  document.getElementById('stat-qty').textContent = fmt(totalQty);
+  document.getElementById('stat-est').textContent = n>0 ? fmt(totalQty/n) : '—';
+}
+
+// ── PICKER MANAGEMENT ──────────────────────────────────────────
+document.getElementById('mp-name').addEventListener('keydown', e=>{ if(e.key==='Enter') addPicker(); });
+document.getElementById('mp-name').addEventListener('paste', e=>{
+  const text = (e.clipboardData||window.clipboardData).getData('text');
+  const names = text.split(/[\n\r,;]+/).map(n=>n.trim()).filter(Boolean);
+  if(names.length>1){
+    e.preventDefault();
+    names.forEach(n=>{ if(n && !pickers.find(p=>p.name===n)) pickers.push({name:n}); });
+    renderTags(); updateStats();
+  }
+});
+function addPicker(){
+  const inp = document.getElementById('mp-name');
+  const name = inp.value.trim();
+  if(!name || pickers.find(p=>p.name===name)){ inp.value=''; return; }
+  pickers.push({name});
+  inp.value='';
+  renderTags(); updateStats();
+}
+function removePicker(name){
+  pickers = pickers.filter(p=>p.name!==name);
+  renderTags(); updateStats();
+}
+function renderTags(){
+  document.getElementById('mp-list').innerHTML = pickers.map((p,i) => {
+    const hasProd = p.existingQty > 0;
+    return `<span class="tag ${hasProd?'has-prod':''}" style="border-color:${COLORS[i%COLORS.length]}40">
+      ${p.name}
+      ${hasProd ? `<span class="tag-prod">${fmt(p.existingQty)}✓</span>` : ''}
+      <span class="tag-rm" onclick="removePicker('${p.name.replace(/'/g,"\\'")}')">&times;</span>
+    </span>`;
+  }).join('');
+  document.getElementById('mp-count').textContent = pickers.length + ' picker';
+}
+
+// ── ASSIGN LOGIC ───────────────────────────────────────────────
+function runAssign(){
+  if(!soData.length){ alert('Upload CSV dulu.'); return; }
+  if(!pickers.length){ alert('Tambahkan picker dulu.'); return; }
+
+  const target = parseInt(document.getElementById('target-qty').value)||2400;
+  const skip = SKIP_STATUS.map(s=>s.toUpperCase());
+
+  // In reassign mode: get existing productivity from CSV
+  if(mode === 'reassign'){
+    // Map existing picker productivity from CSV
+    const prodMap = {};
+    soData.forEach(so => {
+      if(so.existingPicker && !skip.includes((so.status||'').toUpperCase())){
+        prodMap[so.existingPicker] = (prodMap[so.existingPicker]||0) + so.inQty;
+      }
+    });
+    // Attach existing qty to pickers
+    pickers.forEach(p => {
+      p.existingQty = prodMap[p.name] || 0;
+    });
+    renderTags();
+  } else {
+    pickers.forEach(p => { p.existingQty = 0; });
+  }
+
+  // Get SO to assign
+  let soToAssign;
+  if(mode === 'reassign'){
+    // Only assign SO without existing picker
+    soToAssign = soData.filter(s => !skip.includes((s.status||'').toUpperCase()) && !s.existingPicker);
+  } else {
+    soToAssign = soData.filter(s => !skip.includes((s.status||'').toUpperCase()));
+  }
+
+  // Init assign buckets
+  assignResult = {};
+  pickers.forEach((p,i) => {
+    assignResult[p.name] = {
+      picker: p.name,
+      color: COLORS[i%COLORS.length],
+      soList: [],
+      totalQty: p.existingQty || 0,
+      existingQty: p.existingQty || 0,
+      soCount: 0,
+    };
+  });
+  unassignedSO = [];
+
+  // Group SO by TYPE batch (Kepala → Badan → Ekor → Other)
+  // Within each type, sort by Wave order, then qty desc
+  const TYPE_BATCHES = ['Kepala', 'Badan', 'Ekor', 'Other'];
+
+  for(const typeBatch of TYPE_BATCHES){
+    // Get all SO of this type, sorted by wave then qty desc
+    const batchSO = soToAssign
+      .filter(s => s.type === typeBatch)
+      .sort((a,b) => {
+        const wo = (WAVE_ORDER[a.wave]||9) - (WAVE_ORDER[b.wave]||9);
+        if(wo!==0) return wo;
+        return b.qty - a.qty;
+      });
+
+    if(!batchSO.length) continue;
+
+    for(const so of batchSO){
+      // Pick picker with lowest totalQty that is still below target
+      const pickerNames = Object.keys(assignResult);
+      // First try: picker below target
+      const belowTarget = pickerNames.filter(p => assignResult[p].totalQty < target);
+      // If all above target, pick lowest overall (overflow — still assign, merata)
+      const candidates = belowTarget.length > 0 ? belowTarget : pickerNames;
+      const pick = candidates.reduce((a,b) =>
+        assignResult[a].totalQty <= assignResult[b].totalQty ? a : b
+      );
+      assignResult[pick].soList.push(so);
+      assignResult[pick].totalQty += so.qty;
+      assignResult[pick].soCount++;
+    }
+  }
+
+  renderResult(target);
+}
+
+// ── RENDER ─────────────────────────────────────────────────────
+function renderResult(target){
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('result-area').style.display = 'block';
+
+  const assigned = Object.values(assignResult).reduce((a,b)=>a+b.soList.length,0);
+  const totalQty = Object.values(assignResult).reduce((a,b)=>a+b.soList.reduce((x,s)=>x+s.qty,0),0);
+  const avgQty   = pickers.length > 0 ? totalQty / pickers.length : 0;
+
+  document.getElementById('r-assigned').textContent = fmt(assigned);
+  document.getElementById('r-assigned-sub').textContent = 'dari ' + fmt(soData.length) + ' total SO';
+  document.getElementById('r-unassigned').textContent = fmt(unassignedSO.length);
+  document.getElementById('r-unassigned-sub').textContent = unassignedSO.length > 0 ? '⚠ perlu penanganan' : '✓ semua terassign';
+  document.getElementById('r-pickers').textContent = pickers.length;
+  document.getElementById('r-target-sub').textContent = 'target ' + fmt(target) + ' qty/picker';
+  document.getElementById('r-totalqty').textContent = fmt(totalQty);
+  document.getElementById('r-avg-sub').textContent = 'avg ' + fmt(avgQty) + ' / picker';
+  document.getElementById('result-meta').textContent =
+    (mode==='reassign' ? 'Re-assign mode' : 'Fresh assign') + ' · ' + new Date().toLocaleTimeString('id-ID');
+
+  // Alerts
+  let alerts = '';
+  if(unassignedSO.length > 0)
+    alerts += `<div class="alert alert-warn">⚠ ${fmt(unassignedSO.length)} SO unassigned — semua picker sudah balance</div>`;
+  if(mode==='reassign'){
+    const withProd = pickers.filter(p=>assignResult[p.name]?.existingQty>0);
+    if(withProd.length>0)
+      alerts += `<div class="alert alert-info">ℹ ${withProd.length} picker punya existing productivity — assign dimulai dari sisa target mereka</div>`;
+  }
+  document.getElementById('alert-area').innerHTML = alerts;
+
+  // Picker cards
+  // Sort by totalQty desc for display
+  const sortedPickers = [...pickers].sort((a,b) =>
+    (assignResult[b.name]?.totalQty||0) - (assignResult[a.name]?.totalQty||0)
+  );
+
+  let html = '';
+  sortedPickers.forEach((p, idx) => {
+    const d = assignResult[p.name];
+    if(!d) return;
+    const assignedQty = d.soList.reduce((a,s)=>a+s.qty,0);
+    const pct = Math.min(100, Math.round(assignedQty / target * 100));
+    const remaining = Math.max(0, target - assignedQty);
+    const over = assignedQty > target * 1.05;
+    const color = d.color;
+    const barColor = over ? '#f85149' : color;
+
+    // Group SO by wave
+    const byWave = {};
+    d.soList.forEach(so => {
+      const w = so.wave || 'Other';
+      if(!byWave[w]) byWave[w] = [];
+      byWave[w].push(so);
+    });
+
+    const totalSKU = d.soList.reduce((a,so)=>a+so.skus.length,0);
+
+    html += `<div class="picker-card" id="pc-${idx}">
+      <div class="picker-header" onclick="toggleCard(${idx})">
+        <div class="picker-avatar" style="background:${color}22;color:${color}">${initials(p.name)}</div>
+        <div class="picker-info">
+          <div class="picker-name">${p.name}</div>
+          <div class="picker-meta">${d.soList.length} SO · ${totalSKU} SKU${d.existingQty>0?' · existing: '+fmt(d.existingQty):''}</div>
+        </div>
+        <div class="picker-stats">
+          <div>
+            <div class="picker-qty-val" style="color:${barColor}">${fmt(d.soList.reduce((a,s)=>a+s.qty,0))}</div>
+            <div class="picker-so-ct">${pct}% target</div>
+          </div>
+          <div class="chevron">▼</div>
+        </div>
+      </div>
+      <div class="picker-progress">
+        <div class="bar-wrap">
+          <div class="bar-fill" style="width:${pct}%;background:${barColor}"></div>
+        </div>
+        <div class="bar-pct" style="color:${color}">${pct}%</div>
+        <div class="bar-remaining" style="color:var(--text3)">${remaining>0?'sisa '+fmt(remaining):over?'over '+fmt(assignedQty-target):'✓ on target'}</div>
+      </div>
+      <div class="picker-detail">
+        <div class="detail-summary">
+          <div class="detail-stat">
+            <div class="detail-stat-label">Total Qty</div>
+            <div class="detail-stat-val" style="color:${color}">${fmt(d.soList.reduce((a,s)=>a+s.qty,0))}</div>
+          </div>
+          <div class="detail-stat">
+            <div class="detail-stat-label">Total SO</div>
+            <div class="detail-stat-val">${d.soList.length}</div>
+          </div>
+          <div class="detail-stat">
+            <div class="detail-stat-label">Total SKU</div>
+            <div class="detail-stat-val">${totalSKU}</div>
+          </div>
+        </div>
+        ${Object.keys(byWave).sort((a,b)=>(WAVE_ORDER[a]||9)-(WAVE_ORDER[b]||9)).map(wave => {
+          const soList = byWave[wave];
+          return `<div class="wave-group">
+            <div class="wave-group-header">
+              <span class="badge ${waveClass(wave)}">${wave}</span>
+              <span style="color:var(--text3)">${soList.length} SO · ${fmt(soList.reduce((a,s)=>a+s.qty,0))} qty</span>
+            </div>
+            <table class="so-table">
+              <thead><tr>
+                <th>SO Number</th><th>Destination</th><th>Type</th><th>SKU</th><th style="text-align:right">Qty</th>
+              </tr></thead>
+              <tbody>
+                ${soList.map(so => `<tr>
+                  <td class="so-num">${so.so_number}</td>
+                  <td>${so.destination_name}</td>
+                  <td><span class="badge ${typeClass(so.type)}">${so.type}</span></td>
+                  <td style="color:var(--text3)">${so.skus.length}</td>
+                  <td style="text-align:right;font-family:var(--mono)">${fmt(so.qty)}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+
+  // Unassigned
+  if(unassignedSO.length){
+    html += `<div class="unassigned-card">
+      <div class="unassigned-header" onclick="toggleUnassigned()">
+        <span style="font-size:16px">⚠</span>
+        <span style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--amber)">UNASSIGNED — ${unassignedSO.length} SO</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--amber)">▼</span>
+      </div>
+      <div id="unassigned-detail" style="display:none">
+        <table class="so-table">
+          <thead><tr><th>SO Number</th><th>Destination</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th></tr></thead>
+          <tbody>
+            ${unassignedSO.map(so=>`<tr>
+              <td class="so-num">${so.so_number}</td>
+              <td>${so.destination_name}</td>
+              <td><span class="badge ${waveClass(so.wave)}">${so.wave||'—'}</span></td>
+              <td><span class="badge ${typeClass(so.type)}">${so.type}</span></td>
+              <td style="text-align:right;font-family:var(--mono)">${fmt(so.qty)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('picker-list').innerHTML = html;
+}
+
+function toggleCard(idx){
+  const card = document.getElementById('pc-'+idx);
+  card.classList.toggle('open');
+}
+function toggleUnassigned(){
+  const d = document.getElementById('unassigned-detail');
+  d.style.display = d.style.display==='none' ? 'block' : 'none';
+}
+
+// ── DOWNLOAD ───────────────────────────────────────────────────
+function downloadCSV(){
+  if(!Object.keys(assignResult).length){ alert('Jalankan assign dulu.'); return; }
+  let rows = ['Picker,SO Number,Destination,Wave,Type,SKU Count,Qty'];
+  for(const p of pickers){
+    const d = assignResult[p.name];
+    if(!d) continue;
+    for(const so of d.soList){
+      rows.push(`"${p.name}","${so.so_number}","${so.destination_name}","${so.wave||''}","${so.type||''}",${so.skus.length},${so.qty}`);
+    }
+  }
+  for(const so of unassignedSO){
+    rows.push(`"UNASSIGNED","${so.so_number}","${so.destination_name}","${so.wave||''}","${so.type||''}",${so.skus.length},${so.qty}`);
+  }
+  const blob = new Blob([rows.join('\n')],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'assignment_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+</script>
+</body>
+</html>

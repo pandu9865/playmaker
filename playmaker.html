@@ -628,6 +628,7 @@ let fZone = new Set();
 let myPickers = new Set();
 let assignResult = {};
 let assignSkippedRows = [];
+let assignForcedRows = [];
 let tblStatus = 'ALL';
 let charts = {};
 let lastResetDate = '';
@@ -1018,6 +1019,7 @@ function getInitialWorkload(pList){
 function initAssignResult(pList, initialWorkload){
   assignResult = {};
   assignSkippedRows = [];
+  assignForcedRows = [];
 
   pList.forEach(p => {
     assignResult[p] = {
@@ -1098,6 +1100,86 @@ function allocatePoolHardLimit(pool, pList, targetQty, options = {}){
   });
 }
 
+
+function forceAllocateSmallSkippedRows(pList, targetQty, options = {}){
+  const maxForceSO = Number(options.maxForceSO || 3);
+  const maxForceQty = Number(options.maxForceQty || targetQty);
+
+  if(!Array.isArray(assignSkippedRows) || !assignSkippedRows.length){
+    return { forcedSO: 0, forcedQty: 0 };
+  }
+
+  const skippedSO = assignSkippedRows.length;
+  const skippedQty = assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0);
+
+  // Soft fallback yang aman: cuma paksa assign kalau sisa kecil.
+  // Rule: maksimal 3 SO dan total qty skipped <= target picker.
+  // Contoh kasus valid: 2 SO / 921 qty dengan target 1.528 qty.
+  const canForce = skippedSO <= maxForceSO && skippedQty <= maxForceQty;
+
+  if(!canForce){
+    return { forcedSO: 0, forcedQty: 0 };
+  }
+
+  const rowsToForce = assignSkippedRows.slice();
+  assignSkippedRows = [];
+
+  rowsToForce
+    .sort((a,b)=>Number(b.request_quantity || 0) - Number(a.request_quantity || 0))
+    .forEach(s => {
+      const soQty = Number(s.request_quantity || 0);
+      const sortedPickers = pList.slice().sort((a,b) => {
+        const qtyDiff = Number(assignResult[a].totalQty || 0) - Number(assignResult[b].totalQty || 0);
+        if(qtyDiff !== 0) return qtyDiff;
+        return String(a).localeCompare(String(b), 'id');
+      });
+
+      const bestPicker = sortedPickers[0];
+      const forcedSO = {
+        ...s,
+        force_assigned: true,
+        force_reason: `Soft fallback: sisa kecil ${skippedSO.toLocaleString('id-ID')} SO / ${skippedQty.toLocaleString('id-ID')} qty dipaksa assign`
+      };
+
+      assignResult[bestPicker].soList.push(forcedSO);
+      assignResult[bestPicker].newQty += soQty;
+      assignResult[bestPicker].totalQty += soQty;
+
+      assignForcedRows.push({
+        ...forcedSO,
+        picker: bestPicker
+      });
+    });
+
+  addLog(
+    `[Soft fallback] ${skippedSO.toLocaleString('id-ID')} SO (${skippedQty.toLocaleString('id-ID')} qty) dipaksa assign karena sisa kecil. Target tetap ${Number(targetQty || 0).toLocaleString('id-ID')} qty/picker.`,
+    'warn'
+  );
+
+  return { forcedSO: skippedSO, forcedQty: skippedQty };
+}
+
+function getForcedSummary(){
+  const forcedSO = Array.isArray(assignForcedRows) ? assignForcedRows.length : 0;
+  const forcedQty = Array.isArray(assignForcedRows)
+    ? assignForcedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0)
+    : 0;
+
+  return { forcedSO, forcedQty };
+}
+
+function showAssignForcedInfo(targetQty){
+  const { forcedSO, forcedQty } = getForcedSummary();
+
+  if(forcedSO > 0){
+    alert(
+      `ℹ️ Soft fallback aktif.\n\n` +
+      `${forcedSO.toLocaleString('id-ID')} SO / ${forcedQty.toLocaleString('id-ID')} qty dipaksa dibagikan karena sisa kecil.\n` +
+      `Sebagian picker bisa lewat target ${Number(targetQty || 0).toLocaleString('id-ID')} qty. Ini sengaja untuk kasus low volume.`
+    );
+  }
+}
+
 function getSkippedSummary(){
   const skippedSO = Array.isArray(assignSkippedRows) ? assignSkippedRows.length : 0;
   const skippedQty = Array.isArray(assignSkippedRows)
@@ -1163,9 +1245,11 @@ function runAssign(){
 
   const sortedPool = sortPoolByQtyDesc(pool);
   allocatePoolHardLimit(sortedPool, pList, targetQty, { mode: 'manual' });
+  forceAllocateSmallSkippedRows(pList, targetQty, { maxForceSO: 3, maxForceQty: targetQty });
 
   showAssignSkippedWarning(targetQty);
   renderResultCards(targetQty);
+  showAssignForcedInfo(targetQty);
 }
 
 function generateSmartSuggestion(){
@@ -1193,14 +1277,16 @@ function generateSmartSuggestion(){
 
   const sortedPool = sortPoolZoneAware(pool);
   allocatePoolHardLimit(sortedPool, pList, targetQty, { mode: 'smart' });
+  forceAllocateSmallSkippedRows(pList, targetQty, { maxForceSO: 3, maxForceQty: targetQty });
 
   const { skippedSO, skippedQty } = getSkippedSummary();
+  const { forcedSO, forcedQty } = getForcedSummary();
   const assignedSO = Object.values(assignResult).reduce((a,d)=>a + d.soList.length, 0);
   const assignedQty = Object.values(assignResult).reduce((a,d)=>a + Number(d.newQty || 0), 0);
 
   addLog(
-    `[Smart Suggestion] pool:${pool.length.toLocaleString('id-ID')} SO · assigned:${assignedSO.toLocaleString('id-ID')} SO/${assignedQty.toLocaleString('id-ID')} qty · target:${targetQty.toLocaleString('id-ID')} · skipped:${skippedSO.toLocaleString('id-ID')} SO/${skippedQty.toLocaleString('id-ID')} qty`,
-    skippedSO ? 'warn' : 'ok'
+    `[Smart Suggestion] pool:${pool.length.toLocaleString('id-ID')} SO · assigned:${assignedSO.toLocaleString('id-ID')} SO/${assignedQty.toLocaleString('id-ID')} qty · target:${targetQty.toLocaleString('id-ID')} · skipped:${skippedSO.toLocaleString('id-ID')} SO/${skippedQty.toLocaleString('id-ID')} qty · forced:${forcedSO.toLocaleString('id-ID')} SO/${forcedQty.toLocaleString('id-ID')} qty`,
+    (skippedSO || forcedSO) ? 'warn' : 'ok'
   );
 
   renderResultCards(targetQty);
@@ -1209,7 +1295,8 @@ function generateSmartSuggestion(){
     `🪄 Smart Suggestion selesai.\n\n` +
     `Target otomatis: ${targetQty.toLocaleString('id-ID')} qty/picker\n` +
     `Assigned: ${assignedSO.toLocaleString('id-ID')} SO / ${assignedQty.toLocaleString('id-ID')} qty\n` +
-    `Skipped: ${skippedSO.toLocaleString('id-ID')} SO / ${skippedQty.toLocaleString('id-ID')} qty\n\n` +
+    `Skipped: ${skippedSO.toLocaleString('id-ID')} SO / ${skippedQty.toLocaleString('id-ID')} qty\n` +
+    `Forced small remainder: ${forcedSO.toLocaleString('id-ID')} SO / ${forcedQty.toLocaleString('id-ID')} qty\n\n` +
     `Hasil masih preview. Klik Simpan & Upload kalau sudah cocok.`
   );
 }
@@ -1295,11 +1382,13 @@ function renderResultCards(targetQty){
   const totalNewQty = arr.reduce((a,d)=>a + d.newQty, 0);
   const totalSkippedSO = Array.isArray(assignSkippedRows) ? assignSkippedRows.length : 0;
   const totalSkippedQty = Array.isArray(assignSkippedRows) ? assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0) : 0;
+  const totalForcedSO = Array.isArray(assignForcedRows) ? assignForcedRows.length : 0;
+  const totalForcedQty = Array.isArray(assignForcedRows) ? assignForcedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0) : 0;
 
   let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap">
     <div>
       <div style="font-weight:700;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
-      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO assigned · ${totalNewQty.toLocaleString('id-ID')} qty baru · ${totalSkippedSO.toLocaleString('id-ID')} SO skipped · ${arr.length.toLocaleString('id-ID')} picker</div>
+      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO assigned · ${totalNewQty.toLocaleString('id-ID')} qty baru · ${totalForcedSO.toLocaleString('id-ID')} SO forced · ${totalSkippedSO.toLocaleString('id-ID')} SO skipped · ${arr.length.toLocaleString('id-ID')} picker</div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
       <button class="btn-ghost" onclick="copyAssignedGlobal('so',this,event)">📋 Copy All SO</button>
@@ -1308,6 +1397,10 @@ function renderResultCards(targetQty){
       <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">💾 Simpan & Upload ke Google Sheets</button>
     </div>
   </div>
+  ${totalForcedSO ? `
+    <div style="margin-bottom:12px;background:var(--blue-dim);border:1px solid var(--blue-light);color:var(--blue);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:11px;line-height:1.5">
+      ℹ️ Soft fallback aktif: ${totalForcedSO.toLocaleString('id-ID')} SO / ${totalForcedQty.toLocaleString('id-ID')} qty dibagikan paksa karena sisa kecil. Beberapa picker bisa lewat target ${Number(targetQty || 0).toLocaleString('id-ID')} qty.
+    </div>` : ''}
   ${totalSkippedSO ? `
     <div style="margin-bottom:12px;background:var(--amber-dim);border:1px solid var(--amber-light);color:var(--amber);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:11px;line-height:1.5">
       ⚠️ Hard limit aktif: ${totalSkippedSO.toLocaleString('id-ID')} SO / ${totalSkippedQty.toLocaleString('id-ID')} qty tidak dibagikan karena akan melewati target ${Number(targetQty || 0).toLocaleString('id-ID')} qty per picker.
@@ -1344,7 +1437,7 @@ function renderResultCards(targetQty){
           <td class="mono"><span class="zone-badge">${esc(s.picking_zone || '-')}</span></td>
           <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
           <td><span class="badge ${String(t).toLowerCase()}">${esc(t)}</span></td>
-          <td class="mono" style="text-align:right;font-weight:700">${Number(s.request_quantity||0).toLocaleString('id-ID')}</td>
+          <td class="mono" style="text-align:right;font-weight:700">${Number(s.request_quantity||0).toLocaleString('id-ID')}${s.force_assigned ? ' <span class="badge s-prog" title="Soft fallback forced assign">forced</span>' : ''}</td>
         </tr>`;
       }).join('');
 
@@ -1640,7 +1733,7 @@ function renderDetailModalTable(){
       <td class="mono">${esc(z)}</td>
       <td><span class="badge ${stClass}">${esc(s.status)}</span></td>
       <td class="mono" style="font-weight:600;color:var(--blue)">${esc(s.Picker || '-')}</td>
-      <td class="mono" style="text-align:right;font-weight:600">${Number(s.request_quantity||0).toLocaleString('id-ID')}</td>
+      <td class="mono" style="text-align:right;font-weight:600">${Number(s.request_quantity||0).toLocaleString('id-ID')}${s.force_assigned ? ' <span class="badge s-prog" title="Soft fallback forced assign">forced</span>' : ''}</td>
       <td class="mono" style="text-align:right;color:var(--text3)">${Number(s.sku_count||0).toLocaleString('id-ID')}</td>
       <td class="mono" style="text-align:right">${qtyPerSku.toFixed(1)}</td>
     </tr>`;

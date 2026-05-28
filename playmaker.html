@@ -311,6 +311,50 @@ body.dark-theme{
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg3)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* LIVE MAP / RACK MONITOR - 2D BLUEPRINT */
+.map-page{flex-direction:column;overflow:hidden;background:#060a0f;color:#e2e8f0}
+.map-shell{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;height:100%;padding:14px;overflow:hidden;background:#060a0f}
+.map-board{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;padding:14px;overflow:hidden;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 50px #00000033}
+.map-side{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;display:flex;flex-direction:column;box-shadow:0 18px 50px #0000002a}
+.map-title-row{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.map-title{font-weight:800;font-size:14px;color:#f8fafc;letter-spacing:.02em}
+.map-sub{font-family:var(--mono);font-size:10px;color:#64748b;margin-top:2px;line-height:1.45}
+.map-legend{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.map-leg{display:flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid #1e2d3d;border-radius:999px;background:#111827;font-family:var(--mono);font-size:10px;color:#94a3b8}
+.map-dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+.map-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.map-kpi{background:#111827;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px}
+.map-kpi-lbl{font-family:var(--mono);font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
+.map-kpi-val{font-family:var(--mono);font-size:20px;font-weight:800;color:#e2e8f0;margin-top:2px}
+.map-blueprint-wrap{flex:1;min-height:560px;position:relative;background:#030712;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;padding:12px;display:flex;align-items:center;justify-content:center}
+.map-canvas{width:100%;max-width:1100px;height:auto;aspect-ratio:1100/680;background:#020617;border:1px solid #243447;border-radius:10px;box-shadow:inset 0 0 40px #00000055;cursor:crosshair;display:block}
+.map-floating-legend{position:absolute;left:28px;top:28px;background:#020617e6;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;z-index:4;display:flex;flex-direction:column;gap:7px;box-shadow:0 10px 28px #00000055;backdrop-filter:blur(6px)}
+.map-floating-legend .map-leg{border:none;background:transparent;padding:0;color:#cbd5e1}
+.map-status-strip{display:flex;gap:8px;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:#64748b}
+.map-status-strip strong{color:#e2e8f0}
+.map-inspector{padding:14px;border-bottom:1px solid #1e2d3d}
+.map-side-title{font-family:var(--mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:10px}
+.map-ins-name{font-size:18px;font-weight:900;color:#f8fafc;margin-bottom:4px}
+.map-ins-status{font-family:var(--mono);font-size:11px;font-weight:800;margin-bottom:12px}
+.map-ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.map-ins-card{background:#111827;border:1px solid #1e2d3d;border-radius:9px;padding:9px}
+.map-ins-lbl{font-family:var(--mono);font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}
+.map-ins-val{font-family:var(--mono);font-size:15px;font-weight:800;color:#e2e8f0;margin-top:2px;word-break:break-word}
+.map-critical{padding:14px;border-bottom:1px solid #1e2d3d;overflow:auto}
+.map-critical-item{padding:9px;border:1px solid #1e2d3d;border-radius:9px;background:#111827;margin-bottom:8px;cursor:pointer;transition:.15s}
+.map-critical-item:hover{border-color:#3b82f6;background:#172554}
+.map-critical-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.map-critical-zone{font-family:var(--mono);font-size:12px;font-weight:800;color:#f8fafc}
+.map-critical-score{font-family:var(--mono);font-size:11px;font-weight:800;color:#f87171}
+.map-critical-sub{font-size:10px;color:#94a3b8;margin-top:3px;line-height:1.4}
+.map-tracker{padding:14px;overflow:auto;min-height:180px}
+.map-picker-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid #1e2d3d;background:#020617;border-radius:10px;margin-bottom:8px;font-family:var(--mono);font-size:10px}
+.map-picker-name{font-family:var(--sans);font-weight:700;color:#f8fafc;font-size:12px}
+.map-picker-meta{color:#64748b;margin-top:2px}
+.map-picker-dot{width:8px;height:8px;border-radius:50%;background:#eab308;box-shadow:0 0 0 4px #eab30822;display:inline-block;margin-right:5px}
+@media(max-width:1100px){.map-shell{grid-template-columns:1fr}.map-side{max-height:480px}.map-kpi-row{grid-template-columns:repeat(2,1fr)}.map-blueprint-wrap{min-height:420px}.map-floating-legend{position:static;flex-direction:row;margin-bottom:8px;align-self:flex-start}}
+
 </style>
 </head>
 <body>
@@ -322,6 +366,7 @@ body.dark-theme{
     <button class="nav-btn" onclick="showPage('dashboard',this)">Dashboard</button>
     <button class="nav-btn" onclick="showPage('so',this)">Data SO</button>
     <button class="nav-btn active" onclick="showPage('assign',this)">Assign SO</button>
+    <button class="nav-btn" onclick="showPage('map',this)">Live Map</button>
   </nav>
   <div class="topbar-right">
     <div class="sync-badge"><div class="dot" id="dot"></div><span id="sync-txt">Loading...</span></div>
@@ -529,6 +574,62 @@ body.dark-theme{
     </div>
   </div>
 
+
+  <div id="page-map" class="page map-page">
+    <div class="map-shell">
+      <div class="map-board">
+        <div class="map-title-row">
+          <div>
+            <div class="map-title">Live Map - 2D Rack Layout Monitor</div>
+            <div class="map-sub" id="map-sub">Rack-strip activity from SO, picker, qty, rack level, and effort score. Click rack strip to inspect zone workload.</div>
+          </div>
+          <div class="map-legend">
+            <div class="map-leg"><span class="map-dot" style="background:#ef4444"></span>Critical</div>
+            <div class="map-leg"><span class="map-dot" style="background:#f59e0b"></span>Picking</div>
+            <div class="map-leg"><span class="map-dot" style="background:#22c55e"></span>Done</div>
+            <div class="map-leg"><span class="map-dot" style="background:#f97316"></span>Normal</div>
+          </div>
+        </div>
+
+        <div class="map-kpi-row">
+          <div class="map-kpi"><div class="map-kpi-lbl">Active Zone</div><div class="map-kpi-val" id="map-kpi-zone">0</div></div>
+          <div class="map-kpi"><div class="map-kpi-lbl">NEW Qty</div><div class="map-kpi-val" id="map-kpi-new">0</div></div>
+          <div class="map-kpi"><div class="map-kpi-lbl">Picking Qty</div><div class="map-kpi-val" id="map-kpi-pick">0</div></div>
+          <div class="map-kpi"><div class="map-kpi-lbl">Active Picker</div><div class="map-kpi-val" id="map-kpi-picker">0</div></div>
+          <div class="map-kpi"><div class="map-kpi-lbl">Critical Zone</div><div class="map-kpi-val" id="map-kpi-critical">0</div></div>
+        </div>
+
+        <div class="map-blueprint-wrap">
+          <div class="map-floating-legend">
+            <div class="map-leg"><span class="map-dot" style="background:#f97316"></span>Normal Rack</div>
+            <div class="map-leg"><span class="map-dot" style="background:#ef4444"></span>Critical Drop SO</div>
+            <div class="map-leg"><span class="map-dot" style="background:#eab308;border-radius:50%"></span>Picker Activity</div>
+          </div>
+          <canvas id="warehouse-map-canvas" class="map-canvas" width="1100" height="680"></canvas>
+        </div>
+
+        <div class="map-status-strip">
+          <span>Click a rack strip to inspect connected SO workload.</span>
+          <span>Selected: <strong id="map-selected-label">-</strong></span>
+        </div>
+      </div>
+
+      <div class="map-side">
+        <div class="map-inspector">
+          <div class="map-side-title">Inspector Komponen</div>
+          <div id="map-inspector-body"><div class="map-sub">Click a warehouse zone to inspect live activity.</div></div>
+        </div>
+        <div class="map-critical">
+          <div class="map-side-title">Top Critical Zones</div>
+          <div id="map-critical-list"><div class="map-sub">No SO data yet.</div></div>
+        </div>
+        <div class="map-tracker">
+          <div class="map-side-title">Picker Zone Tracker</div>
+          <div id="map-picker-list"><div class="map-sub">Picker data appears after sync or assignment preview.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-bg" id="modal">
@@ -649,6 +750,7 @@ function showPage(p,btn){
   document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   btn.classList.add('active');
+  if(p === 'map') renderRackMonitor();
 }
 
 
@@ -852,6 +954,7 @@ async function loadData(){
     renderTable();
     populateDashboardFilters();
     renderDashboard();
+    renderRackMonitor();
     
     dot.className='dot ok';
     txt.innerText = 'Online: ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -1250,6 +1353,7 @@ function runAssign(){
   showAssignSkippedWarning(targetQty);
   renderResultCards(targetQty);
   showAssignForcedInfo(targetQty);
+  renderRackMonitor();
 }
 
 function generateSmartSuggestion(){
@@ -2161,6 +2265,564 @@ function buildChart(id,type,labels,data,label,colors){
     options: { indexAxis:isZone?'y':'x', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:type==='doughnut', position:'right', labels:{ boxWidth:10, font:{ size:10 } } } }, scales: type==='doughnut'?{}:{ x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
   });
 }
+
+
+/* LIVE MAP ENGINE - RACK STRIP BLUEPRINT */
+const BLUEPRINT_W = 1100;
+const BLUEPRINT_H = 680;
+
+/*
+  Rack-strip layout v1.
+  Ini bukan 23k rack individual; ini render strip rack per operational zone.
+  Workload tetap connect ke SO via picking_zone / origin_rack_name / picker / status.
+*/
+const MAP_RACK_LAYOUT_CONFIG = [
+  // SPR inventory block - top / left side
+  {zone:'SPR 1-1', label:'SPR 1-1', x:80,  y:88,  racks:4, rackW:18, rackH:245, gap:14, dir:'vertical', group:'SPR'},
+  {zone:'SPR 1-2', label:'SPR 1-2', x:175, y:88,  racks:5, rackW:18, rackH:245, gap:13, dir:'vertical', group:'SPR'},
+  {zone:'SPR 1-3', label:'SPR 1-3', x:300, y:88,  racks:4, rackW:18, rackH:245, gap:14, dir:'vertical', group:'SPR'},
+  {zone:'SPR 1-4', label:'SPR 1-4', x:395, y:88,  racks:4, rackW:18, rackH:245, gap:14, dir:'vertical', group:'SPR'},
+
+  // Dense mezzanine area - middle lower rack forest
+  {zone:'MZ 1-1', label:'MZ 1-1', x:95,  y:405, racks:11, rackW:15, rackH:130, gap:10, dir:'vertical', group:'MZ'},
+  {zone:'MZ 2-1', label:'MZ 2-1', x:265, y:405, racks:9,  rackW:15, rackH:130, gap:10, dir:'vertical', group:'MZ'},
+  {zone:'MZ 1-2', label:'MZ 1-2', x:95,  y:555, racks:7,  rackW:105, rackH:13, gap:9,  dir:'horizontal', group:'MZ'},
+
+  // High rack / equipment zones - right side
+  {zone:'HRA-1', label:'HRA-1', x:560, y:88,  racks:6, rackW:19, rackH:390, gap:16, dir:'vertical', group:'HRA'},
+  {zone:'HRA-2', label:'HRA-2', x:720, y:88,  racks:5, rackW:19, rackH:390, gap:16, dir:'vertical', group:'HRA'},
+
+  // SPR upper rack lanes - right lower side
+  {zone:'SPR 2-1', label:'SPR 2-1', x:875, y:110, racks:3, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
+  {zone:'SPR 2-2', label:'SPR 2-2', x:950, y:110, racks:4, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
+  {zone:'SPR 2-3', label:'SPR 2-3', x:875, y:335, racks:3, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
+  {zone:'SPR 2-4', label:'SPR 2-4', x:950, y:335, racks:4, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
+
+  // Special handling
+  {zone:'BF-G', label:'BF-G', x:760, y:555, racks:1, rackW:205, rackH:48, gap:0, dir:'block', group:'BFG'}
+];
+
+function buildMapZoneShapes(){
+  const out = [];
+  MAP_RACK_LAYOUT_CONFIG.forEach(cfg=>{
+    const count = Math.max(1, Number(cfg.racks || 1));
+    for(let i=0;i<count;i++){
+      let x = cfg.x;
+      let y = cfg.y;
+      let w = cfg.rackW;
+      let h = cfg.rackH;
+      if(cfg.dir === 'vertical') x = cfg.x + i * (cfg.rackW + cfg.gap);
+      else if(cfg.dir === 'horizontal') y = cfg.y + i * (cfg.rackH + cfg.gap);
+      out.push({
+        zone:cfg.zone,
+        label: i === 0 ? cfg.label : '',
+        rackLabel: count > 1 ? `${cfg.label}-${String(i+1).padStart(2,'0')}` : cfg.label,
+        x,y,w,h,
+        group:cfg.group,
+        rackIndex:i,
+        rackCount:count,
+        dir:cfg.dir,
+        labelAnchor:i===0
+      });
+    }
+  });
+  return out;
+}
+
+const MAP_ZONE_SHAPES = buildMapZoneShapes();
+const MAP_ZONE_ORDER = MAP_RACK_LAYOUT_CONFIG.map(s=>s.zone);
+let selectedMapZone = '';
+let mapActivityRows = [];
+let mapActivityByZone = {};
+let mapHoverZone = '';
+let mapCanvasBound = false;
+
+function getZoneShapes(zone){ return MAP_ZONE_SHAPES.filter(s=>s.zone === zone); }
+function getZoneBounds(zone){
+  const shapes = getZoneShapes(zone);
+  if(!shapes.length) return null;
+  const minX = Math.min(...shapes.map(s=>s.x));
+  const minY = Math.min(...shapes.map(s=>s.y));
+  const maxX = Math.max(...shapes.map(s=>s.x+s.w));
+  const maxY = Math.max(...shapes.map(s=>s.y+s.h));
+  return {x:minX,y:minY,w:maxX-minX,h:maxY-minY,cx:(minX+maxX)/2,cy:(minY+maxY)/2};
+}
+
+function normalizeZoneName(value){
+  const z = String(value || '').trim().toUpperCase().replace(/\s+/g,' ');
+  if(!z) return 'UNKNOWN';
+  if(z.includes('MZ 1-1') || z.includes('MZ1-1')) return 'MZ 1-1';
+  if(z.includes('MZ 2-1') || z.includes('MZ2-1')) return 'MZ 2-1';
+  if(z.includes('MZ 1-2') || z.includes('MZ1-2')) return 'MZ 1-2';
+  if(z.includes('HRA-1') || z.includes('HRA 1')) return 'HRA-1';
+  if(z.includes('HRA-2') || z.includes('HRA 2')) return 'HRA-2';
+  if(z.includes('SPR 1-1') || z.includes('SPR1-1')) return 'SPR 1-1';
+  if(z.includes('SPR 1-2') || z.includes('SPR1-2')) return 'SPR 1-2';
+  if(z.includes('SPR 1-3') || z.includes('SPR1-3')) return 'SPR 1-3';
+  if(z.includes('SPR 1-4') || z.includes('SPR1-4')) return 'SPR 1-4';
+  if(z.includes('SPR 2-1') || z.includes('SPR2-1')) return 'SPR 2-1';
+  if(z.includes('SPR 2-2') || z.includes('SPR2-2')) return 'SPR 2-2';
+  if(z.includes('SPR 2-3') || z.includes('SPR2-3')) return 'SPR 2-3';
+  if(z.includes('SPR 2-4') || z.includes('SPR2-4')) return 'SPR 2-4';
+  if(z.includes('BF-G') || z.includes('BFG') || z.includes('GALON')) return 'BF-G';
+  return String(value || 'UNKNOWN').trim() || 'UNKNOWN';
+}
+
+function getActualLevelFromSO(s){
+  const direct = Number(s.actual_level || s.level_actual || s.rack_level_actual || 0);
+  if(direct) return direct;
+  const rack = String(s.origin_rack_name || s.rack_name || s.location || '').toUpperCase();
+  const m = rack.match(/-L(\d+)(-|$)/);
+  return m ? Number(m[1]) : 0;
+}
+
+function isEquipmentSO(s, zone){
+  if(s.is_equipment_zone === true || String(s.is_equipment_zone).toLowerCase() === 'true') return true;
+  const zg = String(s.zone_group || '').toUpperCase();
+  const z = String(zone || '').toUpperCase();
+  return zg.includes('HRA') || zg.includes('SPR_2') || z.includes('HRA') || z.includes('SPR 2') || getActualLevelFromSO(s) >= 5;
+}
+
+function zonePenalty(zone){
+  const z = String(zone || '').toUpperCase();
+  if(z.includes('HRA')) return 500;
+  if(z.includes('SPR 2')) return 400;
+  if(z.includes('MZ')) return 300;
+  if(z.includes('BF-G')) return 350;
+  return 0;
+}
+
+function blankZoneActivity(zone){
+  return {
+    zone, total_so:0, total_qty:0, new_so:0, new_qty:0,
+    picking_so:0, picking_qty:0, done_so:0, done_qty:0,
+    active_pickers:new Set(), max_level:0, has_equipment_zone:false,
+    unique_racks:new Set(), effort_score:0, status:'NORMAL'
+  };
+}
+
+function buildZoneActivity(data){
+  const map = {};
+  MAP_ZONE_ORDER.forEach(zone=>{ map[zone] = blankZoneActivity(zone); });
+
+  (data || []).forEach(s=>{
+    const zone = normalizeZoneName(s.picking_zone || s.zone || s.Picking_Zone || s['Picking Zone']);
+    if(!map[zone]) map[zone] = blankZoneActivity(zone);
+
+    const d = map[zone];
+    const qty = Number(s.request_quantity || s.qty || s.request_qty || 0) || 0;
+    const st = String(s.status || 'NEW').toUpperCase().trim();
+    const picker = s.Picker || s.picker || s.picker_name || '';
+    const rack = s.origin_rack_name || s.rack_name || s.location || '';
+    const lvl = getActualLevelFromSO(s);
+
+    d.total_so += 1;
+    d.total_qty += qty;
+    if(rack) d.unique_racks.add(String(rack));
+    if(lvl > d.max_level) d.max_level = lvl;
+    if(isEquipmentSO(s, zone)) d.has_equipment_zone = true;
+    if(picker) d.active_pickers.add(String(picker));
+
+    if(st === 'NEW'){
+      d.new_so += 1; d.new_qty += qty;
+    } else if(st === 'PICKING'){
+      d.picking_so += 1; d.picking_qty += qty;
+    } else {
+      d.done_so += 1; d.done_qty += qty;
+    }
+  });
+
+  Object.values(map).forEach(d=>{
+    const equipmentPenalty = d.has_equipment_zone ? 250 : 0;
+    d.effort_score = Math.round(
+      d.total_qty +
+      (d.total_so * 10) +
+      (d.unique_racks.size * 3) +
+      (d.max_level * 50) +
+      zonePenalty(d.zone) +
+      equipmentPenalty
+    );
+
+    if(d.new_qty >= 1000 || d.new_so >= 30 || d.effort_score >= 5000) d.status = 'CRITICAL';
+    else if(d.picking_qty > 0 || d.picking_so > 0) d.status = 'PICKING';
+    else if(d.done_so > 0 && d.new_so === 0 && d.picking_so === 0) d.status = 'DONE';
+    else d.status = 'NORMAL';
+
+    d.active_pickers = [...d.active_pickers].sort();
+    d.unique_rack_count = d.unique_racks.size;
+    delete d.unique_racks;
+  });
+
+  return Object.values(map).sort((a,b)=>{
+    const ai = MAP_ZONE_ORDER.indexOf(a.zone);
+    const bi = MAP_ZONE_ORDER.indexOf(b.zone);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi) || a.zone.localeCompare(b.zone);
+  });
+}
+
+function mapColorForStatus(status){
+  if(status === 'CRITICAL') return {fill:'#991b1b', stroke:'#f43f5e', glow:'#ef4444'};
+  if(status === 'PICKING') return {fill:'#78350f', stroke:'#eab308', glow:'#f59e0b'};
+  if(status === 'DONE') return {fill:'#065f46', stroke:'#22c55e', glow:'#22c55e'};
+  return {fill:'#ea580c', stroke:'#fb923c', glow:'#f97316'};
+}
+
+function mapPointerToCanvas(e, canvas){
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+
+function getZoneAtPoint(x,y){
+  for(let i=MAP_ZONE_SHAPES.length-1;i>=0;i--){
+    const s = MAP_ZONE_SHAPES[i];
+    if(x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h) return s.zone;
+  }
+  return '';
+}
+
+function bindMapCanvas(){
+  if(mapCanvasBound) return;
+  const canvas = document.getElementById('warehouse-map-canvas');
+  if(!canvas) return;
+  mapCanvasBound = true;
+  canvas.addEventListener('mousemove', e=>{
+    const p = mapPointerToCanvas(e, canvas);
+    const z = getZoneAtPoint(p.x,p.y);
+    if(z !== mapHoverZone){
+      mapHoverZone = z;
+      canvas.style.cursor = z ? 'pointer' : 'crosshair';
+      drawWarehouseBlueprint();
+    }
+  });
+  canvas.addEventListener('mouseleave', ()=>{
+    mapHoverZone = '';
+    canvas.style.cursor = 'crosshair';
+    drawWarehouseBlueprint();
+  });
+  canvas.addEventListener('click', e=>{
+    const p = mapPointerToCanvas(e, canvas);
+    const z = getZoneAtPoint(p.x,p.y);
+    if(z) selectMapZone(z);
+  });
+}
+
+function drawText(ctx, text, x, y, opts={}){
+  ctx.save();
+  ctx.fillStyle = opts.color || '#cbd5e1';
+  ctx.font = opts.font || '11px IBM Plex Mono';
+  ctx.textAlign = opts.align || 'left';
+  ctx.textBaseline = opts.baseline || 'alphabetic';
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function roundRectPath(ctx, x, y, w, h, r){
+  const rr = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+rr,y);
+  ctx.arcTo(x+w,y,x+w,y+h,rr);
+  ctx.arcTo(x+w,y+h,x,y+h,rr);
+  ctx.arcTo(x,y+h,x,y,rr);
+  ctx.arcTo(x,y,x+w,y,rr);
+  ctx.closePath();
+}
+
+function drawRoom(ctx, name, x, y, w, h, fill='#1e293b'){
+  ctx.save();
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 2;
+  ctx.fillRect(x,y,w,h);
+  ctx.strokeRect(x,y,w,h);
+  drawText(ctx, name, x+10, y+22, {color:'#94a3b8', font:'11px Inter'});
+  ctx.restore();
+}
+
+function drawZoneShape(ctx, shape, data){
+  const d = data || blankZoneActivity(shape.zone);
+  const c = mapColorForStatus(d.status);
+  const selected = selectedMapZone === shape.zone;
+  const hovered = mapHoverZone === shape.zone;
+  const intensity = Math.min(0.42, (d.effort_score || 0) / 26000);
+  const isAnchor = shape.labelAnchor;
+
+  ctx.save();
+  if(selected || hovered){
+    ctx.shadowBlur = selected ? 22 : 12;
+    ctx.shadowColor = selected ? '#60a5fa' : c.glow;
+  }
+
+  // rack strip body
+  ctx.fillStyle = c.fill;
+  ctx.strokeStyle = selected ? '#60a5fa' : hovered ? '#93c5fd' : c.stroke;
+  ctx.lineWidth = selected ? 2.5 : hovered ? 2 : 1.2;
+  roundRectPath(ctx, shape.x, shape.y, shape.w, shape.h, 2.5);
+  ctx.fill();
+  ctx.stroke();
+
+  // heat overlay, stronger when effort high
+  ctx.globalAlpha = intensity;
+  ctx.fillStyle = c.glow;
+  roundRectPath(ctx, shape.x, shape.y, shape.w, shape.h, 2.5);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // internal rack shelf lines
+  ctx.strokeStyle = 'rgba(2,6,23,.28)';
+  ctx.lineWidth = 1;
+  if(shape.h >= shape.w){
+    for(let y=shape.y+18;y<shape.y+shape.h;y+=24){
+      ctx.beginPath();ctx.moveTo(shape.x,y);ctx.lineTo(shape.x+shape.w,y);ctx.stroke();
+    }
+  } else {
+    for(let x=shape.x+24;x<shape.x+shape.w;x+=24){
+      ctx.beginPath();ctx.moveTo(x,shape.y);ctx.lineTo(x,shape.y+shape.h);ctx.stroke();
+    }
+  }
+
+  // selected/hovered group outline around whole zone cluster
+  if(isAnchor && (selected || hovered)){
+    const b = getZoneBounds(shape.zone);
+    if(b){
+      ctx.save();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = selected ? '#60a5fa' : '#93c5fd';
+      ctx.lineWidth = selected ? 2 : 1.5;
+      ctx.setLineDash([6,4]);
+      roundRectPath(ctx, b.x-8, b.y-8, b.w+16, b.h+16, 8);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // label only once per zone, not on every strip
+  if(isAnchor){
+    const b = getZoneBounds(shape.zone) || shape;
+    const labelY = b.y - 9 < 22 ? b.y + 14 : b.y - 9;
+    drawText(ctx, shape.zone, b.x, labelY, {color:'#cbd5e1', font:'bold 10px IBM Plex Mono'});
+    if(d.total_so > 0){
+      const badgeX = b.x + b.w + 6;
+      const badgeY = b.y + 12;
+      drawText(ctx, `${d.total_so} SO`, badgeX, badgeY, {color:'#e2e8f0', font:'bold 10px IBM Plex Mono'});
+      drawText(ctx, `${Math.round(d.total_qty).toLocaleString('id-ID')} qty`, badgeX, badgeY+14, {color:'#94a3b8', font:'9px IBM Plex Mono'});
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawPickerMarkers(ctx){
+  const rows = mapActivityRows.filter(d=>d.active_pickers && d.active_pickers.length);
+  rows.forEach(d=>{
+    const b = getZoneBounds(d.zone);
+    if(!b) return;
+    const n = Math.min(d.active_pickers.length, 6);
+    for(let i=0;i<n;i++){
+      const px = b.cx + ((i%3)-1) * 20;
+      const py = b.cy + Math.floor(i/3) * 20 - 8;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, 9, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(234,179,8,.22)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(px, py, 4.5, 0, Math.PI*2);
+      ctx.fillStyle = '#eab308';
+      ctx.fill();
+      const name = d.active_pickers[i] || '';
+      const initial = name.split(/\s+/).map(x=>x[0]).join('').slice(0,3).toUpperCase();
+      drawText(ctx, initial, px+11, py+4, {color:'#f8fafc', font:'bold 9px Inter'});
+      ctx.restore();
+    }
+  });
+}
+
+function drawWarehouseBlueprint(){
+  const canvas = document.getElementById('warehouse-map-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // outer warehouse boundary
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(35,35,1030,610);
+
+  // broad area backgrounds, based on WH Sentul operational blocks
+  ctx.fillStyle = 'rgba(37,99,235,.09)';
+  ctx.fillRect(60,62,470,300);
+  drawText(ctx, 'SPR INVENTORY / PICKING RACK', 70, 82, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+
+  ctx.fillStyle = 'rgba(16,185,129,.08)';
+  ctx.fillRect(70,382,470,215);
+  drawText(ctx, 'MEZZANINE PICK FACE', 80, 398, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+
+  ctx.fillStyle = 'rgba(124,58,237,.08)';
+  ctx.fillRect(540,62,310,445);
+  drawText(ctx, 'HIGH RACK / EQUIPMENT AREA', 550, 82, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+
+  ctx.fillStyle = 'rgba(245,158,11,.06)';
+  ctx.fillRect(855,62,200,455);
+  drawText(ctx, 'SPR UPPER RACK', 865, 82, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+
+  // static rooms / support areas
+  drawRoom(ctx, 'Auto Wrapper', 90, 610, 88, 25, '#334155');
+  drawRoom(ctx, 'Office / Toilet', 200, 600, 150, 35, '#1e293b');
+  drawRoom(ctx, 'Transit / Assembly', 370, 600, 160, 35, '#1e293b');
+  drawRoom(ctx, 'Outbound Staging', 545, 600, 150, 35, '#1e293b');
+  drawRoom(ctx, 'BF-G / Galon', 760, 555, 205, 48, '#0f766e');
+  drawRoom(ctx, 'Inbound / RFM', 900, 608, 155, 27, '#1e293b');
+
+  // forklift / pedestrian path hints
+  ctx.save();
+  ctx.strokeStyle = 'rgba(148,163,184,.20)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,8]);
+  ctx.beginPath(); ctx.moveTo(55,365); ctx.lineTo(1045,365); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(540,55); ctx.lineTo(540,625); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(855,55); ctx.lineTo(855,625); ctx.stroke();
+  ctx.restore();
+
+  // subtle grid for map feeling
+  ctx.strokeStyle = 'rgba(148,163,184,.08)';
+  ctx.lineWidth = 1;
+  for(let x=80; x<1060; x+=80){ctx.beginPath();ctx.moveTo(x,50);ctx.lineTo(x,625);ctx.stroke();}
+  for(let y=120; y<625; y+=70){ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(1060,y);ctx.stroke();}
+
+  // rack strips
+  MAP_ZONE_SHAPES.forEach(shape=>drawZoneShape(ctx, shape, mapActivityByZone[shape.zone]));
+  drawPickerMarkers(ctx);
+
+  // access gates
+  drawText(ctx, 'Main Gate', 90, 655, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
+  ctx.fillStyle = '#ef4444'; ctx.fillRect(85,635,75,5);
+  drawText(ctx, 'Shutter / Loading', 545, 655, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
+  ctx.fillStyle = '#ef4444'; ctx.fillRect(550,635,110,5);
+
+  drawText(ctx, 'WH SENTUL - PLAYMAKER 2D RACK LAYOUT MONITOR', 35, 23, {color:'#94a3b8', font:'bold 12px IBM Plex Mono'});
+}
+
+function renderRackMonitor(){
+  bindMapCanvas();
+  mapActivityRows = buildZoneActivity(soData);
+  mapActivityByZone = {};
+  mapActivityRows.forEach(d=>{ mapActivityByZone[d.zone] = d; });
+
+  const rows = mapActivityRows;
+  const activeRows = rows.filter(x=>x.total_so > 0);
+  const newQty = rows.reduce((a,x)=>a+x.new_qty,0);
+  const pickingQty = rows.reduce((a,x)=>a+x.picking_qty,0);
+  const critical = rows.filter(x=>x.status === 'CRITICAL').length;
+  const pickers = new Set();
+  rows.forEach(x=>(x.active_pickers||[]).forEach(p=>pickers.add(p)));
+
+  const setText = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  setText('map-kpi-zone', activeRows.length.toLocaleString('id-ID'));
+  setText('map-kpi-new', newQty.toLocaleString('id-ID'));
+  setText('map-kpi-pick', pickingQty.toLocaleString('id-ID'));
+  setText('map-kpi-picker', pickers.size.toLocaleString('id-ID'));
+  setText('map-kpi-critical', critical.toLocaleString('id-ID'));
+
+  if(!selectedMapZone && activeRows[0]) selectedMapZone = activeRows[0].zone;
+  if(!selectedMapZone) selectedMapZone = 'MZ 1-1';
+  setText('map-selected-label', selectedMapZone || '-');
+
+  drawWarehouseBlueprint();
+  renderMapInspector(mapActivityByZone[selectedMapZone] || rows[0]);
+  renderMapCriticalList(rows);
+  renderMapPickerList(rows);
+}
+
+function selectMapZone(zone){
+  selectedMapZone = zone;
+  renderRackMonitor();
+}
+
+function renderMapInspector(d){
+  const box = document.getElementById('map-inspector-body');
+  if(!box || !d) return;
+  const pickerText = d.active_pickers && d.active_pickers.length ? d.active_pickers.join(', ') : '-';
+  const equip = d.has_equipment_zone ? 'YES' : 'NO';
+  const statusColor = d.status === 'CRITICAL' ? '#f87171' : d.status === 'PICKING' ? '#fbbf24' : d.status === 'DONE' ? '#4ade80' : '#fb923c';
+  box.innerHTML = `
+    <div class="map-ins-name">${esc(d.zone)}</div>
+    <div class="map-ins-status" style="color:${statusColor}">${d.status}</div>
+    <div class="map-ins-grid">
+      <div class="map-ins-card"><div class="map-ins-lbl">Total SO</div><div class="map-ins-val">${d.total_so.toLocaleString('id-ID')}</div></div>
+      <div class="map-ins-card"><div class="map-ins-lbl">Total Qty</div><div class="map-ins-val">${d.total_qty.toLocaleString('id-ID')}</div></div>
+      <div class="map-ins-card"><div class="map-ins-lbl">NEW</div><div class="map-ins-val">${d.new_so.toLocaleString('id-ID')} / ${d.new_qty.toLocaleString('id-ID')}</div></div>
+      <div class="map-ins-card"><div class="map-ins-lbl">PICKING</div><div class="map-ins-val">${d.picking_so.toLocaleString('id-ID')} / ${d.picking_qty.toLocaleString('id-ID')}</div></div>
+      <div class="map-ins-card"><div class="map-ins-lbl">DONE</div><div class="map-ins-val">${d.done_so.toLocaleString('id-ID')} / ${d.done_qty.toLocaleString('id-ID')}</div></div>
+      <div class="map-ins-card"><div class="map-ins-lbl">Effort</div><div class="map-ins-val">${d.effort_score.toLocaleString('id-ID')}</div></div>
+      <div class="map-ins-card"><div class="map-ins-lbl">Max Level</div><div class="map-ins-val">L${d.max_level || '-'}</div></div>
+      <div class="map-ins-card"><div class="map-ins-lbl">Equipment</div><div class="map-ins-val">${equip}</div></div>
+    </div>
+    <div class="map-ins-card" style="margin-top:8px">
+      <div class="map-ins-lbl">Active Pickers</div>
+      <div class="map-sub" style="margin-top:4px">${esc(pickerText)}</div>
+    </div>`;
+}
+
+function renderMapCriticalList(rows){
+  const list = document.getElementById('map-critical-list');
+  if(!list) return;
+  const top = (rows || [])
+    .filter(x=>x.total_so > 0)
+    .sort((a,b)=>b.effort_score - a.effort_score)
+    .slice(0,8);
+
+  if(!top.length){
+    list.innerHTML = `<div class="map-sub">No SO data yet. Sync data first.</div>`;
+    return;
+  }
+
+  list.innerHTML = top.map(d=>`
+    <div class="map-critical-item" onclick="selectMapZone('${esc(d.zone)}')">
+      <div class="map-critical-top">
+        <div class="map-critical-zone">${esc(d.zone)}</div>
+        <div class="map-critical-score">${d.effort_score.toLocaleString('id-ID')}</div>
+      </div>
+      <div class="map-critical-sub">${d.status} - ${d.total_so.toLocaleString('id-ID')} SO - NEW ${d.new_qty.toLocaleString('id-ID')} qty - L${d.max_level || '-'}</div>
+    </div>`).join('');
+}
+
+function renderMapPickerList(rows){
+  const list = document.getElementById('map-picker-list');
+  if(!list) return;
+  const byPicker = {};
+  (soData || []).forEach(s=>{
+    const picker = s.Picker || s.picker || s.picker_name || '';
+    if(!picker) return;
+    const zone = normalizeZoneName(s.picking_zone || s.zone || s['Picking Zone']);
+    if(!byPicker[picker]) byPicker[picker] = {picker, zones:new Set(), so:0, qty:0};
+    byPicker[picker].zones.add(zone);
+    byPicker[picker].so += 1;
+    byPicker[picker].qty += Number(s.request_quantity || 0) || 0;
+  });
+  const arr = Object.values(byPicker).sort((a,b)=>b.qty-a.qty).slice(0,12);
+  if(!arr.length){
+    list.innerHTML = `<div class="map-sub">No active picker found.</div>`;
+    return;
+  }
+  list.innerHTML = arr.map(p=>`
+    <div class="map-picker-row">
+      <div>
+        <div class="map-picker-name"><span class="map-picker-dot"></span>${esc(p.picker)}</div>
+        <div class="map-picker-meta">Area: ${esc([...p.zones].slice(0,3).join(', '))}${p.zones.size>3?' +'+(p.zones.size-3):''}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="color:#facc15;font-weight:800">${p.qty.toLocaleString('id-ID')} qty</div>
+        <div class="map-picker-meta">${p.so.toLocaleString('id-ID')} SO</div>
+      </div>
+    </div>`).join('');
+}
+
 
 function downloadCSV(){
   if(!Object.keys(assignResult).length){alert('Jalankan assign dulu.');return;}

@@ -1301,6 +1301,54 @@ function generateSmartSuggestion(){
   );
 }
 
+
+function getAssignedSkuCount(s){
+  const raw = firstValue(s || {}, [
+    'sku_count','SKU Count','skuCount','sku_count_total','total_sku','totalSKU','sku_total'
+  ], 0);
+  return Number(String(raw || '0').replace(/,/g,'')) || 0;
+}
+
+function getAssignedLocationCount(s){
+  const raw = firstValue(s || {}, [
+    'picking_location_count','Picking Location Count','location_count','Location Count',
+    'rack_count','Rack Count','origin_rack_count','Origin Rack Count','loc_count','pick_loc_count',
+    'pickingLocationCount','unique_location_count','unique_rack_count'
+  ], '');
+
+  if(raw !== '' && raw !== null && raw !== undefined){
+    const n = Number(String(raw).replace(/,/g,''));
+    if(Number.isFinite(n)) return n;
+  }
+
+  const possibleArrays = [s?.locations, s?.racks, s?.origin_racks, s?.picking_locations];
+  for(const arr of possibleArrays){
+    if(Array.isArray(arr)){
+      return new Set(arr.map(x => String(x || '').trim()).filter(Boolean)).size;
+    }
+  }
+
+  return null;
+}
+
+function formatAssignedLocationCount(s){
+  const c = getAssignedLocationCount(s);
+  return c === null ? '-' : c.toLocaleString('id-ID');
+}
+
+function sumAssignedLocationCount(rows){
+  let total = 0;
+  let known = 0;
+  rows.forEach(s=>{
+    const c = getAssignedLocationCount(s);
+    if(c !== null){
+      total += Number(c || 0);
+      known++;
+    }
+  });
+  return known ? total.toLocaleString('id-ID') : '-';
+}
+
 function buildAssignedRows(){
   const rows = [];
   Object.values(assignResult).forEach(d => {
@@ -1322,7 +1370,7 @@ function buildDetailCopyText(rows){
     const s = x.so;
     const w = s.WAVE || getWave(s.destination_name);
     const t = s.type || getType(s.destination_name);
-    return [s.so_number, x.picker, s.destination_name || '', s.picking_zone || '', w || '', t || '', s.request_quantity || 0].join('\t');
+    return [s.so_number, x.picker, s.destination_name || '', s.picking_zone || '', w || '', t || '', getAssignedSkuCount(s), formatAssignedLocationCount(s), s.request_quantity || 0].join('\t');
   }).join('\n');
 }
 
@@ -1360,11 +1408,11 @@ function downloadAssignedPickerCSV(btn, e){
   const d = assignResult[picker];
   if(!d || !d.soList || !d.soList.length){ alert('Picker ini belum punya SO untuk didownload.'); return; }
 
-  const csv = ['Picker,SO Number,Destination,Zone,Wave,Type,Qty'];
+  const csv = ['Picker,SO Number,Destination,Zone,Wave,Type,SKU Count,Picking Location Count,Qty'];
   d.soList.forEach(s=>{
     const w = s.WAVE || getWave(s.destination_name);
     const t = s.type || getType(s.destination_name);
-    csv.push(`"${String(picker).replace(/"/g,'""')}","${String(s.so_number||'').replace(/"/g,'""')}","${String(s.destination_name||'').replace(/"/g,'""')}","${String(s.picking_zone||'').replace(/"/g,'""')}","${String(w||'').replace(/"/g,'""')}","${String(t||'').replace(/"/g,'""')}","${Number(s.request_quantity||0)}"`);
+    csv.push(`"${String(picker).replace(/"/g,'""')}","${String(s.so_number||'').replace(/"/g,'""')}","${String(s.destination_name||'').replace(/"/g,'""')}","${String(s.picking_zone||'').replace(/"/g,'""')}","${String(w||'').replace(/"/g,'""')}","${String(t||'').replace(/"/g,'""')}","${getAssignedSkuCount(s)}","${formatAssignedLocationCount(s)}","${Number(s.request_quantity||0)}"`);
   });
 
   const a=document.createElement('a');
@@ -1407,7 +1455,11 @@ function renderResultCards(targetQty){
       <br>Naikkan target atau tambah picker kalau SO skipped tetap harus dibagikan.
     </div>` : ''}
   <div style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-    <input type="text" id="assign-picker-search" class="search" placeholder="Filter nama picker / zone / SO..." oninput="filterAssignedPickers()" style="width:280px;max-width:100%">
+    <select id="assign-picker-filter" onchange="filterAssignedPickers()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;min-width:240px;max-width:100%">
+      <option value="">Picker semua</option>
+      ${arr.map(d=>`<option value="${esc(d.picker)}">${esc(d.picker)}</option>`).join('')}
+    </select>
+    <input type="text" id="assign-result-search" class="search" placeholder="Cari zone / SO / tujuan..." oninput="filterAssignedPickers()" style="width:260px;max-width:100%">
     <button class="btn-ghost" onclick="clearAssignedPickerFilter()">✕ Clear</button>
     <div class="mono" id="assign-picker-filter-count" style="font-size:10px;color:var(--text3);margin-left:auto">Menampilkan ${arr.length.toLocaleString('id-ID')} picker</div>
   </div>
@@ -1429,6 +1481,8 @@ function renderResultCards(targetQty){
     const zoneEntries = Object.entries(zoneSummary).sort((a,b)=>b[1].qty-a[1].qty);
     const zonesStr = zoneEntries.map(([z])=>z).join(', ');
     const zoneChips = zoneEntries.map(([z,v])=>`<span class="zone-badge" title="${v.so} SO · ${v.qty.toLocaleString('id-ID')} qty">${esc(z)} · ${v.so} SO · ${v.qty.toLocaleString('id-ID')} qty</span>`).join(' ');
+    const pickerSkuTotal = d.soList.reduce((a,s)=>a + getAssignedSkuCount(s), 0);
+    const pickerLocTotal = sumAssignedLocationCount(d.soList);
 
     const tableRows = d.soList
       .slice()
@@ -1436,12 +1490,16 @@ function renderResultCards(targetQty){
       .map(s=>{
         const w = s.WAVE || getWave(s.destination_name);
         const t = s.type || getType(s.destination_name);
+        const skuCount = getAssignedSkuCount(s);
+        const locCount = formatAssignedLocationCount(s);
         return `<tr>
           <td class="mono"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></td>
           <td style="font-weight:500">${esc(s.destination_name || '-')}</td>
           <td class="mono"><span class="zone-badge">${esc(s.picking_zone || '-')}</span></td>
           <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
           <td><span class="badge ${String(t).toLowerCase()}">${esc(t)}</span></td>
+          <td class="mono" style="text-align:right">${Number(skuCount||0).toLocaleString('id-ID')}</td>
+          <td class="mono" style="text-align:right">${locCount}</td>
           <td class="mono" style="text-align:right;font-weight:700">${Number(s.request_quantity||0).toLocaleString('id-ID')}${s.force_assigned ? ' <span class="badge s-prog" title="Soft fallback forced assign">forced</span>' : ''}</td>
         </tr>`;
       }).join('');
@@ -1452,7 +1510,7 @@ function renderResultCards(targetQty){
         <div class="pc-av" style="background:${COLORS[idx % COLORS.length]}22;color:${COLORS[idx % COLORS.length]}">${esc(d.picker.slice(0,2).toUpperCase())}</div>
         <div class="pc-info">
           <div class="pc-name">${esc(d.picker)}</div>
-          <div class="pc-meta">${d.soList.length.toLocaleString('id-ID')} SO baru · ${d.newQty.toLocaleString('id-ID')} qty baru · ${zoneEntries.length.toLocaleString('id-ID')} zone</div>
+          <div class="pc-meta">${d.soList.length.toLocaleString('id-ID')} SO baru · ${d.newQty.toLocaleString('id-ID')} qty baru · ${pickerSkuTotal.toLocaleString('id-ID')} SKU · ${pickerLocTotal} lokasi · ${zoneEntries.length.toLocaleString('id-ID')} zone</div>
         </div>
         <div class="pc-right">
           <div style="text-align:right">
@@ -1479,7 +1537,7 @@ function renderResultCards(targetQty){
         <div style="overflow:auto;max-height:420px">
           <table>
             <thead><tr>
-              <th>SO Number</th><th>Destination</th><th>Zone</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th>
+              <th>SO Number</th><th>Destination</th><th>Zone</th><th>Wave</th><th>Type</th><th style="text-align:right">SKU</th><th style="text-align:right">Pick Loc</th><th style="text-align:right">Qty</th>
             </tr></thead>
             <tbody>${tableRows}</tbody>
           </table>
@@ -1495,7 +1553,8 @@ function renderResultCards(targetQty){
 }
 
 function filterAssignedPickers(){
-  const q = String(document.getElementById('assign-picker-search')?.value || '').toLowerCase().trim();
+  const pickerFilter = String(document.getElementById('assign-picker-filter')?.value || '').toLowerCase().trim();
+  const q = String(document.getElementById('assign-result-search')?.value || '').toLowerCase().trim();
   const cards = [...document.querySelectorAll('#picker-grid .pc')];
   let shown = 0;
 
@@ -1503,21 +1562,27 @@ function filterAssignedPickers(){
     const picker = String(card.dataset.picker || '').toLowerCase();
     const zones = String(card.dataset.zones || '').toLowerCase();
     const haystack = (picker + ' ' + zones + ' ' + card.innerText.toLowerCase());
-    const match = !q || haystack.includes(q);
+    const matchPicker = !pickerFilter || picker === pickerFilter;
+    const matchQuery = !q || haystack.includes(q);
+    const match = matchPicker && matchQuery;
     card.style.display = match ? '' : 'none';
     if(match) shown++;
   });
 
   const counter = document.getElementById('assign-picker-filter-count');
   if(counter){
-    counter.textContent = q
-      ? `Menampilkan ${shown.toLocaleString('id-ID')} / ${cards.length.toLocaleString('id-ID')} picker`
-      : `Menampilkan ${cards.length.toLocaleString('id-ID')} picker`;
+    const total = cards.length.toLocaleString('id-ID');
+    const current = shown.toLocaleString('id-ID');
+    counter.textContent = (pickerFilter || q)
+      ? `Menampilkan ${current} / ${total} picker`
+      : `Menampilkan ${total} picker`;
   }
 }
 
 function clearAssignedPickerFilter(){
-  const inp = document.getElementById('assign-picker-search');
+  const sel = document.getElementById('assign-picker-filter');
+  const inp = document.getElementById('assign-result-search');
+  if(sel) sel.value = '';
   if(inp) inp.value = '';
   filterAssignedPickers();
 }

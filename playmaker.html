@@ -291,6 +291,9 @@ body.dark-theme{
 .btn-mega-assign{background:var(--green);color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-shadow:0 4px 12px #16a34a33;transition:all .2s ease;font-family:var(--mono)}
 .btn-mega-assign:hover{background:#15803d;transform:translateY(-1px);box-shadow:0 6px 16px #16a34a44}
 .btn-mega-assign:active{transform:scale(.98)}
+.btn-suggest{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-shadow:0 4px 12px #7c3aed33;transition:all .2s ease;font-family:var(--mono)}
+.btn-suggest:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 6px 16px #7c3aed44}
+.btn-suggest:active{transform:scale(.98)}
 .btn-secondary-download{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:9px;font-size:12px;font-weight:500;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;font-family:var(--mono)}
 .btn-secondary-download:hover{background:var(--bg3)}
 
@@ -408,6 +411,7 @@ body.dark-theme{
           </div>
 
           <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn-suggest" onclick="generateSmartSuggestion()">🪄 SMART SUGGESTION</button>
             <button class="btn-mega-assign" onclick="confirmAssign()">🚀 ASSIGN SEKARANG</button>
             <button class="btn-secondary-download" onclick="downloadCSV()">📥 Download CSV</button>
           </div>
@@ -976,13 +980,30 @@ function confirmAssign(){
 
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
 
-function runAssign(){
-  closeModal();
+function getAssignablePool(){
+  const pool = [];
 
-  const targetQty = Number(document.getElementById('target').value) || 2400;
-  const pList = [...myPickers];
+  soData.forEach(s => {
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    const z = s.picking_zone;
 
-  let initialWorkload = {};
+    if(
+      s.status === 'NEW' &&
+      fWave.has(w) &&
+      fType.has(t) &&
+      fZone.has(z) &&
+      !s.Picker
+    ){
+      pool.push(s);
+    }
+  });
+
+  return pool;
+}
+
+function getInitialWorkload(pList){
+  const initialWorkload = {};
   pList.forEach(p => initialWorkload[p] = 0);
 
   soData.forEach(s => {
@@ -991,46 +1012,62 @@ function runAssign(){
     }
   });
 
+  return initialWorkload;
+}
+
+function initAssignResult(pList, initialWorkload){
   assignResult = {};
   assignSkippedRows = [];
 
   pList.forEach(p => {
     assignResult[p] = {
       picker: p,
-      initialQty: initialWorkload[p],
+      initialQty: Number(initialWorkload[p] || 0),
       newQty: 0,
-      totalQty: initialWorkload[p],
+      totalQty: Number(initialWorkload[p] || 0),
       soList: []
     };
   });
+}
 
-  let pool = [];
-  soData.forEach(s => {
-    const w = s.WAVE || getWave(s.destination_name);
-    const t = s.type || getType(s.destination_name);
+function sortPoolByQtyDesc(pool){
+  return pool.slice().sort((a,b) =>
+    Number(b.request_quantity || 0) - Number(a.request_quantity || 0)
+  );
+}
 
-    if(
-      s.status === 'NEW' &&
-      fWave.has(w) &&
-      fType.has(t) &&
-      fZone.has(s.picking_zone) &&
-      !s.Picker
-    ){
-      pool.push(s);
-    }
+function sortPoolZoneAware(pool){
+  return pool.slice().sort((a,b) => {
+    const za = String(a.picking_zone || 'ZZZ');
+    const zb = String(b.picking_zone || 'ZZZ');
+    const zSort = za.localeCompare(zb, 'id');
+    if(zSort !== 0) return zSort;
+
+    const ra = String(a.origin_rack_name || a.location || a.rack_name || '');
+    const rb = String(b.origin_rack_name || b.location || b.rack_name || '');
+    const rSort = ra.localeCompare(rb, 'id');
+    if(rSort !== 0) return rSort;
+
+    return Number(b.request_quantity || 0) - Number(a.request_quantity || 0);
   });
+}
 
-  pool.sort((a,b) => Number(b.request_quantity || 0) - Number(a.request_quantity || 0));
+function pickerHasZone(picker, zone){
+  if(!zone) return false;
+  return assignResult[picker].soList.some(s => String(s.picking_zone || '') === String(zone));
+}
+
+function allocatePoolHardLimit(pool, pList, targetQty, options = {}){
+  const mode = options.mode || 'manual';
 
   pool.forEach(s => {
     const soQty = Number(s.request_quantity || 0);
+    const zone = s.picking_zone || '';
 
-    const availablePickers = pList
-      .filter(p => {
-        const currentQty = Number(assignResult[p].totalQty || 0);
-        return currentQty < targetQty && (currentQty + soQty) <= targetQty;
-      })
-      .sort((a,b) => Number(assignResult[a].totalQty || 0) - Number(assignResult[b].totalQty || 0));
+    let availablePickers = pList.filter(p => {
+      const currentQty = Number(assignResult[p].totalQty || 0);
+      return currentQty < targetQty && (currentQty + soQty) <= targetQty;
+    });
 
     if(!availablePickers.length){
       assignSkippedRows.push({
@@ -1042,29 +1079,139 @@ function runAssign(){
       return;
     }
 
+    if(mode === 'smart'){
+      const sameZonePickers = availablePickers.filter(p => pickerHasZone(p, zone));
+      if(sameZonePickers.length) availablePickers = sameZonePickers;
+    }
+
+    availablePickers.sort((a,b) => {
+      const qtyDiff = Number(assignResult[a].totalQty || 0) - Number(assignResult[b].totalQty || 0);
+      if(qtyDiff !== 0) return qtyDiff;
+      return String(a).localeCompare(String(b), 'id');
+    });
+
     const bestPicker = availablePickers[0];
 
     assignResult[bestPicker].soList.push(s);
     assignResult[bestPicker].newQty += soQty;
     assignResult[bestPicker].totalQty += soQty;
   });
+}
 
-  if(assignSkippedRows.length > 0){
-    const skippedQty = assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0);
+function getSkippedSummary(){
+  const skippedSO = Array.isArray(assignSkippedRows) ? assignSkippedRows.length : 0;
+  const skippedQty = Array.isArray(assignSkippedRows)
+    ? assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0)
+    : 0;
 
+  return { skippedSO, skippedQty };
+}
+
+function calculateSmartTarget(pool, pList, initialWorkload){
+  const totalPoolQty = pool.reduce((a,s)=>a + Number(s.request_quantity || 0), 0);
+  const totalInitialQty = pList.reduce((a,p)=>a + Number(initialWorkload[p] || 0), 0);
+  const maxSOQty = pool.reduce((m,s)=>Math.max(m, Number(s.request_quantity || 0)), 0);
+  const averageTarget = Math.ceil((totalInitialQty + totalPoolQty) / Math.max(1, pList.length));
+  const recommendedTarget = Math.max(100, averageTarget, maxSOQty);
+
+  return {
+    totalPoolQty,
+    totalInitialQty,
+    maxSOQty,
+    averageTarget,
+    recommendedTarget
+  };
+}
+
+function showAssignSkippedWarning(targetQty){
+  const { skippedSO, skippedQty } = getSkippedSummary();
+
+  if(skippedSO > 0){
     addLog(
-      `[Alokasi] ${assignSkippedRows.length.toLocaleString('id-ID')} SO (${skippedQty.toLocaleString('id-ID')} qty) di-skip karena hard target ${targetQty.toLocaleString('id-ID')} qty.`,
+      `[Alokasi] ${skippedSO.toLocaleString('id-ID')} SO (${skippedQty.toLocaleString('id-ID')} qty) di-skip karena hard target ${targetQty.toLocaleString('id-ID')} qty.`,
       'warn'
     );
 
     alert(
-      `⚠️ ${assignSkippedRows.length.toLocaleString('id-ID')} SO tidak dibagikan karena akan melewati target ${targetQty.toLocaleString('id-ID')} qty per picker.\n\n` +
+      `⚠️ ${skippedSO.toLocaleString('id-ID')} SO tidak dibagikan karena akan melewati target ${targetQty.toLocaleString('id-ID')} qty per picker.\n\n` +
       `Qty skipped: ${skippedQty.toLocaleString('id-ID')}\n` +
       `Naikkan target atau tambah picker kalau SO tersebut tetap harus dibagi.`
     );
   }
+}
+
+function runAssign(){
+  closeModal();
+
+  const targetQty = Number(document.getElementById('target').value) || 2400;
+  const pList = [...myPickers];
+
+  if(!pList.length){
+    alert('Isi minimal 1 nama picker dulu, bro!');
+    return;
+  }
+
+  const pool = getAssignablePool();
+
+  if(!pool.length){
+    alert('Gak ada SO NEW yang lolos filter buat di-assign.');
+    return;
+  }
+
+  const initialWorkload = getInitialWorkload(pList);
+  initAssignResult(pList, initialWorkload);
+
+  const sortedPool = sortPoolByQtyDesc(pool);
+  allocatePoolHardLimit(sortedPool, pList, targetQty, { mode: 'manual' });
+
+  showAssignSkippedWarning(targetQty);
+  renderResultCards(targetQty);
+}
+
+function generateSmartSuggestion(){
+  const pList = [...myPickers];
+
+  if(!pList.length){
+    alert('Isi minimal 1 nama picker dulu sebelum generate suggestion.');
+    return;
+  }
+
+  const pool = getAssignablePool();
+
+  if(!pool.length){
+    alert('Gak ada SO NEW yang lolos filter buat dibuatkan suggestion.');
+    return;
+  }
+
+  const initialWorkload = getInitialWorkload(pList);
+  const targetInfo = calculateSmartTarget(pool, pList, initialWorkload);
+  const targetQty = targetInfo.recommendedTarget;
+
+  document.getElementById('target').value = targetQty;
+
+  initAssignResult(pList, initialWorkload);
+
+  const sortedPool = sortPoolZoneAware(pool);
+  allocatePoolHardLimit(sortedPool, pList, targetQty, { mode: 'smart' });
+
+  const { skippedSO, skippedQty } = getSkippedSummary();
+  const assignedSO = Object.values(assignResult).reduce((a,d)=>a + d.soList.length, 0);
+  const assignedQty = Object.values(assignResult).reduce((a,d)=>a + Number(d.newQty || 0), 0);
+
+  addLog(
+    `[Smart Suggestion] pool:${pool.length.toLocaleString('id-ID')} SO · assigned:${assignedSO.toLocaleString('id-ID')} SO/${assignedQty.toLocaleString('id-ID')} qty · target:${targetQty.toLocaleString('id-ID')} · skipped:${skippedSO.toLocaleString('id-ID')} SO/${skippedQty.toLocaleString('id-ID')} qty`,
+    skippedSO ? 'warn' : 'ok'
+  );
 
   renderResultCards(targetQty);
+
+  alert(
+    `🪄 Smart Suggestion selesai.\n\n` +
+    `Target otomatis: ${targetQty.toLocaleString('id-ID')} qty/picker\n` +
+    `Assigned: ${assignedSO.toLocaleString('id-ID')} SO / ${assignedQty.toLocaleString('id-ID')} qty\n` +
+    `Skipped: ${skippedSO.toLocaleString('id-ID')} SO / ${skippedQty.toLocaleString('id-ID')} qty\n\n` +
+    `Hasil masih preview. Klik Simpan & Upload kalau sudah cocok.`
+  );
 }
 
 function buildAssignedRows(){

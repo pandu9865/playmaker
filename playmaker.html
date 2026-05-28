@@ -1406,6 +1406,11 @@ function renderResultCards(targetQty){
       ⚠️ Hard limit aktif: ${totalSkippedSO.toLocaleString('id-ID')} SO / ${totalSkippedQty.toLocaleString('id-ID')} qty tidak dibagikan karena akan melewati target ${Number(targetQty || 0).toLocaleString('id-ID')} qty per picker.
       <br>Naikkan target atau tambah picker kalau SO skipped tetap harus dibagikan.
     </div>` : ''}
+  <div style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <input type="text" id="assign-picker-search" class="search" placeholder="Filter nama picker / zone / SO..." oninput="filterAssignedPickers()" style="width:280px;max-width:100%">
+    <button class="btn-ghost" onclick="clearAssignedPickerFilter()">✕ Clear</button>
+    <div class="mono" id="assign-picker-filter-count" style="font-size:10px;color:var(--text3);margin-left:auto">Menampilkan ${arr.length.toLocaleString('id-ID')} picker</div>
+  </div>
   <div style="display:flex;flex-direction:column;gap:10px" id="picker-grid">`;
 
   arr.forEach((d,idx)=>{
@@ -1486,6 +1491,35 @@ function renderResultCards(targetQty){
   container.innerHTML = html;
 
   anime({ targets: '#picker-grid .pc', opacity: [0, 1], translateY: [10, 0], delay: anime.stagger(60), easing: 'easeOutQuad', duration: 400 });
+  filterAssignedPickers();
+}
+
+function filterAssignedPickers(){
+  const q = String(document.getElementById('assign-picker-search')?.value || '').toLowerCase().trim();
+  const cards = [...document.querySelectorAll('#picker-grid .pc')];
+  let shown = 0;
+
+  cards.forEach(card => {
+    const picker = String(card.dataset.picker || '').toLowerCase();
+    const zones = String(card.dataset.zones || '').toLowerCase();
+    const haystack = (picker + ' ' + zones + ' ' + card.innerText.toLowerCase());
+    const match = !q || haystack.includes(q);
+    card.style.display = match ? '' : 'none';
+    if(match) shown++;
+  });
+
+  const counter = document.getElementById('assign-picker-filter-count');
+  if(counter){
+    counter.textContent = q
+      ? `Menampilkan ${shown.toLocaleString('id-ID')} / ${cards.length.toLocaleString('id-ID')} picker`
+      : `Menampilkan ${cards.length.toLocaleString('id-ID')} picker`;
+  }
+}
+
+function clearAssignedPickerFilter(){
+  const inp = document.getElementById('assign-picker-search');
+  if(inp) inp.value = '';
+  filterAssignedPickers();
 }
 
 function copyRawText(btn, txt){

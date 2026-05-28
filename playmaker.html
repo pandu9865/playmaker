@@ -2277,29 +2277,29 @@ const BLUEPRINT_H = 680;
   Workload tetap connect ke SO via picking_zone / origin_rack_name / picker / status.
 */
 const MAP_RACK_LAYOUT_CONFIG = [
-  // SPR inventory block - top / left side
-  {zone:'SPR 1-1', label:'SPR 1-1', x:80,  y:88,  racks:4, rackW:18, rackH:245, gap:14, dir:'vertical', group:'SPR'},
-  {zone:'SPR 1-2', label:'SPR 1-2', x:175, y:88,  racks:5, rackW:18, rackH:245, gap:13, dir:'vertical', group:'SPR'},
-  {zone:'SPR 1-3', label:'SPR 1-3', x:300, y:88,  racks:4, rackW:18, rackH:245, gap:14, dir:'vertical', group:'SPR'},
-  {zone:'SPR 1-4', label:'SPR 1-4', x:395, y:88,  racks:4, rackW:18, rackH:245, gap:14, dir:'vertical', group:'SPR'},
+  // SPR lower / normal rack area - top left, dibuat lebih renggang agar terbaca
+  {zone:'SPR 1-1', label:'SPR 1-1', x:80,  y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
+  {zone:'SPR 1-2', label:'SPR 1-2', x:205, y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
+  {zone:'SPR 1-3', label:'SPR 1-3', x:330, y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
+  {zone:'SPR 1-4', label:'SPR 1-4', x:455, y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
 
-  // Dense mezzanine area - middle lower rack forest
-  {zone:'MZ 1-1', label:'MZ 1-1', x:95,  y:405, racks:11, rackW:15, rackH:130, gap:10, dir:'vertical', group:'MZ'},
-  {zone:'MZ 2-1', label:'MZ 2-1', x:265, y:405, racks:9,  rackW:15, rackH:130, gap:10, dir:'vertical', group:'MZ'},
-  {zone:'MZ 1-2', label:'MZ 1-2', x:95,  y:555, racks:7,  rackW:105, rackH:13, gap:9,  dir:'horizontal', group:'MZ'},
+  // HRA equipment area - kanan atas, dipisah dari SPR agar tidak tabrakan
+  {zone:'HRA-1', label:'HRA-1', x:650, y:105, racks:4, rackW:20, rackH:300, gap:24, dir:'vertical', group:'HIGH RACK / EQUIPMENT AREA', labelY:74},
+  {zone:'HRA-2', label:'HRA-2', x:820, y:105, racks:4, rackW:20, rackH:300, gap:24, dir:'vertical', group:'HIGH RACK / EQUIPMENT AREA', labelY:74},
 
-  // High rack / equipment zones - right side
-  {zone:'HRA-1', label:'HRA-1', x:560, y:88,  racks:6, rackW:19, rackH:390, gap:16, dir:'vertical', group:'HRA'},
-  {zone:'HRA-2', label:'HRA-2', x:720, y:88,  racks:5, rackW:19, rackH:390, gap:16, dir:'vertical', group:'HRA'},
+  // Mezzanine pick face - bawah kiri/tengah
+  {zone:'MZ 1-1', label:'MZ 1-1', x:80,  y:455, racks:9, rackW:15, rackH:105, gap:14, dir:'vertical', group:'MEZZANINE PICK FACE', labelY:424},
+  {zone:'MZ 2-1', label:'MZ 2-1', x:300, y:455, racks:8, rackW:15, rackH:105, gap:14, dir:'vertical', group:'MEZZANINE PICK FACE', labelY:424},
+  {zone:'MZ 1-2', label:'MZ 1-2', x:505, y:455, racks:3, rackW:15, rackH:105, gap:14, dir:'vertical', group:'MEZZANINE PICK FACE', labelY:424},
 
-  // SPR upper rack lanes - right lower side
-  {zone:'SPR 2-1', label:'SPR 2-1', x:875, y:110, racks:3, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
-  {zone:'SPR 2-2', label:'SPR 2-2', x:950, y:110, racks:4, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
-  {zone:'SPR 2-3', label:'SPR 2-3', x:875, y:335, racks:3, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
-  {zone:'SPR 2-4', label:'SPR 2-4', x:950, y:335, racks:4, rackW:18, rackH:165, gap:14, dir:'vertical', group:'SPR2'},
+  // SPR upper rack - kanan bawah
+  {zone:'SPR 2-1', label:'SPR 2-1', x:705, y:455, racks:3, rackW:17, rackH:105, gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:424},
+  {zone:'SPR 2-2', label:'SPR 2-2', x:815, y:455, racks:3, rackW:17, rackH:105, gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:424},
+  {zone:'SPR 2-3', label:'SPR 2-3', x:705, y:585, racks:3, rackW:17, rackH:80,  gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:564},
+  {zone:'SPR 2-4', label:'SPR 2-4', x:815, y:585, racks:3, rackW:17, rackH:80,  gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:564},
 
-  // Special handling
-  {zone:'BF-G', label:'BF-G', x:760, y:555, racks:1, rackW:205, rackH:48, gap:0, dir:'block', group:'BFG'}
+  // special handling
+  {zone:'BF-G', label:'BF-G', x:930, y:585, racks:1, rackW:120, rackH:50, gap:0, dir:'block', group:'BULKY / GALON', labelY:564}
 ];
 
 function buildMapZoneShapes(){
@@ -2319,6 +2319,7 @@ function buildMapZoneShapes(){
         rackLabel: count > 1 ? `${cfg.label}-${String(i+1).padStart(2,'0')}` : cfg.label,
         x,y,w,h,
         group:cfg.group,
+        labelY:cfg.labelY,
         rackIndex:i,
         rackCount:count,
         dir:cfg.dir,
@@ -2461,12 +2462,18 @@ function buildZoneActivity(data){
 }
 
 function mapColorForStatus(status){
-  if(status === 'CRITICAL') return {fill:'#991b1b', stroke:'#f43f5e', glow:'#ef4444'};
-  if(status === 'PICKING') return {fill:'#78350f', stroke:'#eab308', glow:'#f59e0b'};
-  if(status === 'DONE') return {fill:'#065f46', stroke:'#22c55e', glow:'#22c55e'};
-  return {fill:'#ea580c', stroke:'#fb923c', glow:'#f97316'};
+  const st = String(status || '').toUpperCase();
+  if(st === 'CRITICAL') return {fill:'rgba(239,68,68,0.58)', stroke:'rgba(248,113,113,0.95)', glow:'#ef4444', text:'#fecaca'};
+  if(st === 'PICKING') return {fill:'rgba(245,158,11,0.50)', stroke:'rgba(251,191,36,0.95)', glow:'#f59e0b', text:'#fde68a'};
+  if(st === 'DONE') return {fill:'rgba(34,197,94,0.45)', stroke:'rgba(74,222,128,0.95)', glow:'#22c55e', text:'#bbf7d0'};
+  return {fill:'rgba(249,115,22,0.50)', stroke:'rgba(251,146,60,0.85)', glow:'#f97316', text:'#fed7aa'};
 }
 
+function shortPickerName(name){
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return '';
+  return parts.slice(0,2).map(x=>x[0]).join('').toUpperCase();
+}
 function mapPointerToCanvas(e, canvas){
   const rect = canvas.getBoundingClientRect();
   return {
@@ -2546,105 +2553,107 @@ function drawZoneShape(ctx, shape, data){
   const c = mapColorForStatus(d.status);
   const selected = selectedMapZone === shape.zone;
   const hovered = mapHoverZone === shape.zone;
-  const intensity = Math.min(0.42, (d.effort_score || 0) / 26000);
   const isAnchor = shape.labelAnchor;
 
   ctx.save();
-  if(selected || hovered){
-    ctx.shadowBlur = selected ? 22 : 12;
-    ctx.shadowColor = selected ? '#60a5fa' : c.glow;
-  }
 
-  // rack strip body
-  ctx.fillStyle = c.fill;
-  ctx.strokeStyle = selected ? '#60a5fa' : hovered ? '#93c5fd' : c.stroke;
-  ctx.lineWidth = selected ? 2.5 : hovered ? 2 : 1.2;
-  roundRectPath(ctx, shape.x, shape.y, shape.w, shape.h, 2.5);
-  ctx.fill();
-  ctx.stroke();
-
-  // heat overlay, stronger when effort high
-  ctx.globalAlpha = intensity;
-  ctx.fillStyle = c.glow;
-  roundRectPath(ctx, shape.x, shape.y, shape.w, shape.h, 2.5);
-  ctx.fill();
-  ctx.globalAlpha = 1;
-
-  // internal rack shelf lines
-  ctx.strokeStyle = 'rgba(2,6,23,.28)';
-  ctx.lineWidth = 1;
-  if(shape.h >= shape.w){
-    for(let y=shape.y+18;y<shape.y+shape.h;y+=24){
-      ctx.beginPath();ctx.moveTo(shape.x,y);ctx.lineTo(shape.x+shape.w,y);ctx.stroke();
-    }
-  } else {
-    for(let x=shape.x+24;x<shape.x+shape.w;x+=24){
-      ctx.beginPath();ctx.moveTo(x,shape.y);ctx.lineTo(x,shape.y+shape.h);ctx.stroke();
-    }
-  }
-
-  // selected/hovered group outline around whole zone cluster
-  if(isAnchor && (selected || hovered)){
-    const b = getZoneBounds(shape.zone);
-    if(b){
-      ctx.save();
-      ctx.shadowBlur = 0;
-      ctx.strokeStyle = selected ? '#60a5fa' : '#93c5fd';
-      ctx.lineWidth = selected ? 2 : 1.5;
-      ctx.setLineDash([6,4]);
-      roundRectPath(ctx, b.x-8, b.y-8, b.w+16, b.h+16, 8);
-      ctx.stroke();
-      ctx.restore();
-    }
-  }
-
-  // label only once per zone, not on every strip
   if(isAnchor){
     const b = getZoneBounds(shape.zone) || shape;
-    const labelY = b.y - 9 < 22 ? b.y + 14 : b.y - 9;
-    drawText(ctx, shape.zone, b.x, labelY, {color:'#cbd5e1', font:'bold 10px IBM Plex Mono'});
+    const panelX = b.x - 14;
+    const panelY = b.y - 44;
+    const panelW = b.w + 28;
+    const panelH = b.h + 76;
+
+    // background per zone supaya layout kebaca per blok
+    ctx.fillStyle = 'rgba(15,23,42,0.42)';
+    ctx.strokeStyle = selected ? 'rgba(96,165,250,0.90)' : hovered ? 'rgba(147,197,253,0.72)' : 'rgba(51,65,85,0.55)';
+    ctx.lineWidth = selected ? 2 : 1;
+    if(selected || hovered){
+      ctx.shadowBlur = selected ? 20 : 10;
+      ctx.shadowColor = selected ? '#60a5fa' : c.glow;
+    }
+    roundRectPath(ctx, panelX, panelY, panelW, panelH, 9);
+    ctx.fill();
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // group label dan zone label tidak nabrak rack
+    const labelY = shape.labelY || Math.max(26, b.y - 30);
+    drawText(ctx, shape.group || '', b.x - 8, labelY, {color:'rgba(148,163,184,0.68)', font:'bold 9px IBM Plex Mono'});
+    drawText(ctx, shape.zone, b.x - 8, labelY + 18, {color:'#e2e8f0', font:'bold 13px IBM Plex Mono'});
+
+    // SO / qty pindah kanan cluster, bukan di atas rack
     if(d.total_so > 0){
-      const badgeX = b.x + b.w + 6;
-      const badgeY = b.y + 12;
-      drawText(ctx, `${d.total_so} SO`, badgeX, badgeY, {color:'#e2e8f0', font:'bold 10px IBM Plex Mono'});
-      drawText(ctx, `${Math.round(d.total_qty).toLocaleString('id-ID')} qty`, badgeX, badgeY+14, {color:'#94a3b8', font:'9px IBM Plex Mono'});
+      const badgeX = Math.min(1040, b.x + b.w + 12);
+      const badgeY = b.y + 14;
+      drawText(ctx, `${d.total_so} SO`, badgeX, badgeY, {color:c.text || '#e2e8f0', font:'bold 10px IBM Plex Mono'});
+      drawText(ctx, `${Math.round(d.total_qty).toLocaleString('id-ID')} qty`, badgeX, badgeY + 15, {color:'rgba(148,163,184,0.88)', font:'9px IBM Plex Mono'});
+    }
+  }
+
+  // rack strip body - warna soft dan garis lebih sedikit
+  if(selected || hovered){
+    ctx.shadowBlur = selected ? 14 : 8;
+    ctx.shadowColor = selected ? '#60a5fa' : c.glow;
+  }
+  ctx.fillStyle = c.fill;
+  ctx.strokeStyle = selected ? '#60a5fa' : hovered ? '#93c5fd' : c.stroke;
+  ctx.lineWidth = d.status === 'CRITICAL' ? 1.8 : 1.2;
+  roundRectPath(ctx, shape.x, shape.y, shape.w, shape.h, 4);
+  ctx.fill();
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // shelf lines dikurangi, biar tidak noisy
+  ctx.strokeStyle = 'rgba(15,23,42,0.22)';
+  ctx.lineWidth = 1;
+  if(shape.h >= shape.w){
+    const step = Math.max(28, Math.floor(shape.h / 5));
+    for(let y = shape.y + step; y < shape.y + shape.h - 4; y += step){
+      ctx.beginPath(); ctx.moveTo(shape.x + 2, y); ctx.lineTo(shape.x + shape.w - 2, y); ctx.stroke();
+    }
+  } else {
+    const step = Math.max(28, Math.floor(shape.w / 5));
+    for(let x = shape.x + step; x < shape.x + shape.w - 4; x += step){
+      ctx.beginPath(); ctx.moveTo(x, shape.y + 2); ctx.lineTo(x, shape.y + shape.h - 2); ctx.stroke();
     }
   }
 
   ctx.restore();
 }
-
 function drawPickerMarkers(ctx){
   const rows = mapActivityRows.filter(d=>d.active_pickers && d.active_pickers.length);
   rows.forEach(d=>{
     const b = getZoneBounds(d.zone);
     if(!b) return;
-    const n = Math.min(d.active_pickers.length, 6);
-    for(let i=0;i<n;i++){
-      const px = b.cx + ((i%3)-1) * 20;
-      const py = b.cy + Math.floor(i/3) * 20 - 8;
+    const pickers = d.active_pickers.slice(0, 6);
+
+    pickers.forEach((name, idx)=>{
+      // disebar dari kiri atas zona, bukan numpuk di tengah
+      const px = b.x + 12 + (idx % 3) * 42;
+      const py = b.y + Math.min(b.h - 22, 48 + Math.floor(idx / 3) * 32);
+
       ctx.save();
       ctx.beginPath();
-      ctx.arc(px, py, 9, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(234,179,8,.22)';
+      ctx.arc(px, py, 8, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(250,204,21,0.28)';
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(px, py, 4.5, 0, Math.PI*2);
-      ctx.fillStyle = '#eab308';
+      ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#facc15';
       ctx.fill();
-      const name = d.active_pickers[i] || '';
-      const initial = name.split(/\s+/).map(x=>x[0]).join('').slice(0,3).toUpperCase();
-      drawText(ctx, initial, px+11, py+4, {color:'#f8fafc', font:'bold 9px Inter'});
+      drawText(ctx, shortPickerName(name), px + 11, py + 3, {color:'#fef9c3', font:'bold 10px IBM Plex Mono'});
       ctx.restore();
-    }
+    });
   });
 }
-
 function drawWarehouseBlueprint(){
   const canvas = document.getElementById('warehouse-map-canvas');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.imageSmoothingEnabled = true;
+  ctx.textBaseline = 'middle';
 
   ctx.fillStyle = '#020617';
   ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -2654,60 +2663,58 @@ function drawWarehouseBlueprint(){
   ctx.lineWidth = 3;
   ctx.strokeRect(35,35,1030,610);
 
-  // broad area backgrounds, based on WH Sentul operational blocks
-  ctx.fillStyle = 'rgba(37,99,235,.09)';
-  ctx.fillRect(60,62,470,300);
-  drawText(ctx, 'SPR INVENTORY / PICKING RACK', 70, 82, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+  // broad area backgrounds, dibuat soft supaya rack yang jadi fokus
+  ctx.fillStyle = 'rgba(37,99,235,.055)';
+  ctx.fillRect(58,62,540,300);
+  drawText(ctx, 'SPR INVENTORY / LOWER PICKING RACK', 70, 54, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
 
-  ctx.fillStyle = 'rgba(16,185,129,.08)';
-  ctx.fillRect(70,382,470,215);
-  drawText(ctx, 'MEZZANINE PICK FACE', 80, 398, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+  ctx.fillStyle = 'rgba(16,185,129,.050)';
+  ctx.fillRect(58,382,540,285);
+  drawText(ctx, 'MEZZANINE PICK FACE', 70, 374, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
 
-  ctx.fillStyle = 'rgba(124,58,237,.08)';
-  ctx.fillRect(540,62,310,445);
-  drawText(ctx, 'HIGH RACK / EQUIPMENT AREA', 550, 82, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+  ctx.fillStyle = 'rgba(124,58,237,.050)';
+  ctx.fillRect(620,62,315,360);
+  drawText(ctx, 'HIGH RACK / EQUIPMENT AREA', 632, 54, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
 
-  ctx.fillStyle = 'rgba(245,158,11,.06)';
-  ctx.fillRect(855,62,200,455);
-  drawText(ctx, 'SPR UPPER RACK', 865, 82, {color:'#64748b', font:'bold 11px IBM Plex Mono'});
+  ctx.fillStyle = 'rgba(245,158,11,.040)';
+  ctx.fillRect(670,415,390,252);
+  drawText(ctx, 'SPR UPPER RACK', 685, 408, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
 
-  // static rooms / support areas
-  drawRoom(ctx, 'Auto Wrapper', 90, 610, 88, 25, '#334155');
-  drawRoom(ctx, 'Office / Toilet', 200, 600, 150, 35, '#1e293b');
-  drawRoom(ctx, 'Transit / Assembly', 370, 600, 160, 35, '#1e293b');
-  drawRoom(ctx, 'Outbound Staging', 545, 600, 150, 35, '#1e293b');
-  drawRoom(ctx, 'BF-G / Galon', 760, 555, 205, 48, '#0f766e');
-  drawRoom(ctx, 'Inbound / RFM', 900, 608, 155, 27, '#1e293b');
+  // static rooms / support areas, lebih bawah dan tidak ganggu rack
+  drawRoom(ctx, 'Auto Wrapper', 90, 642, 95, 22, '#334155');
+  drawRoom(ctx, 'Office / Toilet', 205, 642, 145, 22, '#1e293b');
+  drawRoom(ctx, 'Transit / Assembly', 370, 642, 160, 22, '#1e293b');
+  drawRoom(ctx, 'Outbound Staging', 545, 642, 150, 22, '#1e293b');
+  drawRoom(ctx, 'Inbound / RFM', 900, 642, 155, 22, '#1e293b');
 
-  // forklift / pedestrian path hints
+  // pedestrian / forklift path hint: hanya garis utama, jangan bikin pusing
   ctx.save();
-  ctx.strokeStyle = 'rgba(148,163,184,.20)';
+  ctx.strokeStyle = 'rgba(148,163,184,.13)';
   ctx.lineWidth = 1;
-  ctx.setLineDash([4,8]);
-  ctx.beginPath(); ctx.moveTo(55,365); ctx.lineTo(1045,365); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(540,55); ctx.lineTo(540,625); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(855,55); ctx.lineTo(855,625); ctx.stroke();
+  ctx.setLineDash([5,10]);
+  ctx.beginPath(); ctx.moveTo(55,370); ctx.lineTo(1045,370); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(620,55); ctx.lineTo(620,625); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(670,415); ctx.lineTo(1045,415); ctx.stroke();
   ctx.restore();
 
-  // subtle grid for map feeling
-  ctx.strokeStyle = 'rgba(148,163,184,.08)';
+  // grid sangat tipis
+  ctx.strokeStyle = 'rgba(148,163,184,.035)';
   ctx.lineWidth = 1;
   for(let x=80; x<1060; x+=80){ctx.beginPath();ctx.moveTo(x,50);ctx.lineTo(x,625);ctx.stroke();}
-  for(let y=120; y<625; y+=70){ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(1060,y);ctx.stroke();}
+  for(let y=120; y<625; y+=80){ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(1060,y);ctx.stroke();}
 
   // rack strips
   MAP_ZONE_SHAPES.forEach(shape=>drawZoneShape(ctx, shape, mapActivityByZone[shape.zone]));
   drawPickerMarkers(ctx);
 
   // access gates
-  drawText(ctx, 'Main Gate', 90, 655, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
-  ctx.fillStyle = '#ef4444'; ctx.fillRect(85,635,75,5);
-  drawText(ctx, 'Shutter / Loading', 545, 655, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
-  ctx.fillStyle = '#ef4444'; ctx.fillRect(550,635,110,5);
+  drawText(ctx, 'Main Gate', 90, 25, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
+  ctx.fillStyle = '#ef4444'; ctx.fillRect(85,35,75,5);
+  drawText(ctx, 'Shutter / Loading', 545, 25, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
+  ctx.fillStyle = '#ef4444'; ctx.fillRect(550,35,110,5);
 
-  drawText(ctx, 'WH SENTUL - PLAYMAKER 2D RACK LAYOUT MONITOR', 35, 23, {color:'#94a3b8', font:'bold 12px IBM Plex Mono'});
+  drawText(ctx, 'WH SENTUL - CLEAN 2D RACK LAYOUT MONITOR', 35, 675, {color:'rgba(148,163,184,.75)', font:'bold 11px IBM Plex Mono'});
 }
-
 function renderRackMonitor(){
   bindMapCanvas();
   mapActivityRows = buildZoneActivity(soData);

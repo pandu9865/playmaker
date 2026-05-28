@@ -623,6 +623,7 @@ let fType = new Set(['Kepala','Badan','Ekor','Other']);
 let fZone = new Set();
 let myPickers = new Set();
 let assignResult = {};
+let assignSkippedRows = [];
 let tblStatus = 'ALL';
 let charts = {};
 let lastResetDate = '';
@@ -977,40 +978,91 @@ function closeModal(){ document.getElementById('modal').classList.remove('open')
 
 function runAssign(){
   closeModal();
+
   const targetQty = Number(document.getElementById('target').value) || 2400;
   const pList = [...myPickers];
-  
+
   let initialWorkload = {};
-  pList.forEach(p=> initialWorkload[p] = 0);
-  soData.forEach(s=>{
+  pList.forEach(p => initialWorkload[p] = 0);
+
+  soData.forEach(s => {
     if(s.Picker && initialWorkload[s.Picker] !== undefined){
-      initialWorkload[s.Picker] += s.request_quantity;
+      initialWorkload[s.Picker] += Number(s.request_quantity || 0);
     }
   });
 
   assignResult = {};
-  pList.forEach(p=>{
-    assignResult[p] = { picker: p, initialQty: initialWorkload[p], newQty: 0, totalQty: initialWorkload[p], soList: [] };
+  assignSkippedRows = [];
+
+  pList.forEach(p => {
+    assignResult[p] = {
+      picker: p,
+      initialQty: initialWorkload[p],
+      newQty: 0,
+      totalQty: initialWorkload[p],
+      soList: []
+    };
   });
 
   let pool = [];
-  soData.forEach(s=>{
+  soData.forEach(s => {
     const w = s.WAVE || getWave(s.destination_name);
     const t = s.type || getType(s.destination_name);
-    if(s.status==='NEW' && fWave.has(w) && fType.has(t) && fZone.has(s.picking_zone) && (!s.Picker)){
+
+    if(
+      s.status === 'NEW' &&
+      fWave.has(w) &&
+      fType.has(t) &&
+      fZone.has(s.picking_zone) &&
+      !s.Picker
+    ){
       pool.push(s);
     }
   });
-  pool.sort((a,b)=> b.request_quantity - a.request_quantity);
 
-  pool.forEach(s=>{
-    pList.sort((a,b)=> assignResult[a].totalQty - assignResult[b].totalQty);
-    const bestPicker = pList[0];
-    
+  pool.sort((a,b) => Number(b.request_quantity || 0) - Number(a.request_quantity || 0));
+
+  pool.forEach(s => {
+    const soQty = Number(s.request_quantity || 0);
+
+    const availablePickers = pList
+      .filter(p => {
+        const currentQty = Number(assignResult[p].totalQty || 0);
+        return currentQty < targetQty && (currentQty + soQty) <= targetQty;
+      })
+      .sort((a,b) => Number(assignResult[a].totalQty || 0) - Number(assignResult[b].totalQty || 0));
+
+    if(!availablePickers.length){
+      assignSkippedRows.push({
+        ...s,
+        skip_reason: soQty > targetQty
+          ? `SO qty ${soQty.toLocaleString('id-ID')} lebih besar dari target ${targetQty.toLocaleString('id-ID')}`
+          : `Semua picker akan melewati target ${targetQty.toLocaleString('id-ID')}`
+      });
+      return;
+    }
+
+    const bestPicker = availablePickers[0];
+
     assignResult[bestPicker].soList.push(s);
-    assignResult[bestPicker].newQty += s.request_quantity;
-    assignResult[bestPicker].totalQty += s.request_quantity;
+    assignResult[bestPicker].newQty += soQty;
+    assignResult[bestPicker].totalQty += soQty;
   });
+
+  if(assignSkippedRows.length > 0){
+    const skippedQty = assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0);
+
+    addLog(
+      `[Alokasi] ${assignSkippedRows.length.toLocaleString('id-ID')} SO (${skippedQty.toLocaleString('id-ID')} qty) di-skip karena hard target ${targetQty.toLocaleString('id-ID')} qty.`,
+      'warn'
+    );
+
+    alert(
+      `⚠️ ${assignSkippedRows.length.toLocaleString('id-ID')} SO tidak dibagikan karena akan melewati target ${targetQty.toLocaleString('id-ID')} qty per picker.\n\n` +
+      `Qty skipped: ${skippedQty.toLocaleString('id-ID')}\n` +
+      `Naikkan target atau tambah picker kalau SO tersebut tetap harus dibagi.`
+    );
+  }
 
   renderResultCards(targetQty);
 }
@@ -1094,11 +1146,13 @@ function renderResultCards(targetQty){
 
   const totalAssignedSO = arr.reduce((a,d)=>a + d.soList.length, 0);
   const totalNewQty = arr.reduce((a,d)=>a + d.newQty, 0);
+  const totalSkippedSO = Array.isArray(assignSkippedRows) ? assignSkippedRows.length : 0;
+  const totalSkippedQty = Array.isArray(assignSkippedRows) ? assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0) : 0;
 
   let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap">
     <div>
       <div style="font-weight:700;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
-      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO · ${totalNewQty.toLocaleString('id-ID')} qty baru · ${arr.length.toLocaleString('id-ID')} picker</div>
+      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO assigned · ${totalNewQty.toLocaleString('id-ID')} qty baru · ${totalSkippedSO.toLocaleString('id-ID')} SO skipped · ${arr.length.toLocaleString('id-ID')} picker</div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
       <button class="btn-ghost" onclick="copyAssignedGlobal('so',this,event)">📋 Copy All SO</button>
@@ -1106,7 +1160,13 @@ function renderResultCards(targetQty){
       <button class="btn-ghost" onclick="copyAssignedGlobal('detail',this,event)">📋 Copy Detail</button>
       <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">💾 Simpan & Upload ke Google Sheets</button>
     </div>
-  </div><div style="display:flex;flex-direction:column;gap:10px" id="picker-grid">`;
+  </div>
+  ${totalSkippedSO ? `
+    <div style="margin-bottom:12px;background:var(--amber-dim);border:1px solid var(--amber-light);color:var(--amber);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:11px;line-height:1.5">
+      ⚠️ Hard limit aktif: ${totalSkippedSO.toLocaleString('id-ID')} SO / ${totalSkippedQty.toLocaleString('id-ID')} qty tidak dibagikan karena akan melewati target ${Number(targetQty || 0).toLocaleString('id-ID')} qty per picker.
+      <br>Naikkan target atau tambah picker kalau SO skipped tetap harus dibagikan.
+    </div>` : ''}
+  <div style="display:flex;flex-direction:column;gap:10px" id="picker-grid">`;
 
   arr.forEach((d,idx)=>{
     const pctRaw = Math.round((d.totalQty / targetQty) * 100);

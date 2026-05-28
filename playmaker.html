@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -313,10 +313,10 @@ body.dark-theme{
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
 /* LIVE MAP / RACK MONITOR - 2D BLUEPRINT */
-.map-page{flex-direction:column;overflow:hidden;background:#060a0f;color:#e2e8f0}
-.map-shell{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;height:100%;padding:14px;overflow:hidden;background:#060a0f}
-.map-board{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;padding:14px;overflow:hidden;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 50px #00000033}
-.map-side{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;display:flex;flex-direction:column;box-shadow:0 18px 50px #0000002a}
+.map-page{flex-direction:column;overflow:hidden;background:#060a0f;color:#e2e8f0;min-height:0}
+.map-shell{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;height:100%;min-height:0;padding:14px;overflow:hidden;background:#060a0f}
+.map-board{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;padding:14px;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 50px #00000033;overscroll-behavior:contain}
+.map-side{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;min-height:0;display:flex;flex-direction:column;box-shadow:0 18px 50px #0000002a;overscroll-behavior:contain}
 .map-title-row{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;flex-wrap:wrap}
 .map-title{font-weight:800;font-size:14px;color:#f8fafc;letter-spacing:.02em}
 .map-sub{font-family:var(--mono);font-size:10px;color:#64748b;margin-top:2px;line-height:1.45}
@@ -327,8 +327,8 @@ body.dark-theme{
 .map-kpi{background:#111827;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px}
 .map-kpi-lbl{font-family:var(--mono);font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
 .map-kpi-val{font-family:var(--mono);font-size:20px;font-weight:800;color:#e2e8f0;margin-top:2px}
-.map-blueprint-wrap{flex:1;min-height:560px;position:relative;background:#030712;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;padding:12px;display:flex;align-items:center;justify-content:center}
-.map-canvas{width:100%;max-width:1100px;height:auto;aspect-ratio:1100/680;background:#020617;border:1px solid #243447;border-radius:10px;box-shadow:inset 0 0 40px #00000055;cursor:crosshair;display:block}
+.map-blueprint-wrap{flex:1;min-height:0;max-height:calc(100vh - 255px);position:relative;background:#030712;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;padding:12px;display:block;overscroll-behavior:contain}
+.map-canvas{width:1100px;max-width:none;height:680px;background:#020617;border:1px solid #243447;border-radius:10px;box-shadow:inset 0 0 40px #00000055;cursor:crosshair;display:block}
 .map-floating-legend{position:absolute;left:28px;top:28px;background:#020617e6;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;z-index:4;display:flex;flex-direction:column;gap:7px;box-shadow:0 10px 28px #00000055;backdrop-filter:blur(6px)}
 .map-floating-legend .map-leg{border:none;background:transparent;padding:0;color:#cbd5e1}
 .map-status-strip{display:flex;gap:8px;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:#64748b}
@@ -353,7 +353,7 @@ body.dark-theme{
 .map-picker-name{font-family:var(--sans);font-weight:700;color:#f8fafc;font-size:12px}
 .map-picker-meta{color:#64748b;margin-top:2px}
 .map-picker-dot{width:8px;height:8px;border-radius:50%;background:#eab308;box-shadow:0 0 0 4px #eab30822;display:inline-block;margin-right:5px}
-@media(max-width:1100px){.map-shell{grid-template-columns:1fr}.map-side{max-height:480px}.map-kpi-row{grid-template-columns:repeat(2,1fr)}.map-blueprint-wrap{min-height:420px}.map-floating-legend{position:static;flex-direction:row;margin-bottom:8px;align-self:flex-start}}
+@media(max-width:1100px){.map-shell{grid-template-columns:1fr;overflow:auto}.map-side{max-height:480px}.map-kpi-row{grid-template-columns:repeat(2,1fr)}.map-blueprint-wrap{max-height:520px}.map-floating-legend{position:static;flex-direction:row;margin-bottom:8px;align-self:flex-start}}
 
 </style>
 </head>

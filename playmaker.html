@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -47,7 +47,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .page{display:none;height:100%;overflow:hidden}
 .page.active{display:flex}
 
-/* â”€â”€ ASSIGN PAGE â”€â”€ */
+/* ── ASSIGN PAGE ── */
 .assign-page{display:flex;height:100%;overflow:hidden}
 
 /* Left panel */
@@ -175,7 +175,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .skel{background:linear-gradient(90deg,var(--bg4) 25%,var(--bg3) 50%,var(--bg4) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* â”€â”€ DATA SO PAGE â”€â”€ */
+/* ── DATA SO PAGE ── */
 .so-page{flex-direction:column}
 .toolbar{padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
 .search{padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none;width:200px;font-family:var(--mono)}
@@ -193,7 +193,7 @@ tr:nth-child(even) td{background:var(--bg3)}
 tr:hover td{background:var(--blue-dim)!important}
 .mono{font-family:var(--mono);font-size:11px;color:var(--text2)}
 
-/* â”€â”€ DASHBOARD PAGE â”€â”€ */
+/* ── DASHBOARD PAGE ── */
 .dash-page{flex-direction:column;overflow-y:auto}
 .dash-body{padding:14px;display:flex;flex-direction:column;gap:12px}
 /* DASHBOARD FILTER + DARK MODE */
@@ -325,7 +325,7 @@ body.dark-theme{
   </nav>
   <div class="topbar-right">
     <div class="sync-badge"><div class="dot" id="dot"></div><span id="sync-txt">Loading...</span></div>
-    <button class="btn-ghost" onclick="refreshData()">â†» Refresh</button>
+    <button class="btn-ghost" onclick="refreshData()">↻ Refresh</button>
   </div>
 </div>
 
@@ -355,8 +355,8 @@ body.dark-theme{
 
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <div class="panel-section-title" style="margin-bottom:0">ðŸ‘¥ Picker Shift Ini</div>
-              <button class="btn-ghost" onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">âœ• Clear All</button>
+              <div class="panel-section-title" style="margin-bottom:0">👥 Picker Shift Ini</div>
+              <button class="btn-ghost" onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear All</button>
             </div>
             <div class="picker-inp-row">
               <textarea id="mp-inp" class="inp picker-textarea" rows="2" placeholder="Paste nama picker per baris, atau pisah pakai koma"></textarea>
@@ -367,7 +367,7 @@ body.dark-theme{
           </div>
 
           <div>
-            <div class="panel-section-title">ðŸŽ¯ Target Qty / Picker</div>
+            <div class="panel-section-title">🎯 Target Qty / Picker</div>
             <div class="target-input-wrapper">
               <span style="font-size:12px;color:var(--text2)">Qty per picker</span>
               <input type="number" id="target" value="2400" min="100" step="100">
@@ -375,7 +375,7 @@ body.dark-theme{
           </div>
 
           <div>
-            <div class="panel-section-title">ðŸŒŠ Filter Wave</div>
+            <div class="panel-section-title">🌊 Filter Wave</div>
             <div class="filter-grid-2">
               <div class="chip w1 on" onclick="toggleF('wave','WAVE 1',this)">Wave 1</div>
               <div class="chip w2 on" onclick="toggleF('wave','WAVE 2',this)">Wave 2</div>
@@ -385,7 +385,7 @@ body.dark-theme{
           </div>
 
           <div>
-            <div class="panel-section-title">ðŸ“¦ Filter Type</div>
+            <div class="panel-section-title">📦 Filter Type</div>
             <div class="filter-grid-2">
               <div class="chip kepala on" onclick="toggleF('type','Kepala',this)">Kepala</div>
               <div class="chip badan on" onclick="toggleF('type','Badan',this)">Badan</div>
@@ -396,10 +396,10 @@ body.dark-theme{
 
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <div class="panel-section-title" style="margin-bottom:0">ðŸ“ Filter Zone</div>
+              <div class="panel-section-title" style="margin-bottom:0">📍 Filter Zone</div>
               <div style="display:flex;gap:6px">
-                <button class="btn-ghost" onclick="selectAllZones()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">âœ“ All</button>
-                <button class="btn-ghost" onclick="clearAllZones()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">âœ• Clear</button>
+                <button class="btn-ghost" onclick="selectAllZones()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✓ All</button>
+                <button class="btn-ghost" onclick="clearAllZones()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear</button>
               </div>
             </div>
             <div class="zone-wrap" id="fz" style="display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto"></div>
@@ -411,9 +411,9 @@ body.dark-theme{
           </div>
 
           <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="btn-suggest" onclick="generateSmartSuggestion()">ðŸª„ SMART SUGGESTION</button>
-            <button class="btn-mega-assign" onclick="confirmAssign()">ðŸš€ ASSIGN SEKARANG</button>
-            <button class="btn-secondary-download" onclick="downloadCSV()">ðŸ“¥ Download CSV</button>
+            <button class="btn-suggest" onclick="generateSmartSuggestion()">🪄 SMART SUGGESTION</button>
+            <button class="btn-mega-assign" onclick="confirmAssign()">🚀 ASSIGN SEKARANG</button>
+            <button class="btn-secondary-download" onclick="downloadCSV()">📥 Download CSV</button>
           </div>
 
         </div>
@@ -421,7 +421,7 @@ body.dark-theme{
 
       <div id="ap-right" class="ap-right">
         <div class="empty">
-          <div class="empty-icon">ðŸŽ¯</div>
+          <div class="empty-icon">🎯</div>
           <div class="empty-txt">Set filter & picker di panel kiri<br>lalu klik <strong>ASSIGN SEKARANG</strong></div>
         </div>
       </div>
@@ -456,8 +456,8 @@ body.dark-theme{
       <select id="sf-picker" onchange="renderTable()" style="padding:5px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:11px;font-family:var(--mono);outline:none">
         <option value="">Picker (Semua)</option>
       </select>
-      <button onclick="resetSOFilter()" style="padding:5px 10px;border-radius:5px;background:var(--red-dim);border:1px solid var(--red-light);color:var(--red);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s">âœ• Reset Filter</button>
-      <div id="active-filter-badge" style="font-family:var(--mono);font-size:10px;color:var(--blue);display:none">â— Filter aktif</div>
+      <button onclick="resetSOFilter()" style="padding:5px 10px;border-radius:5px;background:var(--red-dim);border:1px solid var(--red-light);color:var(--red);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s">✕ Reset Filter</button>
+      <div id="active-filter-badge" style="font-family:var(--mono);font-size:10px;color:var(--blue);display:none">● Filter aktif</div>
     </div>
     <div class="tbl-wrap">
       <table>
@@ -489,8 +489,8 @@ body.dark-theme{
           <option value="">Status semua</option>
           <option>NEW</option><option>PICKING</option><option>PACKING</option><option>STAGING</option><option>LOADING</option><option>READY TO SHIP</option>
         </select>
-        <button class="btn-ghost" onclick="resetDashboardFilters()">âœ• Reset</button>
-        <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">ðŸŒ™ Dark</button>
+        <button class="btn-ghost" onclick="resetDashboardFilters()">✕ Reset</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">🌙 Dark</button>
         <div class="dash-filter-badge" id="dash-filter-badge">All data</div>
       </div>
       <div class="kpi-row">
@@ -507,8 +507,8 @@ body.dark-theme{
         <div class="chart-card"><div class="chart-title">SO Remarks</div><div class="chart-wrap"><canvas id="c-remarks"></canvas></div></div>
       </div>
       <div class="tactical-row">
-        <div class="tactical-card clickable" onclick="showSOClassDetail('Bulky')" title="Klik untuk lihat daftar SO Bulky"><div class="tactical-label">Bulky SO</div><div class="tactical-val" id="d-bulky">0</div><div class="tactical-sub">qty besar Â· SKU rendah</div></div>
-        <div class="tactical-card clickable" onclick="showSOClassDetail('Eceran')" title="Klik untuk lihat daftar SO Eceran"><div class="tactical-label">Eceran SO</div><div class="tactical-val" id="d-eceran">0</div><div class="tactical-sub">SKU banyak Â· qty kecil</div></div>
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Bulky')" title="Klik untuk lihat daftar SO Bulky"><div class="tactical-label">Bulky SO</div><div class="tactical-val" id="d-bulky">0</div><div class="tactical-sub">qty besar · SKU rendah</div></div>
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Eceran')" title="Klik untuk lihat daftar SO Eceran"><div class="tactical-label">Eceran SO</div><div class="tactical-val" id="d-eceran">0</div><div class="tactical-sub">SKU banyak · qty kecil</div></div>
         <div class="tactical-card clickable" onclick="showSOClassDetail('Normal')" title="Klik untuk lihat daftar SO Normal"><div class="tactical-label">Normal SO</div><div class="tactical-val" id="d-normal">0</div><div class="tactical-sub">beban standar</div></div>
         <div class="tactical-card"><div class="tactical-label">Zona Terberat</div><div class="tactical-val" id="d-risk-zone">-</div><div class="tactical-sub" id="d-risk-zone-sub">0 qty</div></div>
         <div class="tactical-card"><div class="tactical-label">Avg SKU / SO</div><div class="tactical-val" id="d-avg-sku">0</div><div class="tactical-sub" id="d-avg-qty">0 avg qty/SO</div></div>
@@ -549,8 +549,8 @@ body.dark-theme{
         <div class="detail-modal-sub" id="detail-modal-sub">0 SO</div>
       </div>
       <div class="detail-modal-actions">
-        <button class="btn-ghost" onclick="copyDetailSO()">ðŸ“‹ Copy SO</button>
-        <button class="btn-ghost" onclick="downloadDetailCSV()">ðŸ“¥ CSV</button>
+        <button class="btn-ghost" onclick="copyDetailSO()">📋 Copy SO</button>
+        <button class="btn-ghost" onclick="downloadDetailCSV()">📥 CSV</button>
         <button class="btn-cancel" onclick="closeDetailModal()">Tutup</button>
       </div>
     </div>
@@ -583,8 +583,8 @@ body.dark-theme{
         <div class="sku-modal-sub" id="sku-modal-sub">Klik SO number untuk lihat SKU, lokasi, dan qty.</div>
       </div>
       <div class="sku-modal-actions">
-        <button class="btn-ghost" onclick="copySkuDetail()">ðŸ“‹ Copy SKU</button>
-        <button class="btn-ghost" onclick="downloadSkuDetailCSV()">ðŸ“¥ CSV</button>
+        <button class="btn-ghost" onclick="copySkuDetail()">📋 Copy SKU</button>
+        <button class="btn-ghost" onclick="downloadSkuDetailCSV()">📥 CSV</button>
         <button class="btn-cancel" onclick="closeSkuModal()">Tutup</button>
       </div>
     </div>
@@ -803,7 +803,7 @@ function toggleTheme(){
   const dark = document.body.classList.contains('dark-theme');
   localStorage.setItem('playmaker-theme', dark ? 'dark' : 'light');
   const btn = document.getElementById('theme-toggle');
-  if(btn) btn.textContent = dark ? 'â˜€ï¸ Light' : 'ðŸŒ™ Dark';
+  if(btn) btn.textContent = dark ? '☀️ Light' : '🌙 Dark';
   renderDashboard();
 }
 
@@ -811,7 +811,7 @@ function applySavedTheme(){
   const saved = localStorage.getItem('playmaker-theme');
   if(saved === 'dark') document.body.classList.add('dark-theme');
   const btn = document.getElementById('theme-toggle');
-  if(btn) btn.textContent = document.body.classList.contains('dark-theme') ? 'â˜€ï¸ Light' : 'ðŸŒ™ Dark';
+  if(btn) btn.textContent = document.body.classList.contains('dark-theme') ? '☀️ Light' : '🌙 Dark';
 }
 
 function achievementClass(pct){
@@ -836,7 +836,7 @@ async function loadData(){
     
     const apiRows = getApiRows(res);
     soData = apiRows.map(normalizeSO);
-    addLog(`GAS sync OK Â· ${soData.length.toLocaleString('id-ID')} SO loaded`, 'ok');
+    addLog(`GAS sync OK · ${soData.length.toLocaleString('id-ID')} SO loaded`, 'ok');
 
     const allZones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
     
@@ -961,7 +961,7 @@ function clearAllPickers(){ myPickers.clear(); renderPickerTags(); }
 
 function renderPickerTags(){
   const tags = document.getElementById('mp-tags');
-  tags.innerHTML = [...myPickers].map(p=>`<div class="tag" style="background:var(--blue-dim);border-color:var(--blue-light);color:var(--blue)"><span>${esc(p)}</span><span class="tag-x" onclick="removePicker('${esc(p)}')">Ã—</span></div>`).join('');
+  tags.innerHTML = [...myPickers].map(p=>`<div class="tag" style="background:var(--blue-dim);border-color:var(--blue-light);color:var(--blue)"><span>${esc(p)}</span><span class="tag-x" onclick="removePicker('${esc(p)}')">×</span></div>`).join('');
   document.getElementById('mp-ct').innerText = myPickers.size + ' picker';
 }
 
@@ -1173,7 +1173,7 @@ function showAssignForcedInfo(targetQty){
 
   if(forcedSO > 0){
     alert(
-      `â„¹ï¸ Soft fallback aktif.\n\n` +
+      `ℹ️ Soft fallback aktif.\n\n` +
       `${forcedSO.toLocaleString('id-ID')} SO / ${forcedQty.toLocaleString('id-ID')} qty dipaksa dibagikan karena sisa kecil.\n` +
       `Sebagian picker bisa lewat target ${Number(targetQty || 0).toLocaleString('id-ID')} qty. Ini sengaja untuk kasus low volume.`
     );
@@ -1215,7 +1215,7 @@ function showAssignSkippedWarning(targetQty){
     );
 
     alert(
-      `âš ï¸ ${skippedSO.toLocaleString('id-ID')} SO tidak dibagikan karena akan melewati target ${targetQty.toLocaleString('id-ID')} qty per picker.\n\n` +
+      `⚠️ ${skippedSO.toLocaleString('id-ID')} SO tidak dibagikan karena akan melewati target ${targetQty.toLocaleString('id-ID')} qty per picker.\n\n` +
       `Qty skipped: ${skippedQty.toLocaleString('id-ID')}\n` +
       `Naikkan target atau tambah picker kalau SO tersebut tetap harus dibagi.`
     );
@@ -1285,14 +1285,14 @@ function generateSmartSuggestion(){
   const assignedQty = Object.values(assignResult).reduce((a,d)=>a + Number(d.newQty || 0), 0);
 
   addLog(
-    `[Smart Suggestion] pool:${pool.length.toLocaleString('id-ID')} SO Â· assigned:${assignedSO.toLocaleString('id-ID')} SO/${assignedQty.toLocaleString('id-ID')} qty Â· target:${targetQty.toLocaleString('id-ID')} Â· skipped:${skippedSO.toLocaleString('id-ID')} SO/${skippedQty.toLocaleString('id-ID')} qty Â· forced:${forcedSO.toLocaleString('id-ID')} SO/${forcedQty.toLocaleString('id-ID')} qty`,
+    `[Smart Suggestion] pool:${pool.length.toLocaleString('id-ID')} SO · assigned:${assignedSO.toLocaleString('id-ID')} SO/${assignedQty.toLocaleString('id-ID')} qty · target:${targetQty.toLocaleString('id-ID')} · skipped:${skippedSO.toLocaleString('id-ID')} SO/${skippedQty.toLocaleString('id-ID')} qty · forced:${forcedSO.toLocaleString('id-ID')} SO/${forcedQty.toLocaleString('id-ID')} qty`,
     (skippedSO || forcedSO) ? 'warn' : 'ok'
   );
 
   renderResultCards(targetQty);
 
   alert(
-    `ðŸª„ Smart Suggestion selesai.\n\n` +
+    `🪄 Smart Suggestion selesai.\n\n` +
     `Target otomatis: ${targetQty.toLocaleString('id-ID')} qty/picker\n` +
     `Assigned: ${assignedSO.toLocaleString('id-ID')} SO / ${assignedQty.toLocaleString('id-ID')} qty\n` +
     `Skipped: ${skippedSO.toLocaleString('id-ID')} SO / ${skippedQty.toLocaleString('id-ID')} qty\n` +
@@ -1436,22 +1436,22 @@ function renderResultCards(targetQty){
   let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap">
     <div>
       <div style="font-weight:700;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
-      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO assigned Â· ${totalNewQty.toLocaleString('id-ID')} qty baru Â· ${totalForcedSO.toLocaleString('id-ID')} SO forced Â· ${totalSkippedSO.toLocaleString('id-ID')} SO skipped Â· ${arr.length.toLocaleString('id-ID')} picker</div>
+      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO assigned · ${totalNewQty.toLocaleString('id-ID')} qty baru · ${totalForcedSO.toLocaleString('id-ID')} SO forced · ${totalSkippedSO.toLocaleString('id-ID')} SO skipped · ${arr.length.toLocaleString('id-ID')} picker</div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-      <button class="btn-ghost" onclick="copyAssignedGlobal('so',this,event)">ðŸ“‹ Copy All SO</button>
-      <button class="btn-ghost" onclick="copyAssignedGlobal('upload',this,event)">ðŸ“‹ Copy SO + Picker</button>
-      <button class="btn-ghost" onclick="copyAssignedGlobal('detail',this,event)">ðŸ“‹ Copy Detail</button>
-      <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">ðŸ’¾ Simpan & Upload ke Google Sheets</button>
+      <button class="btn-ghost" onclick="copyAssignedGlobal('so',this,event)">📋 Copy All SO</button>
+      <button class="btn-ghost" onclick="copyAssignedGlobal('upload',this,event)">📋 Copy SO + Picker</button>
+      <button class="btn-ghost" onclick="copyAssignedGlobal('detail',this,event)">📋 Copy Detail</button>
+      <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">💾 Simpan & Upload ke Google Sheets</button>
     </div>
   </div>
   ${totalForcedSO ? `
     <div style="margin-bottom:12px;background:var(--blue-dim);border:1px solid var(--blue-light);color:var(--blue);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:11px;line-height:1.5">
-      â„¹ï¸ Soft fallback aktif: ${totalForcedSO.toLocaleString('id-ID')} SO / ${totalForcedQty.toLocaleString('id-ID')} qty dibagikan paksa karena sisa kecil. Beberapa picker bisa lewat target ${Number(targetQty || 0).toLocaleString('id-ID')} qty.
+      ℹ️ Soft fallback aktif: ${totalForcedSO.toLocaleString('id-ID')} SO / ${totalForcedQty.toLocaleString('id-ID')} qty dibagikan paksa karena sisa kecil. Beberapa picker bisa lewat target ${Number(targetQty || 0).toLocaleString('id-ID')} qty.
     </div>` : ''}
   ${totalSkippedSO ? `
     <div style="margin-bottom:12px;background:var(--amber-dim);border:1px solid var(--amber-light);color:var(--amber);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:11px;line-height:1.5">
-      âš ï¸ Hard limit aktif: ${totalSkippedSO.toLocaleString('id-ID')} SO / ${totalSkippedQty.toLocaleString('id-ID')} qty tidak dibagikan karena akan melewati target ${Number(targetQty || 0).toLocaleString('id-ID')} qty per picker.
+      ⚠️ Hard limit aktif: ${totalSkippedSO.toLocaleString('id-ID')} SO / ${totalSkippedQty.toLocaleString('id-ID')} qty tidak dibagikan karena akan melewati target ${Number(targetQty || 0).toLocaleString('id-ID')} qty per picker.
       <br>Naikkan target atau tambah picker kalau SO skipped tetap harus dibagikan.
     </div>` : ''}
   <div style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1460,7 +1460,7 @@ function renderResultCards(targetQty){
       ${arr.map(d=>`<option value="${esc(d.picker)}">${esc(d.picker)}</option>`).join('')}
     </select>
     <input type="text" id="assign-result-search" class="search" placeholder="Cari zone / SO / tujuan..." oninput="filterAssignedPickers()" style="width:260px;max-width:100%">
-    <button class="btn-ghost" onclick="clearAssignedPickerFilter()">âœ• Clear</button>
+    <button class="btn-ghost" onclick="clearAssignedPickerFilter()">✕ Clear</button>
     <div class="mono" id="assign-picker-filter-count" style="font-size:10px;color:var(--text3);margin-left:auto">Menampilkan ${arr.length.toLocaleString('id-ID')} picker</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:10px" id="picker-grid">`;
@@ -1480,7 +1480,7 @@ function renderResultCards(targetQty){
     });
     const zoneEntries = Object.entries(zoneSummary).sort((a,b)=>b[1].qty-a[1].qty);
     const zonesStr = zoneEntries.map(([z])=>z).join(', ');
-    const zoneChips = zoneEntries.map(([z,v])=>`<span class="zone-badge" title="${v.so} SO Â· ${v.qty.toLocaleString('id-ID')} qty">${esc(z)} Â· ${v.so} SO Â· ${v.qty.toLocaleString('id-ID')} qty</span>`).join(' ');
+    const zoneChips = zoneEntries.map(([z,v])=>`<span class="zone-badge" title="${v.so} SO · ${v.qty.toLocaleString('id-ID')} qty">${esc(z)} · ${v.so} SO · ${v.qty.toLocaleString('id-ID')} qty</span>`).join(' ');
     const pickerSkuTotal = d.soList.reduce((a,s)=>a + getAssignedSkuCount(s), 0);
     const pickerLocTotal = sumAssignedLocationCount(d.soList);
 
@@ -1510,14 +1510,14 @@ function renderResultCards(targetQty){
         <div class="pc-av" style="background:${COLORS[idx % COLORS.length]}22;color:${COLORS[idx % COLORS.length]}">${esc(d.picker.slice(0,2).toUpperCase())}</div>
         <div class="pc-info">
           <div class="pc-name">${esc(d.picker)}</div>
-          <div class="pc-meta">${d.soList.length.toLocaleString('id-ID')} SO baru Â· ${d.newQty.toLocaleString('id-ID')} qty baru Â· ${pickerSkuTotal.toLocaleString('id-ID')} SKU Â· ${pickerLocTotal} lokasi Â· ${zoneEntries.length.toLocaleString('id-ID')} zone</div>
+          <div class="pc-meta">${d.soList.length.toLocaleString('id-ID')} SO baru · ${d.newQty.toLocaleString('id-ID')} qty baru · ${pickerSkuTotal.toLocaleString('id-ID')} SKU · ${pickerLocTotal} lokasi · ${zoneEntries.length.toLocaleString('id-ID')} zone</div>
         </div>
         <div class="pc-right">
           <div style="text-align:right">
             <div class="pc-qty">${d.totalQty.toLocaleString('id-ID')} Qty</div>
             <div class="pc-pct" style="color:${barColor};font-weight:600">${pctRaw}% dari target</div>
           </div>
-          <div class="chevron">â–¼</div>
+          <div class="chevron">▼</div>
         </div>
       </div>
       <div class="pc-bar">
@@ -1528,10 +1528,10 @@ function renderResultCards(targetQty){
         <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--bg3)">
           <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">${zoneChips || '<span class="mono" style="color:var(--text3)">No zone</span>'}</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-            <button class="copy-btn" onclick="copyAssignedPicker('so',this,event)">ðŸ“‹ Copy SO Picker</button>
-            <button class="copy-btn" onclick="copyAssignedPicker('upload',this,event)">ðŸ“‹ Copy SO + Picker</button>
-            <button class="copy-btn" onclick="copyAssignedPicker('detail',this,event)">ðŸ“‹ Copy Detail</button>
-            <button class="copy-btn" onclick="downloadAssignedPickerCSV(this,event)">ðŸ“¥ CSV Picker</button>
+            <button class="copy-btn" onclick="copyAssignedPicker('so',this,event)">📋 Copy SO Picker</button>
+            <button class="copy-btn" onclick="copyAssignedPicker('upload',this,event)">📋 Copy SO + Picker</button>
+            <button class="copy-btn" onclick="copyAssignedPicker('detail',this,event)">📋 Copy Detail</button>
+            <button class="copy-btn" onclick="downloadAssignedPickerCSV(this,event)">📥 CSV Picker</button>
           </div>
         </div>
         <div style="overflow:auto;max-height:420px">
@@ -1613,7 +1613,7 @@ function markCopied(btn){
   if(!btn) return;
   const old = btn.dataset.oldText || btn.innerText;
   btn.dataset.oldText = old;
-  btn.innerText = 'âœ“ Copied!'; btn.classList.add('copied');
+  btn.innerText = '✓ Copied!'; btn.classList.add('copied');
   setTimeout(()=>{ btn.innerText = old; btn.classList.remove('copied'); delete btn.dataset.oldText; }, 1500);
 }
 
@@ -1641,10 +1641,10 @@ async function submitToGoogle(){
     const res = await r.json();
     if(res.status === 'success'){
       alert('Mantap! Data alokasi berhasil disimpan ke Google Sheets.');
-      addLog(`Assign upload OK Â· ${payload.length.toLocaleString('id-ID')} SO sent to Google Sheets`, 'ok');
+      addLog(`Assign upload OK · ${payload.length.toLocaleString('id-ID')} SO sent to Google Sheets`, 'ok');
       document.getElementById('ap-right').innerHTML = `
         <div class="empty">
-          <div class="empty-icon" style="color:var(--green); opacity:1">âœ“</div>
+          <div class="empty-icon" style="color:var(--green); opacity:1">✓</div>
           <div class="empty-txt" style="color:var(--green)"><strong>UPLOAD BERHASIL!</strong><br>Data picker sudah masuk ke Google Sheets.</div>
         </div>`;
       if (!isPreviewSandbox()) {
@@ -1775,7 +1775,7 @@ function showSOClassDetail(className){
 
   document.getElementById('detail-modal-bg').classList.add('open');
   renderDetailModalTable();
-  addLog(`Opened ${className} SO detail Â· ${detailRows.length.toLocaleString('id-ID')} rows`, 'info');
+  addLog(`Opened ${className} SO detail · ${detailRows.length.toLocaleString('id-ID')} rows`, 'info');
 }
 
 function closeDetailModal(){
@@ -1806,7 +1806,7 @@ function renderDetailModalTable(){
   const sub = document.getElementById('detail-modal-sub');
   const tbody = document.getElementById('detail-tbody');
   if(title) title.textContent = `Detail ${detailClassName} SO`;
-  if(sub) sub.textContent = `${rows.length.toLocaleString('id-ID')} SO Â· ${totalQty.toLocaleString('id-ID')} qty Â· ${totalSku.toLocaleString('id-ID')} SKU`;
+  if(sub) sub.textContent = `${rows.length.toLocaleString('id-ID')} SO · ${totalQty.toLocaleString('id-ID')} qty · ${totalSku.toLocaleString('id-ID')} SKU`;
 
   if(!tbody) return;
   if(!rows.length){
@@ -1878,7 +1878,7 @@ async function openSkuDetail(soNumber, ev){
   const sub = document.getElementById('sku-modal-sub');
   const tbody = document.getElementById('sku-detail-tbody');
 
-  if(title) title.textContent = 'Detail SKU Â· ' + currentSkuSO;
+  if(title) title.textContent = 'Detail SKU · ' + currentSkuSO;
   if(sub) sub.textContent = 'Loading SKU detail dari Google Apps Script...';
   if(tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Loading detail SKU...</div></td></tr>`;
   if(bg) bg.classList.add('open');
@@ -1909,11 +1909,11 @@ async function openSkuDetail(soNumber, ev){
 
     if(sub){
       const detected = res.detected_headers || {};
-      sub.textContent = `${Number(res.total_rows || skuDetailRows.length).toLocaleString('id-ID')} rows Â· desc:${detected.sku_description || '-'} Â· loc:${detected.location || '-'}`;
+      sub.textContent = `${Number(res.total_rows || skuDetailRows.length).toLocaleString('id-ID')} rows · desc:${detected.sku_description || '-'} · loc:${detected.location || '-'}`;
     }
 
     renderSkuDetailTable();
-    addLog(`SO detail loaded Â· ${currentSkuSO} Â· ${skuDetailRows.length.toLocaleString('id-ID')} SKU rows`, 'ok');
+    addLog(`SO detail loaded · ${currentSkuSO} · ${skuDetailRows.length.toLocaleString('id-ID')} SKU rows`, 'ok');
   }catch(e){
     console.error(e);
     if(sub) sub.textContent = 'Gagal load detail SKU.';
@@ -2134,10 +2134,10 @@ function renderDashboard(){
         const d = pMap[p];
         const achievement = Math.round((d.qty/2400)*100);
         const achClass = achievementClass(achievement);
-        const achLabel = achievement >= 120 ? `${achievement}% Â· overload` :
-                         achievement >= 100 ? `${achievement}% Â· good` :
-                         achievement >= 80 ? `${achievement}% Â· watch` :
-                         `${achievement}% Â· low`;
+        const achLabel = achievement >= 120 ? `${achievement}% · overload` :
+                         achievement >= 100 ? `${achievement}% · good` :
+                         achievement >= 80 ? `${achievement}% · watch` :
+                         `${achievement}% · low`;
         return `<tr>
           <td style="font-weight:600">${esc(p)}</td>
           <td class="mono" style="text-align:right">${d.so}</td>
@@ -2148,7 +2148,7 @@ function renderDashboard(){
         </tr>`;
       }).join('');
   }
-  addLog(`Dashboard rendered Â· filtered:${dashData.length}/${soData.length} Â· bulky:${soClass.Bulky} eceran:${soClass.Eceran} normal:${soClass.Normal}`, 'info');
+  addLog(`Dashboard rendered · filtered:${dashData.length}/${soData.length} · bulky:${soClass.Bulky} eceran:${soClass.Eceran} normal:${soClass.Normal}`, 'info');
 }
 
 function buildChart(id,type,labels,data,label,colors){
@@ -2205,7 +2205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearAllPickers();
       document.getElementById('ap-right').innerHTML = `
         <div class="empty">
-          <div class="empty-icon">ðŸŽ¯</div>
+          <div class="empty-icon">🎯</div>
           <div class="empty-txt">Set filter & picker di panel kiri<br>lalu klik <strong>ASSIGN SEKARANG</strong></div>
         </div>`;
       if (!isPreviewSandbox()) {

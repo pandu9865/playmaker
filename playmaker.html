@@ -1015,23 +1015,131 @@ function runAssign(){
   renderResultCards(targetQty);
 }
 
+function buildAssignedRows(){
+  const rows = [];
+  Object.values(assignResult).forEach(d => {
+    d.soList.forEach(s => rows.push({ picker: d.picker, so: s }));
+  });
+  return rows;
+}
+
+function buildSOCopyText(rows){
+  return rows.map(x => x.so.so_number).join('\n');
+}
+
+function buildUploadCopyText(rows){
+  return rows.map(x => `${x.so.so_number}\t${x.picker}`).join('\n');
+}
+
+function buildDetailCopyText(rows){
+  return rows.map(x => {
+    const s = x.so;
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    return [s.so_number, x.picker, s.destination_name || '', s.picking_zone || '', w || '', t || '', s.request_quantity || 0].join('\t');
+  }).join('\n');
+}
+
+function copyAssignedGlobal(mode, btn, e){
+  if(e) e.stopPropagation();
+  const rows = buildAssignedRows();
+  if(!rows.length){ alert('Belum ada hasil assign untuk dicopy.'); return; }
+
+  const text = mode === 'upload' ? buildUploadCopyText(rows)
+    : mode === 'detail' ? buildDetailCopyText(rows)
+    : buildSOCopyText(rows);
+
+  copyRawText(btn, text);
+}
+
+function copyAssignedPicker(mode, btn, e){
+  if(e) e.stopPropagation();
+  const card = btn.closest('.pc');
+  const picker = card ? card.dataset.picker : '';
+  const d = assignResult[picker];
+  if(!d || !d.soList || !d.soList.length){ alert('Picker ini belum punya SO untuk dicopy.'); return; }
+
+  const rows = d.soList.map(s => ({ picker, so: s }));
+  const text = mode === 'upload' ? buildUploadCopyText(rows)
+    : mode === 'detail' ? buildDetailCopyText(rows)
+    : buildSOCopyText(rows);
+
+  copyRawText(btn, text);
+}
+
+function downloadAssignedPickerCSV(btn, e){
+  if(e) e.stopPropagation();
+  const card = btn.closest('.pc');
+  const picker = card ? card.dataset.picker : '';
+  const d = assignResult[picker];
+  if(!d || !d.soList || !d.soList.length){ alert('Picker ini belum punya SO untuk didownload.'); return; }
+
+  const csv = ['Picker,SO Number,Destination,Zone,Wave,Type,Qty'];
+  d.soList.forEach(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    csv.push(`"${String(picker).replace(/"/g,'""')}","${String(s.so_number||'').replace(/"/g,'""')}","${String(s.destination_name||'').replace(/"/g,'""')}","${String(s.picking_zone||'').replace(/"/g,'""')}","${String(w||'').replace(/"/g,'""')}","${String(t||'').replace(/"/g,'""')}","${Number(s.request_quantity||0)}"`);
+  });
+
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+  a.download=`assign_${picker.replace(/[^A-Za-z0-9]+/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
 function renderResultCards(targetQty){
   const container = document.getElementById('ap-right');
   const arr = Object.values(assignResult);
   if(!arr.length) return;
 
-  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-    <div style="font-weight:600;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
-    <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">💾 Simpan & Upload ke Google Sheets</button>
-  </div><div style="display:flex;flex-direction:column;gap:8px" id="picker-grid">`;
+  const totalAssignedSO = arr.reduce((a,d)=>a + d.soList.length, 0);
+  const totalNewQty = arr.reduce((a,d)=>a + d.newQty, 0);
+
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap">
+    <div>
+      <div style="font-weight:700;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
+      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO · ${totalNewQty.toLocaleString('id-ID')} qty baru · ${arr.length.toLocaleString('id-ID')} picker</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+      <button class="btn-ghost" onclick="copyAssignedGlobal('so',this,event)">📋 Copy All SO</button>
+      <button class="btn-ghost" onclick="copyAssignedGlobal('upload',this,event)">📋 Copy SO + Picker</button>
+      <button class="btn-ghost" onclick="copyAssignedGlobal('detail',this,event)">📋 Copy Detail</button>
+      <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">💾 Simpan & Upload ke Google Sheets</button>
+    </div>
+  </div><div style="display:flex;flex-direction:column;gap:10px" id="picker-grid">`;
 
   arr.forEach((d,idx)=>{
-    const pct = Math.min(100, Math.round((d.totalQty / targetQty) * 100));
+    const pctRaw = Math.round((d.totalQty / targetQty) * 100);
+    const pct = Math.min(100, pctRaw);
     const isOver = d.totalQty > targetQty;
     const barColor = isOver ? 'var(--red)' : (pct > 80 ? 'var(--amber)' : 'var(--green)');
-    
-    let zoneSet = new Set(d.soList.map(s=>s.picking_zone).filter(Boolean));
-    let zonesStr = [...zoneSet].join(', ');
+
+    let zoneSummary = {};
+    d.soList.forEach(s=>{
+      const z = s.picking_zone || 'Unknown';
+      if(!zoneSummary[z]) zoneSummary[z] = { so:0, qty:0 };
+      zoneSummary[z].so++;
+      zoneSummary[z].qty += Number(s.request_quantity || 0);
+    });
+    const zoneEntries = Object.entries(zoneSummary).sort((a,b)=>b[1].qty-a[1].qty);
+    const zonesStr = zoneEntries.map(([z])=>z).join(', ');
+    const zoneChips = zoneEntries.map(([z,v])=>`<span class="zone-badge" title="${v.so} SO · ${v.qty.toLocaleString('id-ID')} qty">${esc(z)} · ${v.so} SO · ${v.qty.toLocaleString('id-ID')} qty</span>`).join(' ');
+
+    const tableRows = d.soList
+      .slice()
+      .sort((a,b)=>String(a.picking_zone||'').localeCompare(String(b.picking_zone||'')) || Number(b.request_quantity||0)-Number(a.request_quantity||0))
+      .map(s=>{
+        const w = s.WAVE || getWave(s.destination_name);
+        const t = s.type || getType(s.destination_name);
+        return `<tr>
+          <td class="mono"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></td>
+          <td style="font-weight:500">${esc(s.destination_name || '-')}</td>
+          <td class="mono"><span class="zone-badge">${esc(s.picking_zone || '-')}</span></td>
+          <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
+          <td><span class="badge ${String(t).toLowerCase()}">${esc(t)}</span></td>
+          <td class="mono" style="text-align:right;font-weight:700">${Number(s.request_quantity||0).toLocaleString('id-ID')}</td>
+        </tr>`;
+      }).join('');
 
     html += `
     <div class="pc" data-picker="${esc(d.picker)}" data-zones="${esc(zonesStr)}">
@@ -1039,12 +1147,12 @@ function renderResultCards(targetQty){
         <div class="pc-av" style="background:${COLORS[idx % COLORS.length]}22;color:${COLORS[idx % COLORS.length]}">${esc(d.picker.slice(0,2).toUpperCase())}</div>
         <div class="pc-info">
           <div class="pc-name">${esc(d.picker)}</div>
-          <div class="pc-meta">${d.soList.length} SO baru | Area: ${esc(zonesStr || '-')}</div>
+          <div class="pc-meta">${d.soList.length.toLocaleString('id-ID')} SO baru · ${d.newQty.toLocaleString('id-ID')} qty baru · ${zoneEntries.length.toLocaleString('id-ID')} zone</div>
         </div>
         <div class="pc-right">
           <div style="text-align:right">
             <div class="pc-qty">${d.totalQty.toLocaleString('id-ID')} Qty</div>
-            <div class="pc-pct" style="color:${barColor};font-weight:600">${pct}% dari target</div>
+            <div class="pc-pct" style="color:${barColor};font-weight:600">${pctRaw}% dari target</div>
           </div>
           <div class="chevron">▼</div>
         </div>
@@ -1053,55 +1161,45 @@ function renderResultCards(targetQty){
         <div class="bar-bg"><div class="bar-fg" style="width:${pct}%;background:${barColor}"></div></div>
         <div class="bar-lbl">(Beban Shift: ${d.initialQty.toLocaleString('id-ID')} | Baru: +${d.newQty.toLocaleString('id-ID')})</div>
       </div>
-      <div class="pc-detail">`;
-
-      let grouped = {};
-      d.soList.forEach(s=>{
-        if(!grouped[s.picking_zone]) grouped[s.picking_zone]=[];
-        grouped[s.picking_zone].push(s);
-      });
-
-      for(let zone in grouped){
-        let soInZone = grouped[zone];
-        let copyTextData = soInZone.map(s=>s.so_number).join('\n');
-        html += `
-        <div class="zone-sec">
-          <div class="zone-hdr">
-            <div class="zone-hdr-left"><span class="zone-badge">${esc(zone)}</span> <span>${soInZone.length} SO</span></div>
-            <button class="copy-btn" onclick="copyText(this,\`${esc(copyTextData)}\`,event)">📋 Copy Semua SO</button>
+      <div class="pc-detail">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--bg3)">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">${zoneChips || '<span class="mono" style="color:var(--text3)">No zone</span>'}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+            <button class="copy-btn" onclick="copyAssignedPicker('so',this,event)">📋 Copy SO Picker</button>
+            <button class="copy-btn" onclick="copyAssignedPicker('upload',this,event)">📋 Copy SO + Picker</button>
+            <button class="copy-btn" onclick="copyAssignedPicker('detail',this,event)">📋 Copy Detail</button>
+            <button class="copy-btn" onclick="downloadAssignedPickerCSV(this,event)">📥 CSV Picker</button>
           </div>
-          <div class="so-list">`;
-          soInZone.forEach(s=>{
-            const w = s.WAVE || getWave(s.destination_name);
-            const t = s.type || getType(s.destination_name);
-            html += `
-            <div class="so-item">
-              <div class="so-num"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></div>
-              <div class="so-dest">${esc(s.destination_name)}</div>
-              <div class="so-tags">
-                <span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span>
-                <span class="badge ${t.toLowerCase()}">${esc(t)}</span>
-              </div>
-              <div class="so-qty">${s.request_quantity} Qty</div>
-            </div>`;
-          });
-          html += `</div></div>`;
-      }
-    html += `</div></div>`;
+        </div>
+        <div style="overflow:auto;max-height:420px">
+          <table>
+            <thead><tr>
+              <th>SO Number</th><th>Destination</th><th>Zone</th><th>Wave</th><th>Type</th><th style="text-align:right">Qty</th>
+            </tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
   });
   html += `</div>`;
   container.innerHTML = html;
-  
+
   anime({ targets: '#picker-grid .pc', opacity: [0, 1], translateY: [10, 0], delay: anime.stagger(60), easing: 'easeOutQuad', duration: 400 });
 }
 
-function copyText(btn, txt, e){
-  e.stopPropagation();
+function copyRawText(btn, txt){
+  if(!txt){ alert('Tidak ada data untuk dicopy.'); return; }
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(txt).then(() => markCopied(btn)).catch(() => fallbackCopy(btn, txt));
   } else {
     fallbackCopy(btn, txt);
   }
+}
+
+function copyText(btn, txt, e){
+  if(e) e.stopPropagation();
+  copyRawText(btn, txt);
 }
 
 function fallbackCopy(btn, txt) {
@@ -1113,8 +1211,11 @@ function fallbackCopy(btn, txt) {
 }
 
 function markCopied(btn){
+  if(!btn) return;
+  const old = btn.dataset.oldText || btn.innerText;
+  btn.dataset.oldText = old;
   btn.innerText = '✓ Copied!'; btn.classList.add('copied');
-  setTimeout(()=>{ btn.innerText = '📋 Copy Semua SO'; btn.classList.remove('copied'); }, 1500);
+  setTimeout(()=>{ btn.innerText = old; btn.classList.remove('copied'); delete btn.dataset.oldText; }, 1500);
 }
 
 async function submitToGoogle(){

@@ -77,6 +77,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .picker-inp-row{display:flex;gap:6px;margin-bottom:6px}
 .inp{flex:1;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;outline:none;font-family:var(--mono)}
 .inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px #2563eb22}
+.picker-textarea{min-height:46px;max-height:96px;resize:vertical;line-height:1.45}
 .btn-plus{padding:7px 10px;border-radius:6px;background:var(--blue);border:none;color:#fff;font-size:16px;font-weight:700;cursor:pointer;line-height:1}
 .btn-plus:hover{opacity:.85}
 .tags{display:flex;flex-wrap:wrap;gap:4px;min-height:18px}
@@ -355,7 +356,7 @@ body.dark-theme{
               <button class="btn-ghost" onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear All</button>
             </div>
             <div class="picker-inp-row">
-              <input type="text" id="mp-inp" class="inp" placeholder="Nama picker (Enter)">
+              <textarea id="mp-inp" class="inp picker-textarea" rows="2" placeholder="Paste nama picker per baris, atau pisah pakai koma"></textarea>
               <button class="btn-plus" id="btn-add-picker">+</button>
             </div>
             <div class="tags" id="mp-tags"></div>
@@ -919,11 +920,34 @@ function updateFilterCount(){
   document.getElementById('f-qty').innerText = q.toLocaleString('id-ID') + ' qty tersedia';
 }
 
+function parsePickerInput(text){
+  return String(text || '')
+    .split(/[\n\r,;|]+/)
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+
 function addPicker(){
   const inp = document.getElementById('mp-inp');
-  const v = inp.value.trim();
-  if(!v) return;
-  myPickers.add(v); inp.value=''; renderPickerTags();
+  const raw = inp.value.trim();
+  if(!raw) return;
+
+  const names = parsePickerInput(raw);
+  names.forEach(name => myPickers.add(name));
+
+  inp.value='';
+  renderPickerTags();
+}
+
+function handlePickerPaste(e){
+  const pasted = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+  if(!pasted) return;
+
+  if(/[\n\r,;|]/.test(pasted)){
+    e.preventDefault();
+    parsePickerInput(pasted).forEach(name => myPickers.add(name));
+    renderPickerTags();
+  }
 }
 
 function removePicker(v){ myPickers.delete(v); renderPickerTags(); }
@@ -1653,7 +1677,14 @@ function downloadCSV(){
 document.addEventListener('DOMContentLoaded', () => {
   applySavedTheme();
   document.getElementById('btn-add-picker').addEventListener('click', addPicker);
-  document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
+  const pickerInput = document.getElementById('mp-inp');
+  pickerInput.addEventListener('paste', handlePickerPaste);
+  pickerInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      addPicker();
+    }
+  });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') { closeSkuModal(); closeDetailModal(); closeModal(); } });
   
   if (isPreviewSandbox()) {

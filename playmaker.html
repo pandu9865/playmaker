@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -47,7 +47,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .page{display:none;height:100%;overflow:hidden}
 .page.active{display:flex}
 
-/* ── ASSIGN PAGE ── */
+/* â”€â”€ ASSIGN PAGE â”€â”€ */
 .assign-page{display:flex;height:100%;overflow:hidden}
 
 /* Left panel */
@@ -77,6 +77,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .picker-inp-row{display:flex;gap:6px;margin-bottom:6px}
 .inp{flex:1;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;outline:none;font-family:var(--mono)}
 .inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px #2563eb22}
+.picker-textarea{min-height:46px;max-height:96px;resize:vertical;line-height:1.45}
 .btn-plus{padding:7px 10px;border-radius:6px;background:var(--blue);border:none;color:#fff;font-size:16px;font-weight:700;cursor:pointer;line-height:1}
 .btn-plus:hover{opacity:.85}
 .tags{display:flex;flex-wrap:wrap;gap:4px;min-height:18px}
@@ -174,7 +175,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .skel{background:linear-gradient(90deg,var(--bg4) 25%,var(--bg3) 50%,var(--bg4) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* ── DATA SO PAGE ── */
+/* â”€â”€ DATA SO PAGE â”€â”€ */
 .so-page{flex-direction:column}
 .toolbar{padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
 .search{padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none;width:200px;font-family:var(--mono)}
@@ -192,18 +193,90 @@ tr:nth-child(even) td{background:var(--bg3)}
 tr:hover td{background:var(--blue-dim)!important}
 .mono{font-family:var(--mono);font-size:11px;color:var(--text2)}
 
-/* ── DASHBOARD PAGE ── */
+/* â”€â”€ DASHBOARD PAGE â”€â”€ */
 .dash-page{flex-direction:column;overflow-y:auto}
 .dash-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+/* DASHBOARD FILTER + DARK MODE */
+body.dark-theme{
+  --bg:#020617;--bg2:#0f172a;--bg3:#111827;--bg4:#1e293b;--bg5:#334155;
+  --text:#e5e7eb;--text2:#cbd5e1;--text3:#64748b;
+  --border:#1e293b;--border2:#334155;
+  --blue-dim:#172554;--blue-light:#1d4ed8;
+  --green-dim:#052e16;--green-light:#166534;
+  --amber-dim:#451a03;--amber-light:#92400e;
+  --red-dim:#450a0a;--red-light:#991b1b;
+  --purple-light:#3b0764;--teal-light:#134e4a;--coral-light:#7c2d12;
+}
+.dash-control-row{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dash-control-title{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-right:4px}
+.dash-control-row select{padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;font-family:var(--mono);outline:none}
+.dash-control-row select:focus{border-color:var(--blue)}
+.dash-filter-badge{font-family:var(--mono);font-size:10px;color:var(--blue);margin-left:auto}
+.theme-toggle{padding:6px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--mono)}
+.theme-toggle:hover{background:var(--bg4);color:var(--text)}
+.ach-good{color:var(--green)!important}
+.ach-watch{color:var(--amber)!important}
+.ach-bad{color:var(--red)!important}
+.ach-over{color:var(--blue)!important}
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .kpi{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-align:center}
 .kpi-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .kpi-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--text)}
 .kpi-sub{font-size:10px;color:var(--text2);margin-top:2px}
-.charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.charts-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:1400px){.charts-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.charts-row{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}}
 .chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
 .chart-title{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:10px}
 .chart-wrap{position:relative;height:180px}
+
+.tactical-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.tactical-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.tactical-card.clickable{cursor:pointer;transition:.15s}
+.tactical-card.clickable:hover{transform:translateY(-1px);border-color:var(--blue);box-shadow:0 6px 16px #0f172a14;background:var(--blue-dim)}
+.tactical-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.tactical-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text)}
+.tactical-sub{font-size:10px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.terminal-card{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px 14px;color:#cbd5e1;font-family:var(--mono)}
+.terminal-title{display:flex;align-items:center;justify-content:space-between;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:8px}
+.terminal-log{height:105px;overflow:auto;background:#020617;border:1px solid #1e293b;border-radius:6px;padding:8px;font-size:10px;line-height:1.55}
+.terminal-line{white-space:pre-wrap;color:#cbd5e1}
+.terminal-line.ok{color:#86efac}.terminal-line.warn{color:#fde68a}.terminal-line.err{color:#fca5a5}.terminal-line.info{color:#93c5fd}
+
+.detail-modal{background:var(--bg2);border-radius:12px;max-width:1080px;width:94%;max-height:86vh;box-shadow:0 20px 60px #0003;display:flex;flex-direction:column;overflow:hidden}
+.detail-modal-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.detail-modal-title{font-weight:700;font-size:15px}
+.detail-modal-sub{font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:2px}
+.detail-modal-actions{display:flex;gap:8px;align-items:center}
+.detail-modal-body{padding:12px 18px 18px;overflow:auto}
+.detail-filter-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.detail-filter-row input,.detail-filter-row select{padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none}
+.detail-filter-row input{min-width:260px;flex:1}
+.detail-table-wrap{border:1px solid var(--border);border-radius:8px;overflow:auto;max-height:58vh}
+.detail-table th{position:sticky;top:0;z-index:1}
+.detail-empty{padding:24px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px}
+
+.so-link{color:var(--blue);font-weight:700;cursor:pointer;text-decoration:none;border-bottom:1px dashed #93c5fd}
+.so-link:hover{color:#1d4ed8;background:var(--blue-dim)}
+.sku-modal{background:var(--bg2);border-radius:12px;max-width:1180px;width:96%;max-height:88vh;box-shadow:0 20px 60px #0003;display:flex;flex-direction:column;overflow:hidden}
+.sku-modal-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sku-modal-title{font-weight:700;font-size:15px}
+.sku-modal-sub{font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:2px}
+.sku-modal-actions{display:flex;gap:8px;align-items:center}
+.sku-modal-body{padding:12px 18px 18px;overflow:auto}
+.sku-summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.sku-summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.sku-summary-label{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px}
+.sku-summary-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text)}
+.sku-filter-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.sku-filter-row input,.sku-filter-row select{padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none}
+.sku-filter-row input{min-width:280px;flex:1}
+.sku-table-wrap{border:1px solid var(--border);border-radius:8px;overflow:auto;max-height:54vh}
+.sku-table th{position:sticky;top:0;z-index:1}
+.sku-empty{padding:24px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px}
+@media(max-width:800px){.sku-summary-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1200px){.tactical-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.tactical-row{grid-template-columns:1fr}}
 
 /* CONTROL PANEL NEW */
 .control-panel-new{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 6px -1px #0000000d}
@@ -218,6 +291,9 @@ tr:hover td{background:var(--blue-dim)!important}
 .btn-mega-assign{background:var(--green);color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-shadow:0 4px 12px #16a34a33;transition:all .2s ease;font-family:var(--mono)}
 .btn-mega-assign:hover{background:#15803d;transform:translateY(-1px);box-shadow:0 6px 16px #16a34a44}
 .btn-mega-assign:active{transform:scale(.98)}
+.btn-suggest{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-shadow:0 4px 12px #7c3aed33;transition:all .2s ease;font-family:var(--mono)}
+.btn-suggest:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 6px 16px #7c3aed44}
+.btn-suggest:active{transform:scale(.98)}
 .btn-secondary-download{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:9px;font-size:12px;font-weight:500;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;font-family:var(--mono)}
 .btn-secondary-download:hover{background:var(--bg3)}
 
@@ -249,7 +325,7 @@ tr:hover td{background:var(--blue-dim)!important}
   </nav>
   <div class="topbar-right">
     <div class="sync-badge"><div class="dot" id="dot"></div><span id="sync-txt">Loading...</span></div>
-    <button class="btn-ghost" onclick="loadData()">↻ Refresh</button>
+    <button class="btn-ghost" onclick="refreshData()">â†» Refresh</button>
   </div>
 </div>
 
@@ -279,11 +355,11 @@ tr:hover td{background:var(--blue-dim)!important}
 
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <div class="panel-section-title" style="margin-bottom:0">👥 Picker Shift Ini</div>
-              <button class="btn-ghost" onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear All</button>
+              <div class="panel-section-title" style="margin-bottom:0">ðŸ‘¥ Picker Shift Ini</div>
+              <button class="btn-ghost" onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">âœ• Clear All</button>
             </div>
             <div class="picker-inp-row">
-              <input type="text" id="mp-inp" class="inp" placeholder="Nama picker (Enter)">
+              <textarea id="mp-inp" class="inp picker-textarea" rows="2" placeholder="Paste nama picker per baris, atau pisah pakai koma"></textarea>
               <button class="btn-plus" id="btn-add-picker">+</button>
             </div>
             <div class="tags" id="mp-tags"></div>
@@ -291,7 +367,7 @@ tr:hover td{background:var(--blue-dim)!important}
           </div>
 
           <div>
-            <div class="panel-section-title">🎯 Target Qty / Picker</div>
+            <div class="panel-section-title">ðŸŽ¯ Target Qty / Picker</div>
             <div class="target-input-wrapper">
               <span style="font-size:12px;color:var(--text2)">Qty per picker</span>
               <input type="number" id="target" value="2400" min="100" step="100">
@@ -299,7 +375,7 @@ tr:hover td{background:var(--blue-dim)!important}
           </div>
 
           <div>
-            <div class="panel-section-title">🌊 Filter Wave</div>
+            <div class="panel-section-title">ðŸŒŠ Filter Wave</div>
             <div class="filter-grid-2">
               <div class="chip w1 on" onclick="toggleF('wave','WAVE 1',this)">Wave 1</div>
               <div class="chip w2 on" onclick="toggleF('wave','WAVE 2',this)">Wave 2</div>
@@ -309,7 +385,7 @@ tr:hover td{background:var(--blue-dim)!important}
           </div>
 
           <div>
-            <div class="panel-section-title">📦 Filter Type</div>
+            <div class="panel-section-title">ðŸ“¦ Filter Type</div>
             <div class="filter-grid-2">
               <div class="chip kepala on" onclick="toggleF('type','Kepala',this)">Kepala</div>
               <div class="chip badan on" onclick="toggleF('type','Badan',this)">Badan</div>
@@ -320,10 +396,10 @@ tr:hover td{background:var(--blue-dim)!important}
 
           <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <div class="panel-section-title" style="margin-bottom:0">📍 Filter Zone</div>
+              <div class="panel-section-title" style="margin-bottom:0">ðŸ“ Filter Zone</div>
               <div style="display:flex;gap:6px">
-                <button class="btn-ghost" onclick="selectAllZones()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✓ All</button>
-                <button class="btn-ghost" onclick="clearAllZones()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear</button>
+                <button class="btn-ghost" onclick="selectAllZones()" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">âœ“ All</button>
+                <button class="btn-ghost" onclick="clearAllZones()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">âœ• Clear</button>
               </div>
             </div>
             <div class="zone-wrap" id="fz" style="display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto"></div>
@@ -335,8 +411,9 @@ tr:hover td{background:var(--blue-dim)!important}
           </div>
 
           <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="btn-mega-assign" onclick="confirmAssign()">🚀 ASSIGN SEKARANG</button>
-            <button class="btn-secondary-download" onclick="downloadCSV()">📥 Download CSV</button>
+            <button class="btn-suggest" onclick="generateSmartSuggestion()">ðŸª„ SMART SUGGESTION</button>
+            <button class="btn-mega-assign" onclick="confirmAssign()">ðŸš€ ASSIGN SEKARANG</button>
+            <button class="btn-secondary-download" onclick="downloadCSV()">ðŸ“¥ Download CSV</button>
           </div>
 
         </div>
@@ -344,7 +421,7 @@ tr:hover td{background:var(--blue-dim)!important}
 
       <div id="ap-right" class="ap-right">
         <div class="empty">
-          <div class="empty-icon">🎯</div>
+          <div class="empty-icon">ðŸŽ¯</div>
           <div class="empty-txt">Set filter & picker di panel kiri<br>lalu klik <strong>ASSIGN SEKARANG</strong></div>
         </div>
       </div>
@@ -379,8 +456,8 @@ tr:hover td{background:var(--blue-dim)!important}
       <select id="sf-picker" onchange="renderTable()" style="padding:5px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:11px;font-family:var(--mono);outline:none">
         <option value="">Picker (Semua)</option>
       </select>
-      <button onclick="resetSOFilter()" style="padding:5px 10px;border-radius:5px;background:var(--red-dim);border:1px solid var(--red-light);color:var(--red);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s">✕ Reset Filter</button>
-      <div id="active-filter-badge" style="font-family:var(--mono);font-size:10px;color:var(--blue);display:none">● Filter aktif</div>
+      <button onclick="resetSOFilter()" style="padding:5px 10px;border-radius:5px;background:var(--red-dim);border:1px solid var(--red-light);color:var(--red);font-size:11px;cursor:pointer;font-family:var(--mono);transition:.15s">âœ• Reset Filter</button>
+      <div id="active-filter-badge" style="font-family:var(--mono);font-size:10px;color:var(--blue);display:none">â— Filter aktif</div>
     </div>
     <div class="tbl-wrap">
       <table>
@@ -395,6 +472,27 @@ tr:hover td{background:var(--blue-dim)!important}
 
   <div id="page-dashboard" class="page dash-page">
     <div class="dash-body">
+      <div class="dash-control-row">
+        <div class="dash-control-title">Quick Filter</div>
+        <select id="dash-wave" onchange="renderDashboard()">
+          <option value="">Wave semua</option>
+          <option>WAVE 1</option><option>WAVE 2</option><option>WAVE 3</option><option>WAVE 4</option>
+        </select>
+        <select id="dash-type" onchange="renderDashboard()">
+          <option value="">Type semua</option>
+          <option>Kepala</option><option>Badan</option><option>Ekor</option><option>Other</option>
+        </select>
+        <select id="dash-zone" onchange="renderDashboard()">
+          <option value="">Zone semua</option>
+        </select>
+        <select id="dash-status" onchange="renderDashboard()">
+          <option value="">Status semua</option>
+          <option>NEW</option><option>PICKING</option><option>PACKING</option><option>STAGING</option><option>LOADING</option><option>READY TO SHIP</option>
+        </select>
+        <button class="btn-ghost" onclick="resetDashboardFilters()">âœ• Reset</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">ðŸŒ™ Dark</button>
+        <div class="dash-filter-badge" id="dash-filter-badge">All data</div>
+      </div>
       <div class="kpi-row">
         <div class="kpi"><div class="kpi-label">Ratio SO</div><div class="kpi-val" id="d-ratio">0</div><div class="kpi-sub">qty/SO</div></div>
         <div class="kpi"><div class="kpi-label">Total Qty</div><div class="kpi-val" id="d-qty">0</div><div class="kpi-sub">request qty</div></div>
@@ -405,7 +503,15 @@ tr:hover td{background:var(--blue-dim)!important}
       <div class="charts-row">
         <div class="chart-card"><div class="chart-title">Progress Wave by SO</div><div class="chart-wrap"><canvas id="c-wave-so"></canvas></div></div>
         <div class="chart-card"><div class="chart-title">Progress Wave by Qty</div><div class="chart-wrap"><canvas id="c-wave-qty"></canvas></div></div>
+        <div class="chart-card"><div class="chart-title">Top Zone Workload</div><div class="chart-wrap"><canvas id="c-zone-workload"></canvas></div></div>
         <div class="chart-card"><div class="chart-title">SO Remarks</div><div class="chart-wrap"><canvas id="c-remarks"></canvas></div></div>
+      </div>
+      <div class="tactical-row">
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Bulky')" title="Klik untuk lihat daftar SO Bulky"><div class="tactical-label">Bulky SO</div><div class="tactical-val" id="d-bulky">0</div><div class="tactical-sub">qty besar Â· SKU rendah</div></div>
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Eceran')" title="Klik untuk lihat daftar SO Eceran"><div class="tactical-label">Eceran SO</div><div class="tactical-val" id="d-eceran">0</div><div class="tactical-sub">SKU banyak Â· qty kecil</div></div>
+        <div class="tactical-card clickable" onclick="showSOClassDetail('Normal')" title="Klik untuk lihat daftar SO Normal"><div class="tactical-label">Normal SO</div><div class="tactical-val" id="d-normal">0</div><div class="tactical-sub">beban standar</div></div>
+        <div class="tactical-card"><div class="tactical-label">Zona Terberat</div><div class="tactical-val" id="d-risk-zone">-</div><div class="tactical-sub" id="d-risk-zone-sub">0 qty</div></div>
+        <div class="tactical-card"><div class="tactical-label">Avg SKU / SO</div><div class="tactical-val" id="d-avg-sku">0</div><div class="tactical-sub" id="d-avg-qty">0 avg qty/SO</div></div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px">
         <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:10px">Summary Picker</div>
@@ -415,6 +521,10 @@ tr:hover td{background:var(--blue-dim)!important}
             <th style="text-align:right">Prod Qty</th><th style="text-align:right">Target</th><th style="text-align:right">Achievement</th>
           </tr></thead><tbody id="picker-tbody"></tbody></table>
         </div>
+      </div>
+      <div class="terminal-card">
+        <div class="terminal-title"><span>Live Sync Terminal</span><span id="log-count">0 logs</span></div>
+        <div class="terminal-log" id="live-log"><div class="terminal-line info">[boot] Dashboard ready. Waiting for first sync...</div></div>
       </div>
     </div>
   </div>
@@ -428,6 +538,76 @@ tr:hover td{background:var(--blue-dim)!important}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Batal</button>
       <button class="btn-confirm" onclick="runAssign()">Ya, Assign</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="detail-modal-bg">
+  <div class="detail-modal">
+    <div class="detail-modal-head">
+      <div>
+        <div class="detail-modal-title" id="detail-modal-title">Detail SO</div>
+        <div class="detail-modal-sub" id="detail-modal-sub">0 SO</div>
+      </div>
+      <div class="detail-modal-actions">
+        <button class="btn-ghost" onclick="copyDetailSO()">ðŸ“‹ Copy SO</button>
+        <button class="btn-ghost" onclick="downloadDetailCSV()">ðŸ“¥ CSV</button>
+        <button class="btn-cancel" onclick="closeDetailModal()">Tutup</button>
+      </div>
+    </div>
+    <div class="detail-modal-body">
+      <div class="detail-filter-row">
+        <input type="text" id="detail-search" placeholder="Cari SO / tujuan / zone / picker..." oninput="renderDetailModalTable()">
+        <select id="detail-wave" onchange="renderDetailModalTable()">
+          <option value="">Wave semua</option>
+          <option>WAVE 1</option><option>WAVE 2</option><option>WAVE 3</option><option>WAVE 4</option>
+        </select>
+        <select id="detail-zone" onchange="renderDetailModalTable()"><option value="">Zone semua</option></select>
+      </div>
+      <div class="detail-table-wrap">
+        <table class="detail-table">
+          <thead><tr>
+            <th>SO Number</th><th>Tujuan</th><th>Wave</th><th>Type</th><th>Zone</th><th>Status</th><th>Picker</th>
+            <th style="text-align:right">Req Qty</th><th style="text-align:right">SKU</th><th style="text-align:right">Qty/SKU</th>
+          </tr></thead>
+          <tbody id="detail-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="sku-modal-bg">
+  <div class="sku-modal">
+    <div class="sku-modal-head">
+      <div>
+        <div class="sku-modal-title" id="sku-modal-title">Detail SKU SO</div>
+        <div class="sku-modal-sub" id="sku-modal-sub">Klik SO number untuk lihat SKU, lokasi, dan qty.</div>
+      </div>
+      <div class="sku-modal-actions">
+        <button class="btn-ghost" onclick="copySkuDetail()">ðŸ“‹ Copy SKU</button>
+        <button class="btn-ghost" onclick="downloadSkuDetailCSV()">ðŸ“¥ CSV</button>
+        <button class="btn-cancel" onclick="closeSkuModal()">Tutup</button>
+      </div>
+    </div>
+    <div class="sku-modal-body">
+      <div class="sku-summary-row">
+        <div class="sku-summary-card"><div class="sku-summary-label">SKU Unique</div><div class="sku-summary-val" id="sku-sum-count">0</div></div>
+        <div class="sku-summary-card"><div class="sku-summary-label">Total Row</div><div class="sku-summary-val" id="sku-sum-row">0</div></div>
+        <div class="sku-summary-card"><div class="sku-summary-label">Request Qty</div><div class="sku-summary-val" id="sku-sum-req">0</div></div>
+        <div class="sku-summary-card"><div class="sku-summary-label">Incoming Qty</div><div class="sku-summary-val" id="sku-sum-inc">0</div></div>
+      </div>
+      <div class="sku-filter-row">
+        <input type="text" id="sku-search" placeholder="Cari SKU / deskripsi / lokasi..." oninput="renderSkuDetailTable()">
+        <select id="sku-location-filter" onchange="renderSkuDetailTable()"><option value="">Lokasi semua</option></select>
+      </div>
+      <div class="sku-table-wrap">
+        <table class="sku-table">
+          <thead><tr>
+            <th>SKU Number</th><th>Deskripsi</th><th>Location</th><th>Zone</th><th>Status</th><th>Picker</th>
+            <th style="text-align:right">Req Qty</th><th style="text-align:right">Inc Qty</th>
+          </tr></thead>
+          <tbody id="sku-detail-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -447,9 +627,12 @@ let fType = new Set(['Kepala','Badan','Ekor','Other']);
 let fZone = new Set();
 let myPickers = new Set();
 let assignResult = {};
+let assignSkippedRows = [];
+let assignForcedRows = [];
 let tblStatus = 'ALL';
 let charts = {};
 let lastResetDate = '';
+let dashboardFiltersReady = false;
 
 function esc(str) {
   if (!str) return '';
@@ -468,20 +651,192 @@ function showPage(p,btn){
   btn.classList.add('active');
 }
 
+
+function isPreviewSandbox(){
+  const host = (location.hostname || '').toLowerCase();
+  let isFramed = false;
+  try { isFramed = window.self !== window.top; } catch(e) { isFramed = true; }
+
+  return (
+    isFramed ||
+    location.protocol === 'file:' ||
+    host === 'localhost' ||
+    host === '127.0.0.1' ||
+    host.includes('preview') ||
+    host.includes('sandbox') ||
+    host.includes('chatgpt') ||
+    host.includes('openai') ||
+    host.includes('oaiusercontent') ||
+    host.includes('usercontent')
+  );
+}
+
+function setPreviewModeUI(){
+  const dot = document.getElementById('dot');
+  const txt = document.getElementById('sync-txt');
+  if(dot) dot.className = 'dot';
+  if(txt) txt.innerText = 'Preview mode - buka Vercel untuk sync';
+}
+
+function refreshData(){
+  if(isPreviewSandbox()){
+    setPreviewModeUI();
+    alert('Preview mode: auto-sync ke Google Apps Script dimatikan supaya popup akses jaringan tidak muncul. Buka URL Vercel untuk sync data.');
+    return;
+  }
+  loadData();
+}
+
+function firstValue(obj, keys, fallback=''){
+  for(const k of keys){
+    if(obj && obj[k] !== undefined && obj[k] !== null && obj[k] !== '') return obj[k];
+  }
+  return fallback;
+}
+
+function normalizeSO(raw){
+  const soNumber = firstValue(raw, ['so_number','SO Number','SO_NUMBER','so','SO','order_number','order_no']);
+  const destination = firstValue(raw, ['destination_name','Destination','destination','Tujuan','tujuan','store_name']);
+  const status = String(firstValue(raw, ['status','Status','remarks','Remarks'], 'NEW')).trim().toUpperCase();
+  const picker = firstValue(raw, ['Picker','picker','picker_name','Picker Name'], '');
+  const zone = firstValue(raw, ['picking_zone','PICKING ZONE','Picking Zone','zone','Zone'], '');
+  const reqQty = Number(String(firstValue(raw, ['request_quantity','Request Quantity','request_qty','Req Qty','qty','Qty'], 0)).replace(/,/g,'')) || 0;
+  const skuCount = Number(String(firstValue(raw, ['sku_count','SKU Count','sku','SKU'], 0)).replace(/,/g,'')) || 0;
+  const incomingQty = Number(String(firstValue(raw, [
+    'incoming_quantity',
+    'Incoming Quantity',
+    'incoming qty',
+    'Incoming Qty',
+    'incoming_quantity_sum',
+    'sum_incoming_quantity',
+    'inc_qty',
+    'Inc Qty',
+    'received_quantity',
+    'Received Quantity',
+    'received_qty',
+    'Received Qty'
+  ], 0)).replace(/,/g,'')) || 0;
+  const wave = firstValue(raw, ['WAVE','wave','Wave'], '') || getWave(destination);
+  const type = firstValue(raw, ['type','TYPE','Type'], '') || getType(destination);
+
+  return {
+    ...raw,
+    so_number: soNumber,
+    destination_name: destination,
+    status,
+    Picker: picker,
+    picking_zone: zone,
+    request_quantity: reqQty,
+    incoming_quantity: incomingQty,
+    sku_count: skuCount,
+    WAVE: wave,
+    type
+  };
+}
+
+function getApiRows(res){
+  if(Array.isArray(res)) return res;
+  if(Array.isArray(res.rows)) return res.rows;
+  if(Array.isArray(res.data)) return res.data;
+  if(Array.isArray(res.result)) return res.result;
+  return [];
+}
+
+function getDashboardFilteredData(){
+  const waveSel = document.getElementById('dash-wave')?.value || '';
+  const typeSel = document.getElementById('dash-type')?.value || '';
+  const zoneSel = document.getElementById('dash-zone')?.value || '';
+  const statusSel = document.getElementById('dash-status')?.value || '';
+
+  return soData.filter(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    const z = s.picking_zone || '';
+    const st = String(s.status || '').toUpperCase().trim();
+
+    return (!waveSel || w === waveSel) &&
+           (!typeSel || t === typeSel) &&
+           (!zoneSel || z === zoneSel) &&
+           (!statusSel || st === statusSel);
+  });
+}
+
+function populateDashboardFilters(){
+  const zSel = document.getElementById('dash-zone');
+  if(!zSel) return;
+
+  const currentZone = zSel.value;
+  const zones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
+
+  zSel.innerHTML = '<option value="">Zone semua</option>' +
+    zones.map(z=>`<option ${z===currentZone?'selected':''}>${esc(z)}</option>`).join('');
+
+  if(currentZone && !zones.includes(currentZone)) zSel.value = '';
+  dashboardFiltersReady = true;
+}
+
+function resetDashboardFilters(){
+  ['dash-wave','dash-type','dash-zone','dash-status'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  renderDashboard();
+}
+
+function updateDashboardFilterBadge(total, filtered){
+  const badge = document.getElementById('dash-filter-badge');
+  if(!badge) return;
+
+  const waveSel = document.getElementById('dash-wave')?.value || '';
+  const typeSel = document.getElementById('dash-type')?.value || '';
+  const zoneSel = document.getElementById('dash-zone')?.value || '';
+  const statusSel = document.getElementById('dash-status')?.value || '';
+  const active = [waveSel,typeSel,zoneSel,statusSel].filter(Boolean);
+
+  badge.textContent = active.length
+    ? `Filtered: ${filtered.toLocaleString('id-ID')} / ${total.toLocaleString('id-ID')} SO`
+    : `All data: ${total.toLocaleString('id-ID')} SO`;
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('dark-theme');
+  const dark = document.body.classList.contains('dark-theme');
+  localStorage.setItem('playmaker-theme', dark ? 'dark' : 'light');
+  const btn = document.getElementById('theme-toggle');
+  if(btn) btn.textContent = dark ? 'â˜€ï¸ Light' : 'ðŸŒ™ Dark';
+  renderDashboard();
+}
+
+function applySavedTheme(){
+  const saved = localStorage.getItem('playmaker-theme');
+  if(saved === 'dark') document.body.classList.add('dark-theme');
+  const btn = document.getElementById('theme-toggle');
+  if(btn) btn.textContent = document.body.classList.contains('dark-theme') ? 'â˜€ï¸ Light' : 'ðŸŒ™ Dark';
+}
+
+function achievementClass(pct){
+  if(pct >= 120) return 'ach-over';
+  if(pct >= 100) return 'ach-good';
+  if(pct >= 80) return 'ach-watch';
+  return 'ach-bad';
+}
+
+
 async function loadData(){
   const dot = document.getElementById('dot');
   const txt = document.getElementById('sync-txt');
   dot.className='dot ok'; txt.innerText='Syncing...';
   try{
-    const r = await fetch(GAS + '?action=so');
+    const r = await fetch(GAS + '?action=so&t=' + Date.now(), {
+      method: 'GET',
+      cache: 'no-store'
+    });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const res = await r.json();
     
-    soData = (res.data || []).map(s => {
-      s.request_quantity = Number(s.request_quantity || 0);
-      s.sku_count = Number(s.sku_count || 0);
-      return s;
-    });
+    const apiRows = getApiRows(res);
+    soData = apiRows.map(normalizeSO);
+    addLog(`GAS sync OK Â· ${soData.length.toLocaleString('id-ID')} SO loaded`, 'ok');
 
     const allZones = [...new Set(soData.map(s=>s.picking_zone).filter(Boolean))].sort();
     
@@ -495,12 +850,14 @@ async function loadData(){
     renderZoneChips(allZones);
     updateFilterCount();
     renderTable();
+    populateDashboardFilters();
     renderDashboard();
     
     dot.className='dot ok';
     txt.innerText = 'Online: ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }catch(e){
     console.error(e);
+    addLog('GAS sync failed: ' + (e.message || e), 'err');
     dot.className='dot err'; txt.innerText='Offline / Error';
   }
 }
@@ -569,11 +926,34 @@ function updateFilterCount(){
   document.getElementById('f-qty').innerText = q.toLocaleString('id-ID') + ' qty tersedia';
 }
 
+function parsePickerInput(text){
+  return String(text || '')
+    .split(/[\n\r,;|]+/)
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+
 function addPicker(){
   const inp = document.getElementById('mp-inp');
-  const v = inp.value.trim();
-  if(!v) return;
-  myPickers.add(v); inp.value=''; renderPickerTags();
+  const raw = inp.value.trim();
+  if(!raw) return;
+
+  const names = parsePickerInput(raw);
+  names.forEach(name => myPickers.add(name));
+
+  inp.value='';
+  renderPickerTags();
+}
+
+function handlePickerPaste(e){
+  const pasted = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+  if(!pasted) return;
+
+  if(/[\n\r,;|]/.test(pasted)){
+    e.preventDefault();
+    parsePickerInput(pasted).forEach(name => myPickers.add(name));
+    renderPickerTags();
+  }
 }
 
 function removePicker(v){ myPickers.delete(v); renderPickerTags(); }
@@ -581,7 +961,7 @@ function clearAllPickers(){ myPickers.clear(); renderPickerTags(); }
 
 function renderPickerTags(){
   const tags = document.getElementById('mp-tags');
-  tags.innerHTML = [...myPickers].map(p=>`<div class="tag" style="background:var(--blue-dim);border-color:var(--blue-light);color:var(--blue)"><span>${esc(p)}</span><span class="tag-x" onclick="removePicker('${esc(p)}')">×</span></div>`).join('');
+  tags.innerHTML = [...myPickers].map(p=>`<div class="tag" style="background:var(--blue-dim);border-color:var(--blue-light);color:var(--blue)"><span>${esc(p)}</span><span class="tag-x" onclick="removePicker('${esc(p)}')">Ã—</span></div>`).join('');
   document.getElementById('mp-ct').innerText = myPickers.size + ' picker';
 }
 
@@ -601,44 +981,444 @@ function confirmAssign(){
 
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
 
-function runAssign(){
-  closeModal();
-  const targetQty = Number(document.getElementById('target').value) || 2400;
-  const pList = [...myPickers];
-  
-  let initialWorkload = {};
-  pList.forEach(p=> initialWorkload[p] = 0);
-  soData.forEach(s=>{
-    if(s.Picker && initialWorkload[s.Picker] !== undefined){
-      initialWorkload[s.Picker] += s.request_quantity;
-    }
-  });
+function getAssignablePool(){
+  const pool = [];
 
-  assignResult = {};
-  pList.forEach(p=>{
-    assignResult[p] = { picker: p, initialQty: initialWorkload[p], newQty: 0, totalQty: initialWorkload[p], soList: [] };
-  });
-
-  let pool = [];
-  soData.forEach(s=>{
+  soData.forEach(s => {
     const w = s.WAVE || getWave(s.destination_name);
     const t = s.type || getType(s.destination_name);
-    if(s.status==='NEW' && fWave.has(w) && fType.has(t) && fZone.has(s.picking_zone) && (!s.Picker)){
+    const z = s.picking_zone;
+
+    if(
+      s.status === 'NEW' &&
+      fWave.has(w) &&
+      fType.has(t) &&
+      fZone.has(z) &&
+      !s.Picker
+    ){
       pool.push(s);
     }
   });
-  pool.sort((a,b)=> b.request_quantity - a.request_quantity);
 
-  pool.forEach(s=>{
-    pList.sort((a,b)=> assignResult[a].totalQty - assignResult[b].totalQty);
-    const bestPicker = pList[0];
-    
-    assignResult[bestPicker].soList.push(s);
-    assignResult[bestPicker].newQty += s.request_quantity;
-    assignResult[bestPicker].totalQty += s.request_quantity;
+  return pool;
+}
+
+function getInitialWorkload(pList){
+  const initialWorkload = {};
+  pList.forEach(p => initialWorkload[p] = 0);
+
+  soData.forEach(s => {
+    if(s.Picker && initialWorkload[s.Picker] !== undefined){
+      initialWorkload[s.Picker] += Number(s.request_quantity || 0);
+    }
   });
 
+  return initialWorkload;
+}
+
+function initAssignResult(pList, initialWorkload){
+  assignResult = {};
+  assignSkippedRows = [];
+  assignForcedRows = [];
+
+  pList.forEach(p => {
+    assignResult[p] = {
+      picker: p,
+      initialQty: Number(initialWorkload[p] || 0),
+      newQty: 0,
+      totalQty: Number(initialWorkload[p] || 0),
+      soList: []
+    };
+  });
+}
+
+function sortPoolByQtyDesc(pool){
+  return pool.slice().sort((a,b) =>
+    Number(b.request_quantity || 0) - Number(a.request_quantity || 0)
+  );
+}
+
+function sortPoolZoneAware(pool){
+  return pool.slice().sort((a,b) => {
+    const za = String(a.picking_zone || 'ZZZ');
+    const zb = String(b.picking_zone || 'ZZZ');
+    const zSort = za.localeCompare(zb, 'id');
+    if(zSort !== 0) return zSort;
+
+    const ra = String(a.origin_rack_name || a.location || a.rack_name || '');
+    const rb = String(b.origin_rack_name || b.location || b.rack_name || '');
+    const rSort = ra.localeCompare(rb, 'id');
+    if(rSort !== 0) return rSort;
+
+    return Number(b.request_quantity || 0) - Number(a.request_quantity || 0);
+  });
+}
+
+function pickerHasZone(picker, zone){
+  if(!zone) return false;
+  return assignResult[picker].soList.some(s => String(s.picking_zone || '') === String(zone));
+}
+
+function allocatePoolHardLimit(pool, pList, targetQty, options = {}){
+  const mode = options.mode || 'manual';
+
+  pool.forEach(s => {
+    const soQty = Number(s.request_quantity || 0);
+    const zone = s.picking_zone || '';
+
+    let availablePickers = pList.filter(p => {
+      const currentQty = Number(assignResult[p].totalQty || 0);
+      return currentQty < targetQty && (currentQty + soQty) <= targetQty;
+    });
+
+    if(!availablePickers.length){
+      assignSkippedRows.push({
+        ...s,
+        skip_reason: soQty > targetQty
+          ? `SO qty ${soQty.toLocaleString('id-ID')} lebih besar dari target ${targetQty.toLocaleString('id-ID')}`
+          : `Semua picker akan melewati target ${targetQty.toLocaleString('id-ID')}`
+      });
+      return;
+    }
+
+    if(mode === 'smart'){
+      const sameZonePickers = availablePickers.filter(p => pickerHasZone(p, zone));
+      if(sameZonePickers.length) availablePickers = sameZonePickers;
+    }
+
+    availablePickers.sort((a,b) => {
+      const qtyDiff = Number(assignResult[a].totalQty || 0) - Number(assignResult[b].totalQty || 0);
+      if(qtyDiff !== 0) return qtyDiff;
+      return String(a).localeCompare(String(b), 'id');
+    });
+
+    const bestPicker = availablePickers[0];
+
+    assignResult[bestPicker].soList.push(s);
+    assignResult[bestPicker].newQty += soQty;
+    assignResult[bestPicker].totalQty += soQty;
+  });
+}
+
+
+function forceAllocateSmallSkippedRows(pList, targetQty, options = {}){
+  const maxForceSO = Number(options.maxForceSO || 3);
+  const maxForceQty = Number(options.maxForceQty || targetQty);
+
+  if(!Array.isArray(assignSkippedRows) || !assignSkippedRows.length){
+    return { forcedSO: 0, forcedQty: 0 };
+  }
+
+  const skippedSO = assignSkippedRows.length;
+  const skippedQty = assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0);
+
+  // Soft fallback yang aman: cuma paksa assign kalau sisa kecil.
+  // Rule: maksimal 3 SO dan total qty skipped <= target picker.
+  // Contoh kasus valid: 2 SO / 921 qty dengan target 1.528 qty.
+  const canForce = skippedSO <= maxForceSO && skippedQty <= maxForceQty;
+
+  if(!canForce){
+    return { forcedSO: 0, forcedQty: 0 };
+  }
+
+  const rowsToForce = assignSkippedRows.slice();
+  assignSkippedRows = [];
+
+  rowsToForce
+    .sort((a,b)=>Number(b.request_quantity || 0) - Number(a.request_quantity || 0))
+    .forEach(s => {
+      const soQty = Number(s.request_quantity || 0);
+      const sortedPickers = pList.slice().sort((a,b) => {
+        const qtyDiff = Number(assignResult[a].totalQty || 0) - Number(assignResult[b].totalQty || 0);
+        if(qtyDiff !== 0) return qtyDiff;
+        return String(a).localeCompare(String(b), 'id');
+      });
+
+      const bestPicker = sortedPickers[0];
+      const forcedSO = {
+        ...s,
+        force_assigned: true,
+        force_reason: `Soft fallback: sisa kecil ${skippedSO.toLocaleString('id-ID')} SO / ${skippedQty.toLocaleString('id-ID')} qty dipaksa assign`
+      };
+
+      assignResult[bestPicker].soList.push(forcedSO);
+      assignResult[bestPicker].newQty += soQty;
+      assignResult[bestPicker].totalQty += soQty;
+
+      assignForcedRows.push({
+        ...forcedSO,
+        picker: bestPicker
+      });
+    });
+
+  addLog(
+    `[Soft fallback] ${skippedSO.toLocaleString('id-ID')} SO (${skippedQty.toLocaleString('id-ID')} qty) dipaksa assign karena sisa kecil. Target tetap ${Number(targetQty || 0).toLocaleString('id-ID')} qty/picker.`,
+    'warn'
+  );
+
+  return { forcedSO: skippedSO, forcedQty: skippedQty };
+}
+
+function getForcedSummary(){
+  const forcedSO = Array.isArray(assignForcedRows) ? assignForcedRows.length : 0;
+  const forcedQty = Array.isArray(assignForcedRows)
+    ? assignForcedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0)
+    : 0;
+
+  return { forcedSO, forcedQty };
+}
+
+function showAssignForcedInfo(targetQty){
+  const { forcedSO, forcedQty } = getForcedSummary();
+
+  if(forcedSO > 0){
+    alert(
+      `â„¹ï¸ Soft fallback aktif.\n\n` +
+      `${forcedSO.toLocaleString('id-ID')} SO / ${forcedQty.toLocaleString('id-ID')} qty dipaksa dibagikan karena sisa kecil.\n` +
+      `Sebagian picker bisa lewat target ${Number(targetQty || 0).toLocaleString('id-ID')} qty. Ini sengaja untuk kasus low volume.`
+    );
+  }
+}
+
+function getSkippedSummary(){
+  const skippedSO = Array.isArray(assignSkippedRows) ? assignSkippedRows.length : 0;
+  const skippedQty = Array.isArray(assignSkippedRows)
+    ? assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0)
+    : 0;
+
+  return { skippedSO, skippedQty };
+}
+
+function calculateSmartTarget(pool, pList, initialWorkload){
+  const totalPoolQty = pool.reduce((a,s)=>a + Number(s.request_quantity || 0), 0);
+  const totalInitialQty = pList.reduce((a,p)=>a + Number(initialWorkload[p] || 0), 0);
+  const maxSOQty = pool.reduce((m,s)=>Math.max(m, Number(s.request_quantity || 0)), 0);
+  const averageTarget = Math.ceil((totalInitialQty + totalPoolQty) / Math.max(1, pList.length));
+  const recommendedTarget = Math.max(100, averageTarget, maxSOQty);
+
+  return {
+    totalPoolQty,
+    totalInitialQty,
+    maxSOQty,
+    averageTarget,
+    recommendedTarget
+  };
+}
+
+function showAssignSkippedWarning(targetQty){
+  const { skippedSO, skippedQty } = getSkippedSummary();
+
+  if(skippedSO > 0){
+    addLog(
+      `[Alokasi] ${skippedSO.toLocaleString('id-ID')} SO (${skippedQty.toLocaleString('id-ID')} qty) di-skip karena hard target ${targetQty.toLocaleString('id-ID')} qty.`,
+      'warn'
+    );
+
+    alert(
+      `âš ï¸ ${skippedSO.toLocaleString('id-ID')} SO tidak dibagikan karena akan melewati target ${targetQty.toLocaleString('id-ID')} qty per picker.\n\n` +
+      `Qty skipped: ${skippedQty.toLocaleString('id-ID')}\n` +
+      `Naikkan target atau tambah picker kalau SO tersebut tetap harus dibagi.`
+    );
+  }
+}
+
+function runAssign(){
+  closeModal();
+
+  const targetQty = Number(document.getElementById('target').value) || 2400;
+  const pList = [...myPickers];
+
+  if(!pList.length){
+    alert('Isi minimal 1 nama picker dulu, bro!');
+    return;
+  }
+
+  const pool = getAssignablePool();
+
+  if(!pool.length){
+    alert('Gak ada SO NEW yang lolos filter buat di-assign.');
+    return;
+  }
+
+  const initialWorkload = getInitialWorkload(pList);
+  initAssignResult(pList, initialWorkload);
+
+  const sortedPool = sortPoolByQtyDesc(pool);
+  allocatePoolHardLimit(sortedPool, pList, targetQty, { mode: 'manual' });
+  forceAllocateSmallSkippedRows(pList, targetQty, { maxForceSO: 3, maxForceQty: targetQty });
+
+  showAssignSkippedWarning(targetQty);
   renderResultCards(targetQty);
+  showAssignForcedInfo(targetQty);
+}
+
+function generateSmartSuggestion(){
+  const pList = [...myPickers];
+
+  if(!pList.length){
+    alert('Isi minimal 1 nama picker dulu sebelum generate suggestion.');
+    return;
+  }
+
+  const pool = getAssignablePool();
+
+  if(!pool.length){
+    alert('Gak ada SO NEW yang lolos filter buat dibuatkan suggestion.');
+    return;
+  }
+
+  const initialWorkload = getInitialWorkload(pList);
+  const targetInfo = calculateSmartTarget(pool, pList, initialWorkload);
+  const targetQty = targetInfo.recommendedTarget;
+
+  document.getElementById('target').value = targetQty;
+
+  initAssignResult(pList, initialWorkload);
+
+  const sortedPool = sortPoolZoneAware(pool);
+  allocatePoolHardLimit(sortedPool, pList, targetQty, { mode: 'smart' });
+  forceAllocateSmallSkippedRows(pList, targetQty, { maxForceSO: 3, maxForceQty: targetQty });
+
+  const { skippedSO, skippedQty } = getSkippedSummary();
+  const { forcedSO, forcedQty } = getForcedSummary();
+  const assignedSO = Object.values(assignResult).reduce((a,d)=>a + d.soList.length, 0);
+  const assignedQty = Object.values(assignResult).reduce((a,d)=>a + Number(d.newQty || 0), 0);
+
+  addLog(
+    `[Smart Suggestion] pool:${pool.length.toLocaleString('id-ID')} SO Â· assigned:${assignedSO.toLocaleString('id-ID')} SO/${assignedQty.toLocaleString('id-ID')} qty Â· target:${targetQty.toLocaleString('id-ID')} Â· skipped:${skippedSO.toLocaleString('id-ID')} SO/${skippedQty.toLocaleString('id-ID')} qty Â· forced:${forcedSO.toLocaleString('id-ID')} SO/${forcedQty.toLocaleString('id-ID')} qty`,
+    (skippedSO || forcedSO) ? 'warn' : 'ok'
+  );
+
+  renderResultCards(targetQty);
+
+  alert(
+    `ðŸª„ Smart Suggestion selesai.\n\n` +
+    `Target otomatis: ${targetQty.toLocaleString('id-ID')} qty/picker\n` +
+    `Assigned: ${assignedSO.toLocaleString('id-ID')} SO / ${assignedQty.toLocaleString('id-ID')} qty\n` +
+    `Skipped: ${skippedSO.toLocaleString('id-ID')} SO / ${skippedQty.toLocaleString('id-ID')} qty\n` +
+    `Forced small remainder: ${forcedSO.toLocaleString('id-ID')} SO / ${forcedQty.toLocaleString('id-ID')} qty\n\n` +
+    `Hasil masih preview. Klik Simpan & Upload kalau sudah cocok.`
+  );
+}
+
+
+function getAssignedSkuCount(s){
+  const raw = firstValue(s || {}, [
+    'sku_count','SKU Count','skuCount','sku_count_total','total_sku','totalSKU','sku_total'
+  ], 0);
+  return Number(String(raw || '0').replace(/,/g,'')) || 0;
+}
+
+function getAssignedLocationCount(s){
+  const raw = firstValue(s || {}, [
+    'picking_location_count','Picking Location Count','location_count','Location Count',
+    'rack_count','Rack Count','origin_rack_count','Origin Rack Count','loc_count','pick_loc_count',
+    'pickingLocationCount','unique_location_count','unique_rack_count'
+  ], '');
+
+  if(raw !== '' && raw !== null && raw !== undefined){
+    const n = Number(String(raw).replace(/,/g,''));
+    if(Number.isFinite(n)) return n;
+  }
+
+  const possibleArrays = [s?.locations, s?.racks, s?.origin_racks, s?.picking_locations];
+  for(const arr of possibleArrays){
+    if(Array.isArray(arr)){
+      return new Set(arr.map(x => String(x || '').trim()).filter(Boolean)).size;
+    }
+  }
+
+  return null;
+}
+
+function formatAssignedLocationCount(s){
+  const c = getAssignedLocationCount(s);
+  return c === null ? '-' : c.toLocaleString('id-ID');
+}
+
+function sumAssignedLocationCount(rows){
+  let total = 0;
+  let known = 0;
+  rows.forEach(s=>{
+    const c = getAssignedLocationCount(s);
+    if(c !== null){
+      total += Number(c || 0);
+      known++;
+    }
+  });
+  return known ? total.toLocaleString('id-ID') : '-';
+}
+
+function buildAssignedRows(){
+  const rows = [];
+  Object.values(assignResult).forEach(d => {
+    d.soList.forEach(s => rows.push({ picker: d.picker, so: s }));
+  });
+  return rows;
+}
+
+function buildSOCopyText(rows){
+  return rows.map(x => x.so.so_number).join('\n');
+}
+
+function buildUploadCopyText(rows){
+  return rows.map(x => `${x.so.so_number}\t${x.picker}`).join('\n');
+}
+
+function buildDetailCopyText(rows){
+  return rows.map(x => {
+    const s = x.so;
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    return [s.so_number, x.picker, s.destination_name || '', s.picking_zone || '', w || '', t || '', getAssignedSkuCount(s), formatAssignedLocationCount(s), s.request_quantity || 0].join('\t');
+  }).join('\n');
+}
+
+function copyAssignedGlobal(mode, btn, e){
+  if(e) e.stopPropagation();
+  const rows = buildAssignedRows();
+  if(!rows.length){ alert('Belum ada hasil assign untuk dicopy.'); return; }
+
+  const text = mode === 'upload' ? buildUploadCopyText(rows)
+    : mode === 'detail' ? buildDetailCopyText(rows)
+    : buildSOCopyText(rows);
+
+  copyRawText(btn, text);
+}
+
+function copyAssignedPicker(mode, btn, e){
+  if(e) e.stopPropagation();
+  const card = btn.closest('.pc');
+  const picker = card ? card.dataset.picker : '';
+  const d = assignResult[picker];
+  if(!d || !d.soList || !d.soList.length){ alert('Picker ini belum punya SO untuk dicopy.'); return; }
+
+  const rows = d.soList.map(s => ({ picker, so: s }));
+  const text = mode === 'upload' ? buildUploadCopyText(rows)
+    : mode === 'detail' ? buildDetailCopyText(rows)
+    : buildSOCopyText(rows);
+
+  copyRawText(btn, text);
+}
+
+function downloadAssignedPickerCSV(btn, e){
+  if(e) e.stopPropagation();
+  const card = btn.closest('.pc');
+  const picker = card ? card.dataset.picker : '';
+  const d = assignResult[picker];
+  if(!d || !d.soList || !d.soList.length){ alert('Picker ini belum punya SO untuk didownload.'); return; }
+
+  const csv = ['Picker,SO Number,Destination,Zone,Wave,Type,SKU Count,Picking Location Count,Qty'];
+  d.soList.forEach(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    csv.push(`"${String(picker).replace(/"/g,'""')}","${String(s.so_number||'').replace(/"/g,'""')}","${String(s.destination_name||'').replace(/"/g,'""')}","${String(s.picking_zone||'').replace(/"/g,'""')}","${String(w||'').replace(/"/g,'""')}","${String(t||'').replace(/"/g,'""')}","${getAssignedSkuCount(s)}","${formatAssignedLocationCount(s)}","${Number(s.request_quantity||0)}"`);
+  });
+
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+  a.download=`assign_${picker.replace(/[^A-Za-z0-9]+/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
 }
 
 function renderResultCards(targetQty){
@@ -646,18 +1426,83 @@ function renderResultCards(targetQty){
   const arr = Object.values(assignResult);
   if(!arr.length) return;
 
-  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-    <div style="font-weight:600;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
-    <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">💾 Simpan & Upload ke Google Sheets</button>
-  </div><div style="display:flex;flex-direction:column;gap:8px" id="picker-grid">`;
+  const totalAssignedSO = arr.reduce((a,d)=>a + d.soList.length, 0);
+  const totalNewQty = arr.reduce((a,d)=>a + d.newQty, 0);
+  const totalSkippedSO = Array.isArray(assignSkippedRows) ? assignSkippedRows.length : 0;
+  const totalSkippedQty = Array.isArray(assignSkippedRows) ? assignSkippedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0) : 0;
+  const totalForcedSO = Array.isArray(assignForcedRows) ? assignForcedRows.length : 0;
+  const totalForcedQty = Array.isArray(assignForcedRows) ? assignForcedRows.reduce((a,s)=>a + Number(s.request_quantity || 0), 0) : 0;
+
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap">
+    <div>
+      <div style="font-weight:700;font-size:14px">Hasil Alokasi Penyeimbangan Beban</div>
+      <div class="mono" style="font-size:10px;color:var(--text3);margin-top:2px">${totalAssignedSO.toLocaleString('id-ID')} SO assigned Â· ${totalNewQty.toLocaleString('id-ID')} qty baru Â· ${totalForcedSO.toLocaleString('id-ID')} SO forced Â· ${totalSkippedSO.toLocaleString('id-ID')} SO skipped Â· ${arr.length.toLocaleString('id-ID')} picker</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+      <button class="btn-ghost" onclick="copyAssignedGlobal('so',this,event)">ðŸ“‹ Copy All SO</button>
+      <button class="btn-ghost" onclick="copyAssignedGlobal('upload',this,event)">ðŸ“‹ Copy SO + Picker</button>
+      <button class="btn-ghost" onclick="copyAssignedGlobal('detail',this,event)">ðŸ“‹ Copy Detail</button>
+      <button class="btn-ghost" onclick="submitToGoogle()" style="background:var(--green);color:#fff;border:none;font-weight:600;padding:6px 12px">ðŸ’¾ Simpan & Upload ke Google Sheets</button>
+    </div>
+  </div>
+  ${totalForcedSO ? `
+    <div style="margin-bottom:12px;background:var(--blue-dim);border:1px solid var(--blue-light);color:var(--blue);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:11px;line-height:1.5">
+      â„¹ï¸ Soft fallback aktif: ${totalForcedSO.toLocaleString('id-ID')} SO / ${totalForcedQty.toLocaleString('id-ID')} qty dibagikan paksa karena sisa kecil. Beberapa picker bisa lewat target ${Number(targetQty || 0).toLocaleString('id-ID')} qty.
+    </div>` : ''}
+  ${totalSkippedSO ? `
+    <div style="margin-bottom:12px;background:var(--amber-dim);border:1px solid var(--amber-light);color:var(--amber);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:11px;line-height:1.5">
+      âš ï¸ Hard limit aktif: ${totalSkippedSO.toLocaleString('id-ID')} SO / ${totalSkippedQty.toLocaleString('id-ID')} qty tidak dibagikan karena akan melewati target ${Number(targetQty || 0).toLocaleString('id-ID')} qty per picker.
+      <br>Naikkan target atau tambah picker kalau SO skipped tetap harus dibagikan.
+    </div>` : ''}
+  <div style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <select id="assign-picker-filter" onchange="filterAssignedPickers()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;min-width:240px;max-width:100%">
+      <option value="">Picker semua</option>
+      ${arr.map(d=>`<option value="${esc(d.picker)}">${esc(d.picker)}</option>`).join('')}
+    </select>
+    <input type="text" id="assign-result-search" class="search" placeholder="Cari zone / SO / tujuan..." oninput="filterAssignedPickers()" style="width:260px;max-width:100%">
+    <button class="btn-ghost" onclick="clearAssignedPickerFilter()">âœ• Clear</button>
+    <div class="mono" id="assign-picker-filter-count" style="font-size:10px;color:var(--text3);margin-left:auto">Menampilkan ${arr.length.toLocaleString('id-ID')} picker</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px" id="picker-grid">`;
 
   arr.forEach((d,idx)=>{
-    const pct = Math.min(100, Math.round((d.totalQty / targetQty) * 100));
+    const pctRaw = Math.round((d.totalQty / targetQty) * 100);
+    const pct = Math.min(100, pctRaw);
     const isOver = d.totalQty > targetQty;
     const barColor = isOver ? 'var(--red)' : (pct > 80 ? 'var(--amber)' : 'var(--green)');
-    
-    let zoneSet = new Set(d.soList.map(s=>s.picking_zone).filter(Boolean));
-    let zonesStr = [...zoneSet].join(', ');
+
+    let zoneSummary = {};
+    d.soList.forEach(s=>{
+      const z = s.picking_zone || 'Unknown';
+      if(!zoneSummary[z]) zoneSummary[z] = { so:0, qty:0 };
+      zoneSummary[z].so++;
+      zoneSummary[z].qty += Number(s.request_quantity || 0);
+    });
+    const zoneEntries = Object.entries(zoneSummary).sort((a,b)=>b[1].qty-a[1].qty);
+    const zonesStr = zoneEntries.map(([z])=>z).join(', ');
+    const zoneChips = zoneEntries.map(([z,v])=>`<span class="zone-badge" title="${v.so} SO Â· ${v.qty.toLocaleString('id-ID')} qty">${esc(z)} Â· ${v.so} SO Â· ${v.qty.toLocaleString('id-ID')} qty</span>`).join(' ');
+    const pickerSkuTotal = d.soList.reduce((a,s)=>a + getAssignedSkuCount(s), 0);
+    const pickerLocTotal = sumAssignedLocationCount(d.soList);
+
+    const tableRows = d.soList
+      .slice()
+      .sort((a,b)=>String(a.picking_zone||'').localeCompare(String(b.picking_zone||'')) || Number(b.request_quantity||0)-Number(a.request_quantity||0))
+      .map(s=>{
+        const w = s.WAVE || getWave(s.destination_name);
+        const t = s.type || getType(s.destination_name);
+        const skuCount = getAssignedSkuCount(s);
+        const locCount = formatAssignedLocationCount(s);
+        return `<tr>
+          <td class="mono"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></td>
+          <td style="font-weight:500">${esc(s.destination_name || '-')}</td>
+          <td class="mono"><span class="zone-badge">${esc(s.picking_zone || '-')}</span></td>
+          <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
+          <td><span class="badge ${String(t).toLowerCase()}">${esc(t)}</span></td>
+          <td class="mono" style="text-align:right">${Number(skuCount||0).toLocaleString('id-ID')}</td>
+          <td class="mono" style="text-align:right">${locCount}</td>
+          <td class="mono" style="text-align:right;font-weight:700">${Number(s.request_quantity||0).toLocaleString('id-ID')}${s.force_assigned ? ' <span class="badge s-prog" title="Soft fallback forced assign">forced</span>' : ''}</td>
+        </tr>`;
+      }).join('');
 
     html += `
     <div class="pc" data-picker="${esc(d.picker)}" data-zones="${esc(zonesStr)}">
@@ -665,69 +1510,95 @@ function renderResultCards(targetQty){
         <div class="pc-av" style="background:${COLORS[idx % COLORS.length]}22;color:${COLORS[idx % COLORS.length]}">${esc(d.picker.slice(0,2).toUpperCase())}</div>
         <div class="pc-info">
           <div class="pc-name">${esc(d.picker)}</div>
-          <div class="pc-meta">${d.soList.length} SO baru | Area: ${esc(zonesStr || '-')}</div>
+          <div class="pc-meta">${d.soList.length.toLocaleString('id-ID')} SO baru Â· ${d.newQty.toLocaleString('id-ID')} qty baru Â· ${pickerSkuTotal.toLocaleString('id-ID')} SKU Â· ${pickerLocTotal} lokasi Â· ${zoneEntries.length.toLocaleString('id-ID')} zone</div>
         </div>
         <div class="pc-right">
           <div style="text-align:right">
             <div class="pc-qty">${d.totalQty.toLocaleString('id-ID')} Qty</div>
-            <div class="pc-pct" style="color:${barColor};font-weight:600">${pct}% dari target</div>
+            <div class="pc-pct" style="color:${barColor};font-weight:600">${pctRaw}% dari target</div>
           </div>
-          <div class="chevron">▼</div>
+          <div class="chevron">â–¼</div>
         </div>
       </div>
       <div class="pc-bar">
         <div class="bar-bg"><div class="bar-fg" style="width:${pct}%;background:${barColor}"></div></div>
         <div class="bar-lbl">(Beban Shift: ${d.initialQty.toLocaleString('id-ID')} | Baru: +${d.newQty.toLocaleString('id-ID')})</div>
       </div>
-      <div class="pc-detail">`;
-
-      let grouped = {};
-      d.soList.forEach(s=>{
-        if(!grouped[s.picking_zone]) grouped[s.picking_zone]=[];
-        grouped[s.picking_zone].push(s);
-      });
-
-      for(let zone in grouped){
-        let soInZone = grouped[zone];
-        let copyTextData = soInZone.map(s=>s.so_number).join('\n');
-        html += `
-        <div class="zone-sec">
-          <div class="zone-hdr">
-            <div class="zone-hdr-left"><span class="zone-badge">${esc(zone)}</span> <span>${soInZone.length} SO</span></div>
-            <button class="copy-btn" onclick="copyText(this,\`${esc(copyTextData)}\`,event)">📋 Copy Semua SO</button>
+      <div class="pc-detail">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--bg3)">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">${zoneChips || '<span class="mono" style="color:var(--text3)">No zone</span>'}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+            <button class="copy-btn" onclick="copyAssignedPicker('so',this,event)">ðŸ“‹ Copy SO Picker</button>
+            <button class="copy-btn" onclick="copyAssignedPicker('upload',this,event)">ðŸ“‹ Copy SO + Picker</button>
+            <button class="copy-btn" onclick="copyAssignedPicker('detail',this,event)">ðŸ“‹ Copy Detail</button>
+            <button class="copy-btn" onclick="downloadAssignedPickerCSV(this,event)">ðŸ“¥ CSV Picker</button>
           </div>
-          <div class="so-list">`;
-          soInZone.forEach(s=>{
-            const w = s.WAVE || getWave(s.destination_name);
-            const t = s.type || getType(s.destination_name);
-            html += `
-            <div class="so-item">
-              <div class="so-num">${esc(s.so_number)}</div>
-              <div class="so-dest">${esc(s.destination_name)}</div>
-              <div class="so-tags">
-                <span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span>
-                <span class="badge ${t.toLowerCase()}">${esc(t)}</span>
-              </div>
-              <div class="so-qty">${s.request_quantity} Qty</div>
-            </div>`;
-          });
-          html += `</div></div>`;
-      }
-    html += `</div></div>`;
+        </div>
+        <div style="overflow:auto;max-height:420px">
+          <table>
+            <thead><tr>
+              <th>SO Number</th><th>Destination</th><th>Zone</th><th>Wave</th><th>Type</th><th style="text-align:right">SKU</th><th style="text-align:right">Pick Loc</th><th style="text-align:right">Qty</th>
+            </tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
   });
   html += `</div>`;
   container.innerHTML = html;
-  
+
   anime({ targets: '#picker-grid .pc', opacity: [0, 1], translateY: [10, 0], delay: anime.stagger(60), easing: 'easeOutQuad', duration: 400 });
+  filterAssignedPickers();
 }
 
-function copyText(btn, txt, e){
-  e.stopPropagation();
+function filterAssignedPickers(){
+  const pickerFilter = String(document.getElementById('assign-picker-filter')?.value || '').toLowerCase().trim();
+  const q = String(document.getElementById('assign-result-search')?.value || '').toLowerCase().trim();
+  const cards = [...document.querySelectorAll('#picker-grid .pc')];
+  let shown = 0;
+
+  cards.forEach(card => {
+    const picker = String(card.dataset.picker || '').toLowerCase();
+    const zones = String(card.dataset.zones || '').toLowerCase();
+    const haystack = (picker + ' ' + zones + ' ' + card.innerText.toLowerCase());
+    const matchPicker = !pickerFilter || picker === pickerFilter;
+    const matchQuery = !q || haystack.includes(q);
+    const match = matchPicker && matchQuery;
+    card.style.display = match ? '' : 'none';
+    if(match) shown++;
+  });
+
+  const counter = document.getElementById('assign-picker-filter-count');
+  if(counter){
+    const total = cards.length.toLocaleString('id-ID');
+    const current = shown.toLocaleString('id-ID');
+    counter.textContent = (pickerFilter || q)
+      ? `Menampilkan ${current} / ${total} picker`
+      : `Menampilkan ${total} picker`;
+  }
+}
+
+function clearAssignedPickerFilter(){
+  const sel = document.getElementById('assign-picker-filter');
+  const inp = document.getElementById('assign-result-search');
+  if(sel) sel.value = '';
+  if(inp) inp.value = '';
+  filterAssignedPickers();
+}
+
+function copyRawText(btn, txt){
+  if(!txt){ alert('Tidak ada data untuk dicopy.'); return; }
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(txt).then(() => markCopied(btn)).catch(() => fallbackCopy(btn, txt));
   } else {
     fallbackCopy(btn, txt);
   }
+}
+
+function copyText(btn, txt, e){
+  if(e) e.stopPropagation();
+  copyRawText(btn, txt);
 }
 
 function fallbackCopy(btn, txt) {
@@ -739,11 +1610,18 @@ function fallbackCopy(btn, txt) {
 }
 
 function markCopied(btn){
-  btn.innerText = '✓ Copied!'; btn.classList.add('copied');
-  setTimeout(()=>{ btn.innerText = '📋 Copy Semua SO'; btn.classList.remove('copied'); }, 1500);
+  if(!btn) return;
+  const old = btn.dataset.oldText || btn.innerText;
+  btn.dataset.oldText = old;
+  btn.innerText = 'âœ“ Copied!'; btn.classList.add('copied');
+  setTimeout(()=>{ btn.innerText = old; btn.classList.remove('copied'); delete btn.dataset.oldText; }, 1500);
 }
 
 async function submitToGoogle(){
+  if(isPreviewSandbox()){
+    alert('Preview mode: upload ke Google Sheets dimatikan di preview supaya tidak muncul popup akses jaringan. Jalankan dari URL Vercel.');
+    return;
+  }
   let payload = [];
   Object.values(assignResult).forEach(d => {
     d.soList.forEach(s => { payload.push({ so_number: s.so_number, picker: d.picker }); });
@@ -755,21 +1633,32 @@ async function submitToGoogle(){
   btn.innerText = 'Uploading...'; btn.style.opacity = '0.6'; btn.disabled = true;
 
   try{
-    const r = await fetch(GAS, { method: 'POST', body: JSON.stringify({ action: 'assign', data: payload }) });
+    const r = await fetch(GAS + '?t=' + Date.now(), {
+      method: 'POST',
+      cache: 'no-store',
+      body: JSON.stringify({ action: 'assign', data: payload })
+    });
     const res = await r.json();
     if(res.status === 'success'){
       alert('Mantap! Data alokasi berhasil disimpan ke Google Sheets.');
+      addLog(`Assign upload OK Â· ${payload.length.toLocaleString('id-ID')} SO sent to Google Sheets`, 'ok');
       document.getElementById('ap-right').innerHTML = `
         <div class="empty">
-          <div class="empty-icon" style="color:var(--green); opacity:1">✓</div>
+          <div class="empty-icon" style="color:var(--green); opacity:1">âœ“</div>
           <div class="empty-txt" style="color:var(--green)"><strong>UPLOAD BERHASIL!</strong><br>Data picker sudah masuk ke Google Sheets.</div>
         </div>`;
-      loadData();
+      if (!isPreviewSandbox()) {
+        setTimeout(loadData, 1200);
+      } else {
+        setPreviewModeUI();
+      }
     } else {
+      addLog('Assign upload failed: ' + (res.message || 'unknown error'), 'err');
       alert('Gagal: ' + res.message);
       btn.innerText = oldTxt; btn.style.opacity = '1'; btn.disabled = false;
     }
   }catch(e){
+    addLog('Assign upload connection error: ' + (e.message || e), 'err');
     alert('Koneksi terputus atau GSheets error.');
     btn.innerText = oldTxt; btn.style.opacity = '1'; btn.disabled = false;
   }
@@ -835,7 +1724,7 @@ function renderTable(){
     else if(s.status==='READY TO SHIP') stClass='s-del';
 
     return `<tr>
-      <td class="mono">${esc(s.so_number)}</td>
+      <td class="mono"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></td>
       <td style="font-weight:500">${esc(s.destination_name)}</td>
       <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
       <td><span class="badge ${t.toLowerCase()}">${esc(t)}</span></td>
@@ -848,36 +1737,387 @@ function renderTable(){
   }).join('');
 }
 
-function renderDashboard(){
-  if(!soData.length) return;
-  let totQty=0, pickedQty=0, uniqueSO=soData.length, incQty=0;
-  let waveSO={}, waveQty={}, remarksCount={};
 
-  soData.forEach(s=>{
-    totQty += s.request_quantity;
-    if(s.status !== 'NEW') pickedQty += s.request_quantity;
-    if(['PACKING','STAGING','LOADING','READY TO SHIP'].includes(s.status)) incQty += s.request_quantity;
+function classifySO(s){
+  const qty = Number(s.request_quantity || 0);
+  const sku = Number(s.sku_count || 0);
+  const qtyPerSku = sku ? qty / sku : qty;
+  if ((qty >= 120 && sku <= 4) || qtyPerSku >= 35) return 'Bulky';
+  if (sku >= 8 && qtyPerSku <= 8) return 'Eceran';
+  return 'Normal';
+}
+
+let detailRows = [];
+let detailClassName = '';
+
+function getQtyPerSku(s){
+  const qty = Number(s.request_quantity || 0);
+  const sku = Number(s.sku_count || 0);
+  return sku ? qty / sku : qty;
+}
+
+function showSOClassDetail(className){
+  detailClassName = className;
+  detailRows = getDashboardFilteredData().filter(s => classifySO(s) === className)
+    .sort((a,b) => {
+      const q = (Number(b.request_quantity||0) - Number(a.request_quantity||0));
+      return q || String(a.so_number||'').localeCompare(String(b.so_number||''));
+    });
+
+  const zones = [...new Set(detailRows.map(s => s.picking_zone || '-').filter(Boolean))].sort();
+  const zSel = document.getElementById('detail-zone');
+  if(zSel) zSel.innerHTML = '<option value="">Zone semua</option>' + zones.map(z=>`<option>${esc(z)}</option>`).join('');
+
+  const search = document.getElementById('detail-search');
+  const wave = document.getElementById('detail-wave');
+  if(search) search.value = '';
+  if(wave) wave.value = '';
+
+  document.getElementById('detail-modal-bg').classList.add('open');
+  renderDetailModalTable();
+  addLog(`Opened ${className} SO detail Â· ${detailRows.length.toLocaleString('id-ID')} rows`, 'info');
+}
+
+function closeDetailModal(){
+  document.getElementById('detail-modal-bg').classList.remove('open');
+}
+
+function getFilteredDetailRows(){
+  const q = (document.getElementById('detail-search')?.value || '').toLowerCase();
+  const wv = document.getElementById('detail-wave')?.value || '';
+  const zn = document.getElementById('detail-zone')?.value || '';
+  return detailRows.filter(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const z = s.picking_zone || '-';
+    const matchQ = !q ||
+      String(s.so_number||'').toLowerCase().includes(q) ||
+      String(s.destination_name||'').toLowerCase().includes(q) ||
+      String(z||'').toLowerCase().includes(q) ||
+      String(s.Picker||'').toLowerCase().includes(q);
+    return matchQ && (!wv || w === wv) && (!zn || z === zn);
+  });
+}
+
+function renderDetailModalTable(){
+  const rows = getFilteredDetailRows();
+  const totalQty = rows.reduce((a,s)=>a + Number(s.request_quantity||0),0);
+  const totalSku = rows.reduce((a,s)=>a + Number(s.sku_count||0),0);
+  const title = document.getElementById('detail-modal-title');
+  const sub = document.getElementById('detail-modal-sub');
+  const tbody = document.getElementById('detail-tbody');
+  if(title) title.textContent = `Detail ${detailClassName} SO`;
+  if(sub) sub.textContent = `${rows.length.toLocaleString('id-ID')} SO Â· ${totalQty.toLocaleString('id-ID')} qty Â· ${totalSku.toLocaleString('id-ID')} SKU`;
+
+  if(!tbody) return;
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="10"><div class="detail-empty">Tidak ada SO yang match filter.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    const z = s.picking_zone || '-';
+    const qtyPerSku = getQtyPerSku(s);
+    let stClass = 's-oth';
+    if(s.status==='NEW') stClass='s-new';
+    else if(s.status==='PICKING') stClass='s-prog';
+    else if(['PACKING','STAGING','LOADING'].includes(s.status)) stClass='s-done';
+    else if(s.status==='READY TO SHIP') stClass='s-del';
+    return `<tr>
+      <td class="mono"><span class="so-link" onclick="openSkuDetail(\`${esc(s.so_number)}\`, event)">${esc(s.so_number)}</span></td>
+      <td style="font-weight:500">${esc(s.destination_name)}</td>
+      <td><span class="badge ${w.toLowerCase().replace(' ','')}">${esc(w)}</span></td>
+      <td><span class="badge ${String(t).toLowerCase()}">${esc(t)}</span></td>
+      <td class="mono">${esc(z)}</td>
+      <td><span class="badge ${stClass}">${esc(s.status)}</span></td>
+      <td class="mono" style="font-weight:600;color:var(--blue)">${esc(s.Picker || '-')}</td>
+      <td class="mono" style="text-align:right;font-weight:600">${Number(s.request_quantity||0).toLocaleString('id-ID')}${s.force_assigned ? ' <span class="badge s-prog" title="Soft fallback forced assign">forced</span>' : ''}</td>
+      <td class="mono" style="text-align:right;color:var(--text3)">${Number(s.sku_count||0).toLocaleString('id-ID')}</td>
+      <td class="mono" style="text-align:right">${qtyPerSku.toFixed(1)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function copyDetailSO(){
+  const rows = getFilteredDetailRows();
+  const txt = rows.map(s=>s.so_number).join('\n');
+  if(!txt){ alert('Tidak ada SO untuk dicopy.'); return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>alert(`${rows.length} SO copied.`));
+  } else {
+    const t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert(`${rows.length} SO copied.`);
+  }
+}
+
+function downloadDetailCSV(){
+  const rows = getFilteredDetailRows();
+  if(!rows.length){ alert('Tidak ada SO untuk didownload.'); return; }
+  const csv = ['Class,SO Number,Destination,Wave,Type,Zone,Status,Picker,Req Qty,SKU,Qty per SKU'];
+  rows.forEach(s=>{
+    const w = s.WAVE || getWave(s.destination_name);
+    const t = s.type || getType(s.destination_name);
+    csv.push(`"${detailClassName}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(w)}","${esc(t)}","${esc(s.picking_zone||'-')}","${esc(s.status)}","${esc(s.Picker||'-')}","${Number(s.request_quantity||0)}","${Number(s.sku_count||0)}","${getQtyPerSku(s).toFixed(1)}"`);
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+  a.download=`${detailClassName.toLowerCase()}_so_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+let skuDetailRows = [];
+let currentSkuSO = '';
+
+async function openSkuDetail(soNumber, ev){
+  if(ev) ev.stopPropagation();
+  currentSkuSO = String(soNumber || '').trim();
+  if(!currentSkuSO){ alert('SO number kosong.'); return; }
+
+  const bg = document.getElementById('sku-modal-bg');
+  const title = document.getElementById('sku-modal-title');
+  const sub = document.getElementById('sku-modal-sub');
+  const tbody = document.getElementById('sku-detail-tbody');
+
+  if(title) title.textContent = 'Detail SKU Â· ' + currentSkuSO;
+  if(sub) sub.textContent = 'Loading SKU detail dari Google Apps Script...';
+  if(tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Loading detail SKU...</div></td></tr>`;
+  if(bg) bg.classList.add('open');
+
+  if(isPreviewSandbox()){
+    if(sub) sub.textContent = 'Preview mode: buka URL Vercel untuk fetch detail SKU.';
+    if(tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Preview mode: request GAS diblokir agar popup akses jaringan tidak muncul.</div></td></tr>`;
+    setPreviewModeUI();
+    return;
+  }
+
+  try{
+    const url = GAS + '?action=soDetail&so=' + encodeURIComponent(currentSkuSO) + '&t=' + Date.now();
+    const r = await fetch(url, { method:'GET', cache:'no-store' });
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const res = await r.json();
+
+    if(res.status === 'error' || res.error) throw new Error(res.error || 'GAS returned error');
+
+    skuDetailRows = Array.isArray(res.rows) ? res.rows : [];
+
+    const locs = [...new Set(skuDetailRows.map(x => x.location || x.origin_rack_name || x.picking_zone || '-').filter(Boolean))].sort();
+    const locSel = document.getElementById('sku-location-filter');
+    if(locSel) locSel.innerHTML = '<option value="">Lokasi semua</option>' + locs.map(l=>`<option>${esc(l)}</option>`).join('');
+
+    const search = document.getElementById('sku-search');
+    if(search) search.value = '';
+
+    if(sub){
+      const detected = res.detected_headers || {};
+      sub.textContent = `${Number(res.total_rows || skuDetailRows.length).toLocaleString('id-ID')} rows Â· desc:${detected.sku_description || '-'} Â· loc:${detected.location || '-'}`;
+    }
+
+    renderSkuDetailTable();
+    addLog(`SO detail loaded Â· ${currentSkuSO} Â· ${skuDetailRows.length.toLocaleString('id-ID')} SKU rows`, 'ok');
+  }catch(e){
+    console.error(e);
+    if(sub) sub.textContent = 'Gagal load detail SKU.';
+    if(tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Gagal load detail SKU: ${esc(e.message || e)}</div></td></tr>`;
+    addLog('SO detail load failed: ' + (e.message || e), 'err');
+  }
+}
+
+function closeSkuModal(){
+  document.getElementById('sku-modal-bg')?.classList.remove('open');
+}
+
+function getFilteredSkuRows(){
+  const q = (document.getElementById('sku-search')?.value || '').toLowerCase();
+  const loc = document.getElementById('sku-location-filter')?.value || '';
+  return skuDetailRows.filter(r=>{
+    const location = r.location || r.origin_rack_name || r.picking_zone || '-';
+    const matchQ = !q ||
+      String(r.sku_number || '').toLowerCase().includes(q) ||
+      String(r.sku_description || r.name || '').toLowerCase().includes(q) ||
+      String(location || '').toLowerCase().includes(q);
+    return matchQ && (!loc || location === loc);
+  });
+}
+
+function renderSkuDetailTable(){
+  const rows = getFilteredSkuRows();
+  const tbody = document.getElementById('sku-detail-tbody');
+  const skuSet = new Set(rows.map(r => r.sku_number).filter(Boolean));
+  const totalReq = rows.reduce((a,r)=>a + Number(r.request_quantity || 0),0);
+  const totalInc = rows.reduce((a,r)=>a + Number(r.incoming_quantity || 0),0);
+
+  const c = document.getElementById('sku-sum-count');
+  const row = document.getElementById('sku-sum-row');
+  const req = document.getElementById('sku-sum-req');
+  const inc = document.getElementById('sku-sum-inc');
+  if(c) c.textContent = skuSet.size.toLocaleString('id-ID');
+  if(row) row.textContent = rows.length.toLocaleString('id-ID');
+  if(req) req.textContent = totalReq.toLocaleString('id-ID');
+  if(inc) inc.textContent = totalInc.toLocaleString('id-ID');
+
+  if(!tbody) return;
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="8"><div class="sku-empty">Tidak ada SKU detail yang match filter.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r=>{
+    const loc = r.location || r.origin_rack_name || '-';
+    let stClass = 's-oth';
+    const status = String(r.status || '').toUpperCase();
+    if(status==='NEW') stClass='s-new';
+    else if(status==='PICKING') stClass='s-prog';
+    else if(['PACKING','STAGING','LOADING'].includes(status)) stClass='s-done';
+    else if(status==='READY TO SHIP') stClass='s-del';
+
+    return `<tr>
+      <td class="mono" style="font-weight:700;color:var(--blue)">${esc(r.sku_number || '-')}</td>
+      <td style="font-weight:500">${esc(r.sku_description || r.name || '-')}</td>
+      <td class="mono">${esc(loc)}</td>
+      <td class="mono">${esc(r.picking_zone || '-')}</td>
+      <td><span class="badge ${stClass}">${esc(r.status || '-')}</span></td>
+      <td class="mono" style="font-weight:600;color:var(--blue)">${esc(r.Picker || '-')}</td>
+      <td class="mono" style="text-align:right;font-weight:700">${Number(r.request_quantity || 0).toLocaleString('id-ID')}</td>
+      <td class="mono" style="text-align:right;color:var(--text2)">${Number(r.incoming_quantity || 0).toLocaleString('id-ID')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function copySkuDetail(){
+  const rows = getFilteredSkuRows();
+  if(!rows.length){ alert('Tidak ada SKU untuk dicopy.'); return; }
+  const txt = rows.map(r => [
+    r.sku_number || '',
+    r.sku_description || r.name || '',
+    r.location || r.origin_rack_name || '',
+    r.request_quantity || 0
+  ].join('\t')).join('\n');
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>alert(`${rows.length} SKU rows copied.`));
+  } else {
+    const t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert(`${rows.length} SKU rows copied.`);
+  }
+}
+
+function downloadSkuDetailCSV(){
+  const rows = getFilteredSkuRows();
+  if(!rows.length){ alert('Tidak ada SKU untuk didownload.'); return; }
+
+  const csv = ['SO Number,SKU Number,Description,Location,Picking Zone,Status,Picker,Req Qty,Incoming Qty'];
+  rows.forEach(r=>{
+    csv.push(`"${esc(currentSkuSO)}","${esc(r.sku_number || '')}","${esc(r.sku_description || r.name || '')}","${esc(r.location || r.origin_rack_name || '')}","${esc(r.picking_zone || '')}","${esc(r.status || '')}","${esc(r.Picker || '')}","${Number(r.request_quantity || 0)}","${Number(r.incoming_quantity || 0)}"`);
+  });
+
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv.join('\n')],{type:'text/csv'}));
+  a.download=`sku_detail_${currentSkuSO.replace(/[^A-Za-z0-9]+/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function addLog(message, type='info'){
+  const box = document.getElementById('live-log');
+  if(!box) return;
+  const time = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const line = document.createElement('div');
+  line.className = 'terminal-line ' + type;
+  line.textContent = `[${time}] ${message}`;
+  box.appendChild(line);
+  while(box.children.length > 50) box.removeChild(box.firstChild);
+  box.scrollTop = box.scrollHeight;
+  const cnt = document.getElementById('log-count');
+  if(cnt) cnt.textContent = box.children.length + ' logs';
+}
+
+function renderDashboard(){
+  if(!soData.length){
+    addLog('No SO data returned from GAS.', 'warn');
+    return;
+  }
+
+  if(!dashboardFiltersReady) populateDashboardFilters();
+
+  const dashData = getDashboardFilteredData();
+  updateDashboardFilterBadge(soData.length, dashData.length);
+
+  if(!dashData.length){
+    ['d-ratio','d-qty','d-so','d-prog','d-fr','d-bulky','d-eceran','d-normal'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.innerText = id === 'd-fr' ? '0.0%' : (id === 'd-prog' ? '0%' : '0');
+    });
+    document.getElementById('d-risk-zone').innerText = '-';
+    document.getElementById('d-risk-zone-sub').innerText = '0 qty';
+    document.getElementById('d-avg-sku').innerText = '0.0';
+    document.getElementById('d-avg-qty').innerText = '0 avg qty/SO';
+    buildChart('c-wave-so','bar',['No Data'],[0],'SO Count','#2563eb');
+    buildChart('c-wave-qty','line',['No Data'],[0],'Qty Pcs','#16a34a');
+    buildChart('c-zone-workload','bar',['No Data'],[0],'Total Qty','#7c3aed');
+    buildChart('c-remarks','doughnut',['No Data'],[1],'',COLORS);
+    document.getElementById('picker-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Tidak ada data sesuai dashboard filter</td></tr>`;
+    addLog('Dashboard filter returned no data.', 'warn');
+    return;
+  }
+
+  let totQty=0, pickedQty=0, uniqueSO=dashData.length, incQty=0, totalSku=0;
+  let waveSO={'WAVE 1':0,'WAVE 2':0,'WAVE 3':0,'WAVE 4':0};
+  let waveQty={'WAVE 1':0,'WAVE 2':0,'WAVE 3':0,'WAVE 4':0};
+  let remarksCount={};
+  let zoneWorkload={};
+  let soClass={Bulky:0,Eceran:0,Normal:0};
+
+  dashData.forEach(s=>{
+    const req = Number(s.request_quantity || 0);
+    const inc = Number(s.incoming_quantity || 0);
+    const sku = Number(s.sku_count || 0);
+    const status = String(s.status || 'NEW').toUpperCase().trim();
+
+    totQty += req;
+    incQty += inc;
+    totalSku += sku;
+
+    // Progress = SO yang sudah bergerak dari NEW.
+    // FR% = incoming_quantity / request_quantity.
+    if(status !== 'NEW') pickedQty += req;
 
     const w = s.WAVE || getWave(s.destination_name);
     waveSO[w] = (waveSO[w]||0)+1;
-    waveQty[w] = (waveQty[w]||0)+s.request_quantity;
+    waveQty[w] = (waveQty[w]||0)+req;
 
-    const rem = s.status || 'NEW';
-    remarksCount[rem] = (remarksCount[rem]||0)+1;
+    const zone = s.picking_zone || 'UNZONED';
+    zoneWorkload[zone] = (zoneWorkload[zone]||0)+req;
+
+    const cls = classifySO(s);
+    soClass[cls] = (soClass[cls]||0)+1;
+
+    remarksCount[status] = (remarksCount[status]||0)+1;
   });
+
+  const sortedZones = Object.keys(zoneWorkload).sort((a,b)=>zoneWorkload[b]-zoneWorkload[a]).slice(0,6);
+  const sortedZoneValues = sortedZones.map(z=>zoneWorkload[z]);
+  const riskZone = sortedZones[0] || '-';
+  const riskQty = riskZone === '-' ? 0 : zoneWorkload[riskZone];
 
   document.getElementById('d-ratio').innerText = Math.round(totQty / uniqueSO) || 0;
   document.getElementById('d-qty').innerText = totQty.toLocaleString('id-ID');
   document.getElementById('d-so').innerText = uniqueSO;
-  document.getElementById('d-prog').innerText = (Math.round((pickedQty/totQty)*100)||0) + '%';
-  document.getElementById('d-fr').innerText = (Math.round((incQty/totQty)*100)||0) + '%';
+  document.getElementById('d-prog').innerText = (totQty ? Math.round((pickedQty/totQty)*100) : 0) + '%';
+  document.getElementById('d-fr').innerText = (totQty ? ((incQty/totQty)*100).toFixed(1) : '0.0') + '%';
+
+  document.getElementById('d-bulky').innerText = soClass.Bulky.toLocaleString('id-ID');
+  document.getElementById('d-eceran').innerText = soClass.Eceran.toLocaleString('id-ID');
+  document.getElementById('d-normal').innerText = soClass.Normal.toLocaleString('id-ID');
+  document.getElementById('d-risk-zone').innerText = riskZone;
+  document.getElementById('d-risk-zone-sub').innerText = riskQty.toLocaleString('id-ID') + ' qty';
+  document.getElementById('d-avg-sku').innerText = uniqueSO ? (totalSku/uniqueSO).toFixed(1) : '0.0';
+  document.getElementById('d-avg-qty').innerText = (uniqueSO ? Math.round(totQty/uniqueSO) : 0).toLocaleString('id-ID') + ' avg qty/SO';
 
   buildChart('c-wave-so','bar',Object.keys(waveSO),Object.values(waveSO),'SO Count','#2563eb');
   buildChart('c-wave-qty','line',Object.keys(waveQty),Object.values(waveQty),'Qty Pcs','#16a34a');
+  buildChart('c-zone-workload','bar',sortedZones,sortedZoneValues,'Total Qty','#7c3aed');
   buildChart('c-remarks','doughnut',Object.keys(remarksCount),Object.values(remarksCount),'',COLORS);
 
   let pMap = {};
-  soData.forEach(s=>{
+  dashData.forEach(s=>{
     if(!s.Picker) return;
     if(!pMap[s.Picker]) pMap[s.Picker] = { so:0, qty:0 };
     pMap[s.Picker].so++;
@@ -885,26 +2125,40 @@ function renderDashboard(){
   });
 
   const pTbody = document.getElementById('picker-tbody');
-  pTbody.innerHTML = Object.keys(pMap).map(p=>{
-    const d = pMap[p];
-    return `<tr>
-      <td style="font-weight:600">${esc(p)}</td>
-      <td class="mono" style="text-align:right">${d.so}</td>
-      <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
-      <td class="mono" style="text-align:right;font-weight:600;color:var(--green)">${d.qty.toLocaleString('id-ID')}</td>
-      <td class="mono" style="text-align:right;color:var(--text3)">2.400</td>
-      <td class="mono" style="text-align:right;font-weight:600;color:var(--blue)">${Math.round((d.qty/2400)*100)}%</td>
-    </tr>`;
-  }).join('');
+  if(Object.keys(pMap).length === 0){
+    pTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Belum ada data picker pada filter ini</td></tr>`;
+  } else {
+    pTbody.innerHTML = Object.keys(pMap)
+      .sort((a,b)=>pMap[b].qty-pMap[a].qty)
+      .map(p=>{
+        const d = pMap[p];
+        const achievement = Math.round((d.qty/2400)*100);
+        const achClass = achievementClass(achievement);
+        const achLabel = achievement >= 120 ? `${achievement}% Â· overload` :
+                         achievement >= 100 ? `${achievement}% Â· good` :
+                         achievement >= 80 ? `${achievement}% Â· watch` :
+                         `${achievement}% Â· low`;
+        return `<tr>
+          <td style="font-weight:600">${esc(p)}</td>
+          <td class="mono" style="text-align:right">${d.so}</td>
+          <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
+          <td class="mono" style="text-align:right;font-weight:600;color:var(--green)">${d.qty.toLocaleString('id-ID')}</td>
+          <td class="mono" style="text-align:right;color:var(--text3)">2.400</td>
+          <td class="mono ${achClass}" style="text-align:right;font-weight:700">${achLabel}</td>
+        </tr>`;
+      }).join('');
+  }
+  addLog(`Dashboard rendered Â· filtered:${dashData.length}/${soData.length} Â· bulky:${soClass.Bulky} eceran:${soClass.Eceran} normal:${soClass.Normal}`, 'info');
 }
 
 function buildChart(id,type,labels,data,label,colors){
   if(charts[id]) charts[id].destroy();
   const ctx = document.getElementById(id).getContext('2d');
+  const isZone = id === 'c-zone-workload';
   charts[id] = new Chart(ctx,{
     type: type,
     data: { labels:labels, datasets:[{ label:label, data:data, backgroundColor:colors, borderColor:Array.isArray(colors)?'#fff':colors, borderWidth:1, fill:type==='line'?'start':false, tension:0.3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:type==='doughnut', position:'right', labels:{ boxWidth:10, font:{ size:10 } } } }, scales: type==='doughnut'?{}:{ x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
+    options: { indexAxis:isZone?'y':'x', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:type==='doughnut', position:'right', labels:{ boxWidth:10, font:{ size:10 } } } }, scales: type==='doughnut'?{}:{ x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } }, y:{ ticks:{ font:{ size:10 } } } } }
   });
 }
 
@@ -912,7 +2166,7 @@ function downloadCSV(){
   if(!Object.keys(assignResult).length){alert('Jalankan assign dulu.');return;}
   let rows=['Picker,SO Number,Destination,Wave,Type,Zone,Qty'];
   Object.values(assignResult).forEach(d=>{
-    d.soList.forEach(s=>rows.push(`"${esc(d.picker)}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(s.WAVE||'')}","${esc(s.type||'')}","${esc(s.picking_zone||'')}","${s.request_quantity}`));
+    d.soList.forEach(s=>rows.push(`"${esc(d.picker)}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(s.WAVE||'')}","${esc(s.type||'')}","${esc(s.picking_zone||'')}","${s.request_quantity}"`));
   });
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
@@ -921,11 +2175,25 @@ function downloadCSV(){
 
 // Setup Event Listeners secara aman
 document.addEventListener('DOMContentLoaded', () => {
+  applySavedTheme();
   document.getElementById('btn-add-picker').addEventListener('click', addPicker);
-  document.getElementById('mp-inp').addEventListener('keydown', e => { if(e.key === 'Enter') addPicker(); });
+  const pickerInput = document.getElementById('mp-inp');
+  pickerInput.addEventListener('paste', handlePickerPaste);
+  pickerInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      addPicker();
+    }
+  });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') { closeSkuModal(); closeDetailModal(); closeModal(); } });
   
-  loadData();
-  setInterval(loadData, 10*60*1000);
+  if (isPreviewSandbox()) {
+    setPreviewModeUI();
+    addLog('Preview sandbox detected. GAS sync disabled here.', 'warn');
+  } else {
+    loadData();
+    setInterval(loadData, 60*1000);
+  }
 
   setInterval(()=>{
     const now = new Date();
@@ -937,10 +2205,14 @@ document.addEventListener('DOMContentLoaded', () => {
       clearAllPickers();
       document.getElementById('ap-right').innerHTML = `
         <div class="empty">
-          <div class="empty-icon">🎯</div>
+          <div class="empty-icon">ðŸŽ¯</div>
           <div class="empty-txt">Set filter & picker di panel kiri<br>lalu klik <strong>ASSIGN SEKARANG</strong></div>
         </div>`;
-      loadData();
+      if (!isPreviewSandbox()) {
+        loadData();
+      } else {
+        setPreviewModeUI();
+      }
     }
   }, 60000);
 });

@@ -355,6 +355,45 @@ body.dark-theme{
 .map-picker-dot{width:8px;height:8px;border-radius:50%;background:#eab308;box-shadow:0 0 0 4px #eab30822;display:inline-block;margin-right:5px}
 @media(max-width:1100px){.map-shell{grid-template-columns:1fr;overflow:auto}.map-side{max-height:480px}.map-kpi-row{grid-template-columns:repeat(2,1fr)}.map-blueprint-wrap{max-height:520px}.map-floating-legend{position:static;flex-direction:row;margin-bottom:8px;align-self:flex-start}}
 
+
+/* HOURLY PRODUCTIVITY REPORT */
+.hourly-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 4px 10px #0f172a0a}
+.hourly-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.hourly-title{font-size:12px;font-weight:800;color:var(--text);letter-spacing:.02em;text-transform:uppercase}
+.hourly-sub{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px;line-height:1.45}
+.hourly-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--text2)}
+.hourly-tools input{width:86px;padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;text-align:right}
+.hourly-tools input:focus{border-color:var(--blue);box-shadow:0 0 0 2px #2563eb22}
+.hourly-legend{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:8px}
+.hourly-leg{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1px solid var(--border);border-radius:999px;background:var(--bg3)}
+.hourly-leg-dot{width:9px;height:9px;border-radius:2px;display:inline-block}
+.hourly-wrap{overflow:auto;border:1px solid var(--border);border-radius:8px;max-height:430px;background:var(--bg2)}
+.hourly-table{min-width:1360px;width:100%;border-collapse:collapse;font-size:11px}
+.hourly-table th{position:sticky;top:0;z-index:5;background:#b91c1c;color:#fff;font-family:var(--mono);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:7px 8px;border-bottom:1px solid #7f1d1d;white-space:nowrap;text-align:center}
+.hourly-table td{padding:5px 7px;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:middle}
+.hourly-table tr:nth-child(even) td{background:var(--amber-dim)}
+.hourly-table tr:hover td{filter:brightness(.98)}
+.hourly-sticky-name{position:sticky;left:0;z-index:4;background:var(--bg2)!important;box-shadow:1px 0 0 var(--border);min-width:210px;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.hourly-table th.hourly-sticky-name{background:#991b1b!important;color:#fff;z-index:7;text-align:left}
+.hourly-sticky-shift{position:sticky;left:210px;z-index:4;background:var(--bg2)!important;box-shadow:1px 0 0 var(--border);min-width:76px;text-align:center}
+.hourly-table th.hourly-sticky-shift{background:#991b1b!important;color:#fff;z-index:7}
+.hourly-sticky-staff{position:sticky;left:286px;z-index:4;background:var(--bg2)!important;box-shadow:1px 0 0 var(--border);min-width:80px;text-align:center;font-family:var(--mono)}
+.hourly-table th.hourly-sticky-staff{background:#991b1b!important;color:#fff;z-index:7}
+.hour-cell{text-align:center;font-family:var(--mono);font-weight:700;border-left:1px solid #ffffff44}
+.hour-zero{background:#fecaca!important;color:#7f1d1d!important}
+.hour-low{background:#fef3c7!important;color:#92400e!important}
+.hour-good{background:#dcfce7!important;color:#166534!important}
+.hour-break{box-shadow:inset 0 0 0 999px #f59e0b22}
+.hour-total{background:var(--bg4)!important;color:var(--text)!important;font-family:var(--mono);font-weight:900;text-align:right}
+.hour-diff-good{color:var(--green);font-family:var(--mono);font-weight:900;text-align:right}
+.hour-diff-bad{color:var(--red);font-family:var(--mono);font-weight:900;text-align:right}
+.hour-mono{text-align:right;font-family:var(--mono);font-weight:700;color:var(--text2)}
+.hour-empty{padding:26px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:11px;background:var(--bg3)!important}
+body.dark-theme .hourly-sticky-name,body.dark-theme .hourly-sticky-shift,body.dark-theme .hourly-sticky-staff{background:#0f172a!important}
+body.dark-theme .hour-zero{background:#450a0a!important;color:#fca5a5!important}
+body.dark-theme .hour-low{background:#451a03!important;color:#fde68a!important}
+body.dark-theme .hour-good{background:#052e16!important;color:#86efac!important}
+
 </style>
 </head>
 <body>
@@ -567,6 +606,37 @@ body.dark-theme{
           </tr></thead><tbody id="picker-tbody"></tbody></table>
         </div>
       </div>
+
+      <div class="hourly-card">
+        <div class="hourly-head">
+          <div>
+            <div class="hourly-title">Hourly Productivity Picker Report</div>
+            <div class="hourly-sub" id="hourly-sub">Source: Google Sheets REPORT · shift dari Data Absen</div>
+          </div>
+          <div class="hourly-tools">
+            <span>Target / hour</span>
+            <input id="hourly-target" type="number" value="325" min="0" step="25" onchange="renderHourlyReport()">
+            <button class="btn-ghost" onclick="loadHourlyReport()">Refresh Report</button>
+          </div>
+        </div>
+        <div class="hourly-legend">
+          <span class="hourly-leg"><span class="hourly-leg-dot" style="background:#dcfce7;border:1px solid #22c55e"></span> ≥ target</span>
+          <span class="hourly-leg"><span class="hourly-leg-dot" style="background:#fef3c7;border:1px solid #f59e0b"></span> below target</span>
+          <span class="hourly-leg"><span class="hourly-leg-dot" style="background:#fecaca;border:1px solid #ef4444"></span> zero output</span>
+          <span class="hourly-leg"><span class="hourly-leg-dot" style="background:#f59e0b55;border:1px solid #f59e0b"></span> break 09:00</span>
+        </div>
+        <div class="hourly-wrap">
+          <table class="hourly-table">
+            <thead id="hourly-report-head">
+              <tr><th>Loading...</th></tr>
+            </thead>
+            <tbody id="hourly-report-body">
+              <tr><td class="hour-empty">Hourly report belum sync.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="terminal-card">
         <div class="terminal-title"><span>Live Sync Terminal</span><span id="log-count">0 logs</span></div>
         <div class="terminal-log" id="live-log"><div class="terminal-line info">[boot] Dashboard ready. Waiting for first sync...</div></div>
@@ -737,6 +807,7 @@ let tblStatus = 'ALL';
 let charts = {};
 let lastResetDate = '';
 let dashboardFiltersReady = false;
+let hourlyReportData = null;
 
 function esc(str) {
   if (!str) return '';
@@ -754,6 +825,7 @@ function showPage(p,btn){
   document.getElementById('page-'+p).classList.add('active');
   btn.classList.add('active');
   if(p === 'map') renderRackMonitor();
+  if(p === 'dashboard') renderHourlyReport();
 }
 
 
@@ -959,6 +1031,7 @@ async function loadData(){
     renderTable();
     populateDashboardFilters();
     renderDashboard();
+    loadHourlyReport();
     renderRackMonitor();
     
     dot.className='dot ok';
@@ -3063,6 +3136,120 @@ function renderMapPickerList(rows){
 }
 
 
+
+
+// ============================================================
+// HOURLY PRODUCTIVITY REPORT — source: GAS action=hourlyReport
+// ============================================================
+function hourReportNum(v){
+  const n = Number(String(v ?? 0).replace(/,/g,''));
+  return Number.isFinite(n) ? n : 0;
+}
+
+async function loadHourlyReport(){
+  if(isPreviewSandbox()) return;
+
+  const sub = document.getElementById('hourly-sub');
+  if(sub) sub.textContent = 'Syncing hourly report from Google Sheets REPORT...';
+
+  try{
+    const r = await fetch(GAS + '?action=hourlyReport&t=' + Date.now(), {
+      method: 'GET',
+      cache: 'no-store'
+    });
+
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+
+    const data = await r.json();
+
+    if(data.status !== 'success'){
+      hourlyReportData = data;
+      renderHourlyReport();
+      addLog('Hourly report error: ' + (data.error || 'unknown'), 'warn');
+      return;
+    }
+
+    hourlyReportData = data;
+    renderHourlyReport();
+    addLog(`Hourly report OK · ${Number(data.total_rows || 0).toLocaleString('id-ID')} picker rows`, 'ok');
+  }catch(err){
+    console.error(err);
+    hourlyReportData = {status:'error', error: err.message || String(err), rows:[], hours:[]};
+    renderHourlyReport();
+    addLog('Hourly report sync failed: ' + (err.message || err), 'err');
+  }
+}
+
+function renderHourlyReport(){
+  const head = document.getElementById('hourly-report-head');
+  const body = document.getElementById('hourly-report-body');
+  const sub = document.getElementById('hourly-sub');
+  if(!head || !body) return;
+
+  if(!hourlyReportData){
+    head.innerHTML = `<tr><th>Hourly Productivity Picker Report</th></tr>`;
+    body.innerHTML = `<tr><td class="hour-empty">Report belum dimuat. Klik Refresh Report atau tunggu sync.</td></tr>`;
+    return;
+  }
+
+  if(hourlyReportData.status !== 'success'){
+    head.innerHTML = `<tr><th>Hourly Productivity Picker Report</th></tr>`;
+    body.innerHTML = `<tr><td class="hour-empty">${esc(hourlyReportData.error || 'Gagal load hourly report.')}</td></tr>`;
+    if(sub) sub.textContent = 'Hourly report gagal sync.';
+    return;
+  }
+
+  const hours = Array.isArray(hourlyReportData.hours) ? hourlyReportData.hours : [];
+  const rows = Array.isArray(hourlyReportData.rows) ? hourlyReportData.rows : [];
+  const target = hourReportNum(document.getElementById('hourly-target')?.value || 325);
+  const totalTarget = target * hours.length;
+
+  if(sub){
+    sub.textContent = `Source: ${hourlyReportData.sheet || 'REPORT'} · ${Number(rows.length || 0).toLocaleString('id-ID')} picker · updated ${hourlyReportData.lastUpdated || '-'}`;
+  }
+
+  head.innerHTML = `
+    <tr>
+      <th class="hourly-sticky-name">Name Picker</th>
+      <th class="hourly-sticky-shift">Shift</th>
+      <th class="hourly-sticky-staff">Staff ID</th>
+      ${hours.map(h => `<th class="${h === '09:00' ? 'hour-break' : ''}">${esc(h)}${h === '09:00' ? '<br>BREAK' : ''}</th>`).join('')}
+      <th>Total</th>
+      <th>Diff</th>
+      <th>Avg</th>
+      <th>Total SO</th>
+    </tr>`;
+
+  if(!rows.length){
+    body.innerHTML = `<tr><td class="hour-empty" colspan="${hours.length + 7}">REPORT kosong atau belum generate.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = rows.map(r => {
+    const total = hourReportNum(r.total);
+    const diff = total - totalTarget;
+    const diffCls = diff >= 0 ? 'hour-diff-good' : 'hour-diff-bad';
+
+    return `
+      <tr>
+        <td class="hourly-sticky-name"><b>${esc(r.name || '-')}</b><div class="hourly-sub">${esc(r.role || 'Picker Staff')}</div></td>
+        <td class="hourly-sticky-shift">${esc(r.shift || '-')}</td>
+        <td class="hourly-sticky-staff">${esc(r.staff_id || r.StaffID || '-')}</td>
+        ${hours.map(h => {
+          const val = hourReportNum(r.hours && r.hours[h]);
+          let cls = 'hour-zero';
+          if(val >= target && target > 0) cls = 'hour-good';
+          else if(val > 0) cls = 'hour-low';
+          if(h === '09:00') cls += ' hour-break';
+          return `<td class="hour-cell ${cls}">${val.toLocaleString('id-ID')}</td>`;
+        }).join('')}
+        <td class="hour-total">${total.toLocaleString('id-ID')}</td>
+        <td class="${diffCls}">${diff >= 0 ? '+' : ''}${diff.toLocaleString('id-ID')}</td>
+        <td class="hour-mono">${hourReportNum(r.avg).toLocaleString('id-ID')}</td>
+        <td class="hour-mono">${hourReportNum(r.total_so).toLocaleString('id-ID')}</td>
+      </tr>`;
+  }).join('');
+}
 
 function downloadCSV(){
   const rows = buildAssignedRows();

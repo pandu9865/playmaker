@@ -404,7 +404,7 @@ body.dark-theme{
               <button class="btn-ghost" onclick="clearAllPickers()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--mono);padding:0;opacity:.7">✕ Clear All</button>
             </div>
             <div class="picker-inp-row">
-              <textarea id="mp-inp" class="inp picker-textarea" rows="2" placeholder="Paste nama picker per baris, atau pisah pakai koma"></textarea>
+              <textarea id="mp-inp" class="inp picker-textarea" rows="2" placeholder="Paste Staff ID - Nama per baris. Bisa juga tab dari sheet."></textarea>
               <button class="btn-plus" id="btn-add-picker">+</button>
             </div>
             <div class="tags" id="mp-tags"></div>
@@ -508,7 +508,7 @@ body.dark-theme{
       <table>
         <thead><tr>
           <th>SO Number</th><th>Tujuan</th><th>Wave</th><th>Type</th><th>Zone</th>
-          <th>Status</th><th>Picker</th><th style="text-align:right">Req Qty</th><th style="text-align:right">SKU</th>
+          <th>Status</th><th>Picker</th><th>Staff ID</th><th style="text-align:right">Req Qty</th><th style="text-align:right">SKU</th>
         </tr></thead>
         <tbody id="so-tbody"></tbody>
       </table>
@@ -562,7 +562,7 @@ body.dark-theme{
         <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:10px">Summary Picker</div>
         <div style="overflow-x:auto">
           <table><thead><tr>
-            <th>Picker</th><th style="text-align:right">Total SO</th><th style="text-align:right">Ratio SO</th>
+            <th>Staff ID</th><th>Picker</th><th style="text-align:right">Total SO</th><th style="text-align:right">Ratio SO</th>
             <th style="text-align:right">Prod Qty</th><th style="text-align:right">Target</th><th style="text-align:right">Achievement</th>
           </tr></thead><tbody id="picker-tbody"></tbody></table>
         </div>
@@ -726,7 +726,7 @@ let soData = [];
 let fWave = new Set(['WAVE 1','WAVE 2','WAVE 3','WAVE 4']);
 let fType = new Set(['Kepala','Badan','Ekor','Other']);
 let fZone = new Set();
-let myPickers = new Set();
+let myPickers = new Map(); // key = staff_id atau nama, value = { staff_id, name }
 let assignResult = {};
 let assignSkippedRows = [];
 let assignForcedRows = [];
@@ -801,6 +801,7 @@ function normalizeSO(raw){
   const destination = firstValue(raw, ['destination_name','Destination','destination','Tujuan','tujuan','store_name']);
   const status = String(firstValue(raw, ['status','Status','remarks','Remarks'], 'NEW')).trim().toUpperCase();
   const picker = firstValue(raw, ['Picker','picker','picker_name','Picker Name'], '');
+  const staffId = firstValue(raw, ['staff_id','Staff ID','Staff Id','StaffID','Staff Id','Staf ID','Staff ID '], '');
   const zone = firstValue(raw, ['picking_zone','PICKING ZONE','Picking Zone','zone','Zone'], '');
   const reqQty = Number(String(firstValue(raw, ['request_quantity','Request Quantity','request_qty','Req Qty','qty','Qty'], 0)).replace(/,/g,'')) || 0;
   const skuCount = Number(String(firstValue(raw, ['sku_count','SKU Count','sku','SKU'], 0)).replace(/,/g,'')) || 0;
@@ -827,6 +828,7 @@ function normalizeSO(raw){
     destination_name: destination,
     status,
     Picker: picker,
+    staff_id: staffId,
     picking_zone: zone,
     request_quantity: reqQty,
     incoming_quantity: incomingQty,
@@ -1030,10 +1032,67 @@ function updateFilterCount(){
 }
 
 function parsePickerInput(text){
-  return String(text || '')
-    .split(/[\n\r,;|]+/)
-    .map(x => x.trim())
+  const raw = String(text || '').trim();
+  if(!raw) return [];
+
+  // Support paste dari spreadsheet:
+  // Staff ID<TAB>Nama
+  // Staff ID - Nama
+  // Staff ID,Nama
+  // Nama only
+  const lines = raw
+    .split(/[\n\r]+/)
+    .map(line => line.trim())
     .filter(Boolean);
+
+  // Kalau user paste 1 baris dengan koma/semicolon/pipe berisi nama doang,
+  // tetap support format lama: "Sofyan, Ega, Zaenal"
+  if(lines.length === 1 && !/\t/.test(lines[0]) && !/\s+-\s+/.test(lines[0])){
+    const single = lines[0];
+    if(/[;|]/.test(single)){
+      return single.split(/[;|]+/).map(x => ({ staff_id:'', name:x.trim() })).filter(p=>p.name);
+    }
+
+    const commaParts = single.split(',').map(x => x.trim()).filter(Boolean);
+    if(commaParts.length > 2){
+      return commaParts.map(x => ({ staff_id:'', name:x })).filter(p=>p.name);
+    }
+  }
+
+  return lines.map(line => {
+    let staffId = '';
+    let name = '';
+
+    if(line.includes('\t')){
+      const parts = line.split('\t').map(x => x.trim()).filter(Boolean);
+      staffId = parts[0] || '';
+      name = parts.slice(1).join(' ') || '';
+    } else if(/\s+-\s+/.test(line)){
+      const parts = line.split(/\s+-\s+/).map(x => x.trim()).filter(Boolean);
+      staffId = parts[0] || '';
+      name = parts.slice(1).join(' - ') || '';
+    } else if(line.includes(',')){
+      const parts = line.split(',').map(x => x.trim()).filter(Boolean);
+      if(parts.length >= 2){
+        staffId = parts[0] || '';
+        name = parts.slice(1).join(' ') || '';
+      } else {
+        name = line;
+      }
+    } else {
+      name = line;
+    }
+
+    if(!name && staffId){
+      name = staffId;
+      staffId = '';
+    }
+
+    return {
+      staff_id: String(staffId || '').trim(),
+      name: String(name || '').trim()
+    };
+  }).filter(p => p.name);
 }
 
 function addPicker(){
@@ -1041,8 +1100,10 @@ function addPicker(){
   const raw = inp.value.trim();
   if(!raw) return;
 
-  const names = parsePickerInput(raw);
-  names.forEach(name => myPickers.add(name));
+  parsePickerInput(raw).forEach(p => {
+    const key = p.staff_id || p.name;
+    myPickers.set(key, p);
+  });
 
   inp.value='';
   renderPickerTags();
@@ -1052,19 +1113,56 @@ function handlePickerPaste(e){
   const pasted = (e.clipboardData || window.clipboardData)?.getData('text') || '';
   if(!pasted) return;
 
-  if(/[\n\r,;|]/.test(pasted)){
+  if(/[\n\r\t,;|]/.test(pasted)){
     e.preventDefault();
-    parsePickerInput(pasted).forEach(name => myPickers.add(name));
+
+    parsePickerInput(pasted).forEach(p => {
+      const key = p.staff_id || p.name;
+      myPickers.set(key, p);
+    });
+
     renderPickerTags();
   }
 }
 
-function removePicker(v){ myPickers.delete(v); renderPickerTags(); }
-function clearAllPickers(){ myPickers.clear(); renderPickerTags(); }
+function removePicker(key){
+  myPickers.delete(key);
+  renderPickerTags();
+}
+
+function clearAllPickers(){
+  myPickers.clear();
+  renderPickerTags();
+}
+
+function getPickerList(){
+  return [...myPickers.values()];
+}
+
+function getPickerNames(){
+  return getPickerList().map(p => p.name);
+}
+
+function findPickerByName(name){
+  const target = String(name || '').trim().toUpperCase();
+  return getPickerList().find(p => String(p.name || '').trim().toUpperCase() === target) || null;
+}
+
+function getPickerStaffId(name){
+  const p = findPickerByName(name);
+  return p ? (p.staff_id || '') : '';
+}
 
 function renderPickerTags(){
   const tags = document.getElementById('mp-tags');
-  tags.innerHTML = [...myPickers].map(p=>`<div class="tag" style="background:var(--blue-dim);border-color:var(--blue-light);color:var(--blue)"><span>${esc(p)}</span><span class="tag-x" onclick="removePicker('${esc(p)}')">×</span></div>`).join('');
+  tags.innerHTML = [...myPickers.entries()].map(([key, p]) => {
+    const label = p.staff_id
+      ? `${esc(p.staff_id)} | ${esc(p.name)}`
+      : esc(p.name);
+
+    return `<div class="tag" style="background:var(--blue-dim);border-color:var(--blue-light);color:var(--blue)"><span>${label}</span><span class="tag-x" onclick="removePicker('${esc(key)}')">×</span></div>`;
+  }).join('');
+
   document.getElementById('mp-ct').innerText = myPickers.size + ' picker';
 }
 
@@ -1329,7 +1427,7 @@ function runAssign(){
   closeModal();
 
   const targetQty = Number(document.getElementById('target').value) || 2400;
-  const pList = [...myPickers];
+  const pList = getPickerNames();
 
   if(!pList.length){
     alert('Isi minimal 1 nama picker dulu, bro!');
@@ -1357,7 +1455,7 @@ function runAssign(){
 }
 
 function generateSmartSuggestion(){
-  const pList = [...myPickers];
+  const pList = getPickerNames();
 
   if(!pList.length){
     alert('Isi minimal 1 nama picker dulu sebelum generate suggestion.');
@@ -1456,7 +1554,8 @@ function sumAssignedLocationCount(rows){
 function buildAssignedRows(){
   const rows = [];
   Object.values(assignResult).forEach(d => {
-    d.soList.forEach(s => rows.push({ picker: d.picker, so: s }));
+    const staffId = getPickerStaffId(d.picker);
+    d.soList.forEach(s => rows.push({ picker: d.picker, staff_id: staffId, so: s }));
   });
   return rows;
 }
@@ -1466,7 +1565,7 @@ function buildSOCopyText(rows){
 }
 
 function buildUploadCopyText(rows){
-  return rows.map(x => `${x.so.so_number}\t${x.picker}`).join('\n');
+  return rows.map(x => `${x.so.so_number}\t${x.picker}\t${x.staff_id || ''}`).join('\n');
 }
 
 function buildDetailCopyText(rows){
@@ -1474,7 +1573,7 @@ function buildDetailCopyText(rows){
     const s = x.so;
     const w = s.WAVE || getWave(s.destination_name);
     const t = s.type || getType(s.destination_name);
-    return [s.so_number, x.picker, s.destination_name || '', s.picking_zone || '', w || '', t || '', getAssignedSkuCount(s), formatAssignedLocationCount(s), s.request_quantity || 0].join('\t');
+    return [s.so_number, x.picker, x.staff_id || '', s.destination_name || '', s.picking_zone || '', w || '', t || '', getAssignedSkuCount(s), formatAssignedLocationCount(s), s.request_quantity || 0].join('\t');
   }).join('\n');
 }
 
@@ -1497,7 +1596,7 @@ function copyAssignedPicker(mode, btn, e){
   const d = assignResult[picker];
   if(!d || !d.soList || !d.soList.length){ alert('Picker ini belum punya SO untuk dicopy.'); return; }
 
-  const rows = d.soList.map(s => ({ picker, so: s }));
+  const rows = d.soList.map(s => ({ picker, staff_id: getPickerStaffId(picker), so: s }));
   const text = mode === 'upload' ? buildUploadCopyText(rows)
     : mode === 'detail' ? buildDetailCopyText(rows)
     : buildSOCopyText(rows);
@@ -1512,11 +1611,12 @@ function downloadAssignedPickerCSV(btn, e){
   const d = assignResult[picker];
   if(!d || !d.soList || !d.soList.length){ alert('Picker ini belum punya SO untuk didownload.'); return; }
 
-  const csv = ['Picker,SO Number,Destination,Zone,Wave,Type,SKU Count,Picking Location Count,Qty'];
+  const csv = ['Staff ID,Picker,SO Number,Destination,Zone,Wave,Type,SKU Count,Picking Location Count,Qty'];
   d.soList.forEach(s=>{
     const w = s.WAVE || getWave(s.destination_name);
     const t = s.type || getType(s.destination_name);
-    csv.push(`"${String(picker).replace(/"/g,'""')}","${String(s.so_number||'').replace(/"/g,'""')}","${String(s.destination_name||'').replace(/"/g,'""')}","${String(s.picking_zone||'').replace(/"/g,'""')}","${String(w||'').replace(/"/g,'""')}","${String(t||'').replace(/"/g,'""')}","${getAssignedSkuCount(s)}","${formatAssignedLocationCount(s)}","${Number(s.request_quantity||0)}"`);
+    const staffId = getPickerStaffId(picker);
+    csv.push(`"${String(staffId||'').replace(/"/g,'""')}","${String(picker).replace(/"/g,'""')}","${String(s.so_number||'').replace(/"/g,'""')}","${String(s.destination_name||'').replace(/"/g,'""')}","${String(s.picking_zone||'').replace(/"/g,'""')}","${String(w||'').replace(/"/g,'""')}","${String(t||'').replace(/"/g,'""')}","${getAssignedSkuCount(s)}","${formatAssignedLocationCount(s)}","${Number(s.request_quantity||0)}"`);
   });
 
   const a=document.createElement('a');
@@ -1561,7 +1661,7 @@ function renderResultCards(targetQty){
   <div style="margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
     <select id="assign-picker-filter" onchange="filterAssignedPickers()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;min-width:240px;max-width:100%">
       <option value="">Picker semua</option>
-      ${arr.map(d=>`<option value="${esc(d.picker)}">${esc(d.picker)}</option>`).join('')}
+      ${arr.map(d=>`<option value="${esc(d.picker)}">${esc(getPickerStaffId(d.picker) ? getPickerStaffId(d.picker) + ' | ' : '')}${esc(d.picker)}</option>`).join('')}
     </select>
     <input type="text" id="assign-result-search" class="search" placeholder="Cari zone / SO / tujuan..." oninput="filterAssignedPickers()" style="width:260px;max-width:100%">
     <button class="btn-ghost" onclick="clearAssignedPickerFilter()">✕ Clear</button>
@@ -1608,12 +1708,14 @@ function renderResultCards(targetQty){
         </tr>`;
       }).join('');
 
+    const pickerStaffId = getPickerStaffId(d.picker);
+
     html += `
-    <div class="pc" data-picker="${esc(d.picker)}" data-zones="${esc(zonesStr)}">
+    <div class="pc" data-picker="${esc(d.picker)}" data-staff-id="${esc(pickerStaffId)}" data-zones="${esc(zonesStr)}">
       <div class="pc-head" onclick="this.parentElement.classList.toggle('open')">
         <div class="pc-av" style="background:${COLORS[idx % COLORS.length]}22;color:${COLORS[idx % COLORS.length]}">${esc(d.picker.slice(0,2).toUpperCase())}</div>
         <div class="pc-info">
-          <div class="pc-name">${esc(d.picker)}</div>
+          <div class="pc-name">${esc(pickerStaffId ? pickerStaffId + ' | ' : '')}${esc(d.picker)}</div>
           <div class="pc-meta">${d.soList.length.toLocaleString('id-ID')} SO baru · ${d.newQty.toLocaleString('id-ID')} qty baru · ${pickerSkuTotal.toLocaleString('id-ID')} SKU · ${pickerLocTotal} lokasi · ${zoneEntries.length.toLocaleString('id-ID')} zone</div>
         </div>
         <div class="pc-right">
@@ -1665,7 +1767,8 @@ function filterAssignedPickers(){
   cards.forEach(card => {
     const picker = String(card.dataset.picker || '').toLowerCase();
     const zones = String(card.dataset.zones || '').toLowerCase();
-    const haystack = (picker + ' ' + zones + ' ' + card.innerText.toLowerCase());
+    const staffId = String(card.dataset.staffId || '').toLowerCase();
+    const haystack = (picker + ' ' + staffId + ' ' + zones + ' ' + card.innerText.toLowerCase());
     const matchPicker = !pickerFilter || picker === pickerFilter;
     const matchQuery = !q || haystack.includes(q);
     const match = matchPicker && matchQuery;
@@ -1728,7 +1831,14 @@ async function submitToGoogle(){
   }
   let payload = [];
   Object.values(assignResult).forEach(d => {
-    d.soList.forEach(s => { payload.push({ so_number: s.so_number, picker: d.picker }); });
+    const staffId = getPickerStaffId(d.picker);
+    d.soList.forEach(s => {
+      payload.push({
+        so_number: s.so_number,
+        picker: d.picker,
+        staff_id: staffId
+      });
+    });
   });
   if(!payload.length) return;
 
@@ -1835,6 +1945,7 @@ function renderTable(){
       <td><span class="badge s-new" style="background:none;color:var(--text)">${esc(s.picking_zone || '-')}</span></td>
       <td><span class="badge ${stClass}">${esc(s.status)}</span></td>
       <td class="mono" style="font-weight:600;color:var(--blue)">${esc(s.Picker || '-')}</td>
+      <td class="mono" style="font-weight:600;color:var(--text2)">${esc(s.staff_id || '-')}</td>
       <td class="mono" style="text-align:right;font-weight:600">${s.request_quantity}</td>
       <td class="mono" style="text-align:right;color:var(--text3)">${s.sku_count}</td>
     </tr>`;
@@ -2157,7 +2268,7 @@ function renderDashboard(){
     buildChart('c-wave-qty','line',['No Data'],[0],'Qty Pcs','#16a34a');
     buildChart('c-zone-workload','bar',['No Data'],[0],'Total Qty','#7c3aed');
     buildChart('c-remarks','doughnut',['No Data'],[1],'',COLORS);
-    document.getElementById('picker-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Tidak ada data sesuai dashboard filter</td></tr>`;
+    document.getElementById('picker-tbody').innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text3)">Tidak ada data sesuai dashboard filter</td></tr>`;
     addLog('Dashboard filter returned no data.', 'warn');
     return;
   }
@@ -2223,14 +2334,15 @@ function renderDashboard(){
   let pMap = {};
   dashData.forEach(s=>{
     if(!s.Picker) return;
-    if(!pMap[s.Picker]) pMap[s.Picker] = { so:0, qty:0 };
+    if(!pMap[s.Picker]) pMap[s.Picker] = { so:0, qty:0, staff_id:'' };
+    if(s.staff_id && !pMap[s.Picker].staff_id) pMap[s.Picker].staff_id = s.staff_id;
     pMap[s.Picker].so++;
     pMap[s.Picker].qty += s.request_quantity;
   });
 
   const pTbody = document.getElementById('picker-tbody');
   if(Object.keys(pMap).length === 0){
-    pTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text3)">Belum ada data picker pada filter ini</td></tr>`;
+    pTbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text3)">Belum ada data picker pada filter ini</td></tr>`;
   } else {
     pTbody.innerHTML = Object.keys(pMap)
       .sort((a,b)=>pMap[b].qty-pMap[a].qty)
@@ -2242,7 +2354,9 @@ function renderDashboard(){
                          achievement >= 100 ? `${achievement}% · good` :
                          achievement >= 80 ? `${achievement}% · watch` :
                          `${achievement}% · low`;
+        const staffId = d.staff_id || getPickerStaffId(p) || '-';
         return `<tr>
+          <td class="mono" style="font-weight:600;color:var(--text2)">${esc(staffId)}</td>
           <td style="font-weight:600">${esc(p)}</td>
           <td class="mono" style="text-align:right">${d.so}</td>
           <td class="mono" style="text-align:right">${Math.round(d.qty/d.so)}</td>
@@ -2861,9 +2975,10 @@ function renderMapPickerList(rows){
 
 function downloadCSV(){
   if(!Object.keys(assignResult).length){alert('Jalankan assign dulu.');return;}
-  let rows=['Picker,SO Number,Destination,Wave,Type,Zone,Qty'];
+  let rows=['Staff ID,Picker,SO Number,Destination,Wave,Type,Zone,Qty'];
   Object.values(assignResult).forEach(d=>{
-    d.soList.forEach(s=>rows.push(`"${esc(d.picker)}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(s.WAVE||'')}","${esc(s.type||'')}","${esc(s.picking_zone||'')}","${s.request_quantity}"`));
+    const staffId = getPickerStaffId(d.picker);
+    d.soList.forEach(s=>rows.push(`"${esc(staffId)}","${esc(d.picker)}","${esc(s.so_number)}","${esc(s.destination_name)}","${esc(s.WAVE||'')}","${esc(s.type||'')}","${esc(s.picking_zone||'')}","${s.request_quantity}"`));
   });
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));

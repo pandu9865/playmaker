@@ -3235,7 +3235,7 @@ function renderHourlyReport(){
 
     return `
       <tr>
-        <td class="hourly-sticky-name"><b>${esc(r.name || '-')}</b><div class="hourly-sub">${esc(r.role || 'Picker Staff')}</div></td>
+        <td class="hourly-sticky-name"><b>${esc(r.name || r.name_picker || '-')}</b><div class="hourly-sub">${esc(r.role || 'Picker Staff')}</div></td>
         <td class="hourly-sticky-shift">${esc(r.shift || '-')}</td>
         <td class="hourly-sticky-staff">${esc(r.staff_id || r.StaffID || '-')}</td>
         ${hours.map(h => {

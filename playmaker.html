@@ -327,8 +327,8 @@ body.dark-theme{
 .map-kpi{background:#111827;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px}
 .map-kpi-lbl{font-family:var(--mono);font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
 .map-kpi-val{font-family:var(--mono);font-size:20px;font-weight:800;color:#e2e8f0;margin-top:2px}
-.map-blueprint-wrap{flex:1;min-height:0;max-height:calc(100vh - 255px);position:relative;background:#030712;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;padding:12px;display:block;overscroll-behavior:contain}
-.map-canvas{width:1100px;max-width:none;height:680px;background:#020617;border:1px solid #243447;border-radius:10px;box-shadow:inset 0 0 40px #00000055;cursor:crosshair;display:block}
+.map-blueprint-wrap{flex:1;min-height:0;max-height:calc(100vh - 235px);position:relative;background:#030712;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;padding:12px;display:block;overscroll-behavior:contain}
+.map-canvas{width:1280px;max-width:none;height:860px;background:#020617;border:1px solid #243447;border-radius:10px;box-shadow:inset 0 0 40px #00000055;cursor:crosshair;display:block}
 .map-floating-legend{position:absolute;left:28px;top:28px;background:#020617e6;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;z-index:4;display:flex;flex-direction:column;gap:7px;box-shadow:0 10px 28px #00000055;backdrop-filter:blur(6px)}
 .map-floating-legend .map-leg{border:none;background:transparent;padding:0;color:#cbd5e1}
 .map-status-strip{display:flex;gap:8px;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:#64748b}
@@ -605,7 +605,7 @@ body.dark-theme{
             <div class="map-leg"><span class="map-dot" style="background:#ef4444"></span>Critical Drop SO</div>
             <div class="map-leg"><span class="map-dot" style="background:#eab308;border-radius:50%"></span>Picker Activity</div>
           </div>
-          <canvas id="warehouse-map-canvas" class="map-canvas" width="1100" height="680"></canvas>
+          <canvas id="warehouse-map-canvas" class="map-canvas" width="1280" height="860"></canvas>
         </div>
 
         <div class="map-status-strip">
@@ -2268,8 +2268,8 @@ function buildChart(id,type,labels,data,label,colors){
 
 
 /* LIVE MAP ENGINE - RACK STRIP BLUEPRINT */
-const BLUEPRINT_W = 1100;
-const BLUEPRINT_H = 680;
+const BLUEPRINT_W = 1280;
+const BLUEPRINT_H = 860;
 
 /*
   Rack-strip layout v1.
@@ -2277,29 +2277,30 @@ const BLUEPRINT_H = 680;
   Workload tetap connect ke SO via picking_zone / origin_rack_name / picker / status.
 */
 const MAP_RACK_LAYOUT_CONFIG = [
-  // SPR lower / normal rack area - top left, dibuat lebih renggang agar terbaca
-  {zone:'SPR 1-1', label:'SPR 1-1', x:80,  y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
-  {zone:'SPR 1-2', label:'SPR 1-2', x:205, y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
-  {zone:'SPR 1-3', label:'SPR 1-3', x:330, y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
-  {zone:'SPR 1-4', label:'SPR 1-4', x:455, y:105, racks:4, rackW:18, rackH:220, gap:20, dir:'vertical', group:'SPR LOWER RACK', labelY:74},
+  // Struktur dibuat sectioned: inventory SPR di atas, gangway tengah, pick face/mezzanine di bawah.
+  // Ini bukan koordinat CAD; ini clean operational map supaya supervisor bisa baca workload tanpa teks tabrakan.
+  {zone:'SPR 1-1', label:'SPR 1-1', x:80,  y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
+  {zone:'SPR 1-2', label:'SPR 1-2', x:245, y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
+  {zone:'SPR 1-3', label:'SPR 1-3', x:410, y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
+  {zone:'SPR 1-4', label:'SPR 1-4', x:575, y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
 
-  // HRA equipment area - kanan atas, dipisah dari SPR agar tidak tabrakan
-  {zone:'HRA-1', label:'HRA-1', x:650, y:105, racks:4, rackW:20, rackH:300, gap:24, dir:'vertical', group:'HIGH RACK / EQUIPMENT AREA', labelY:74},
-  {zone:'HRA-2', label:'HRA-2', x:820, y:105, racks:4, rackW:20, rackH:300, gap:24, dir:'vertical', group:'HIGH RACK / EQUIPMENT AREA', labelY:74},
+  // Equipment-heavy area dipisah jelas di kanan atas.
+  {zone:'HRA-1', label:'HRA-1', x:835,  y:130, racks:3, rackW:24, rackH:255, gap:34, dir:'vertical', group:'HIGH RACK / EQUIPMENT', labelY:94},
+  {zone:'HRA-2', label:'HRA-2', x:1035, y:130, racks:3, rackW:24, rackH:255, gap:34, dir:'vertical', group:'HIGH RACK / EQUIPMENT', labelY:94},
 
-  // Mezzanine pick face - bawah kiri/tengah
-  {zone:'MZ 1-1', label:'MZ 1-1', x:80,  y:455, racks:9, rackW:15, rackH:105, gap:14, dir:'vertical', group:'MEZZANINE PICK FACE', labelY:424},
-  {zone:'MZ 2-1', label:'MZ 2-1', x:300, y:455, racks:8, rackW:15, rackH:105, gap:14, dir:'vertical', group:'MEZZANINE PICK FACE', labelY:424},
-  {zone:'MZ 1-2', label:'MZ 1-2', x:505, y:455, racks:3, rackW:15, rackH:105, gap:14, dir:'vertical', group:'MEZZANINE PICK FACE', labelY:424},
+  // Mezzanine pick face di bawah, lebih lega dan dipisah dari SPR lower oleh gangway.
+  {zone:'MZ 1-1', label:'MZ 1-1', x:80,  y:585, racks:7, rackW:18, rackH:125, gap:22, dir:'vertical', group:'PICKABLE AREA / MEZZANINE', labelY:548},
+  {zone:'MZ 2-1', label:'MZ 2-1', x:390, y:585, racks:6, rackW:18, rackH:125, gap:22, dir:'vertical', group:'PICKABLE AREA / MEZZANINE', labelY:548},
+  {zone:'MZ 1-2', label:'MZ 1-2', x:650, y:585, racks:3, rackW:18, rackH:125, gap:22, dir:'vertical', group:'PICKABLE AREA / MEZZANINE', labelY:548},
 
-  // SPR upper rack - kanan bawah
-  {zone:'SPR 2-1', label:'SPR 2-1', x:705, y:455, racks:3, rackW:17, rackH:105, gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:424},
-  {zone:'SPR 2-2', label:'SPR 2-2', x:815, y:455, racks:3, rackW:17, rackH:105, gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:424},
-  {zone:'SPR 2-3', label:'SPR 2-3', x:705, y:585, racks:3, rackW:17, rackH:80,  gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:564},
-  {zone:'SPR 2-4', label:'SPR 2-4', x:815, y:585, racks:3, rackW:17, rackH:80,  gap:18, dir:'vertical', group:'SPR UPPER RACK', labelY:564},
+  // SPR upper rack di kanan bawah.
+  {zone:'SPR 2-1', label:'SPR 2-1', x:855,  y:585, racks:3, rackW:18, rackH:115, gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:548},
+  {zone:'SPR 2-2', label:'SPR 2-2', x:1010, y:585, racks:3, rackW:18, rackH:115, gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:548},
+  {zone:'SPR 2-3', label:'SPR 2-3', x:855,  y:745, racks:3, rackW:18, rackH:80,  gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:724},
+  {zone:'SPR 2-4', label:'SPR 2-4', x:1010, y:745, racks:3, rackW:18, rackH:80,  gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:724},
 
-  // special handling
-  {zone:'BF-G', label:'BF-G', x:930, y:585, racks:1, rackW:120, rackH:50, gap:0, dir:'block', group:'BULKY / GALON', labelY:564}
+  // Special handling / galon.
+  {zone:'BF-G', label:'BF-G', x:1150, y:745, racks:1, rackW:86, rackH:58, gap:0, dir:'block', group:'BULKY / GALON', labelY:724}
 ];
 
 function buildMapZoneShapes(){
@@ -2661,59 +2662,86 @@ function drawWarehouseBlueprint(){
   // outer warehouse boundary
   ctx.strokeStyle = '#334155';
   ctx.lineWidth = 3;
-  ctx.strokeRect(35,35,1030,610);
+  ctx.strokeRect(35,35,1210,790);
 
-  // broad area backgrounds, dibuat soft supaya rack yang jadi fokus
-  ctx.fillStyle = 'rgba(37,99,235,.055)';
-  ctx.fillRect(58,62,540,300);
-  drawText(ctx, 'SPR INVENTORY / LOWER PICKING RACK', 70, 54, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
+  // header blueprint label
+  drawText(ctx, 'WH SENTUL - SECTIONED 2D RACK LAYOUT MONITOR', 45, 28, {color:'rgba(226,232,240,.86)', font:'bold 12px IBM Plex Mono'});
+  drawText(ctx, 'Data driven by SO zone, picker, status, qty, level, and effort score', 420, 28, {color:'rgba(148,163,184,.70)', font:'10px IBM Plex Mono'});
 
-  ctx.fillStyle = 'rgba(16,185,129,.050)';
-  ctx.fillRect(58,382,540,285);
-  drawText(ctx, 'MEZZANINE PICK FACE', 70, 374, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
-
-  ctx.fillStyle = 'rgba(124,58,237,.050)';
-  ctx.fillRect(620,62,315,360);
-  drawText(ctx, 'HIGH RACK / EQUIPMENT AREA', 632, 54, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
-
-  ctx.fillStyle = 'rgba(245,158,11,.040)';
-  ctx.fillRect(670,415,390,252);
-  drawText(ctx, 'SPR UPPER RACK', 685, 408, {color:'rgba(148,163,184,.55)', font:'bold 10px IBM Plex Mono'});
-
-  // static rooms / support areas, lebih bawah dan tidak ganggu rack
-  drawRoom(ctx, 'Auto Wrapper', 90, 642, 95, 22, '#334155');
-  drawRoom(ctx, 'Office / Toilet', 205, 642, 145, 22, '#1e293b');
-  drawRoom(ctx, 'Transit / Assembly', 370, 642, 160, 22, '#1e293b');
-  drawRoom(ctx, 'Outbound Staging', 545, 642, 150, 22, '#1e293b');
-  drawRoom(ctx, 'Inbound / RFM', 900, 642, 155, 22, '#1e293b');
-
-  // pedestrian / forklift path hint: hanya garis utama, jangan bikin pusing
+  // SECTION BACKGROUNDS: dibuat mengikuti ide Gemini, tapi tetap pakai zone real Playmaker.
   ctx.save();
-  ctx.strokeStyle = 'rgba(148,163,184,.13)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([5,10]);
-  ctx.beginPath(); ctx.moveTo(55,370); ctx.lineTo(1045,370); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(620,55); ctx.lineTo(620,625); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(670,415); ctx.lineTo(1045,415); ctx.stroke();
+
+  // Main Inventory SPR
+  ctx.fillStyle = 'rgba(37,99,235,.060)';
+  roundRectPath(ctx, 58, 68, 700, 330, 12);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(59,130,246,.18)';
+  ctx.stroke();
+  drawText(ctx, 'MAIN INVENTORY - SPR LOWER RACK', 76, 78, {color:'rgba(147,197,253,.78)', font:'bold 11px IBM Plex Mono'});
+
+  // Equipment / high rack
+  ctx.fillStyle = 'rgba(124,58,237,.060)';
+  roundRectPath(ctx, 800, 68, 420, 330, 12);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(168,85,247,.18)';
+  ctx.stroke();
+  drawText(ctx, 'HRA / EQUIPMENT AREA', 820, 78, {color:'rgba(216,180,254,.78)', font:'bold 11px IBM Plex Mono'});
+
+  // Forklift flow road
+  ctx.fillStyle = 'rgba(15,23,42,.78)';
+  roundRectPath(ctx, 58, 425, 1162, 66, 11);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(148,163,184,.18)';
+  ctx.setLineDash([10,8]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  drawText(ctx, 'MAIN FORKLIFT FLOW ROAD / 2 GANGWAY', 82, 458, {color:'rgba(148,163,184,.78)', font:'bold 11px IBM Plex Mono'});
+  drawText(ctx, 'SPR to PICKABLE AREA', 950, 458, {color:'rgba(148,163,184,.55)', font:'10px IBM Plex Mono'});
+
+  // Pickable / mezzanine
+  ctx.fillStyle = 'rgba(16,185,129,.055)';
+  roundRectPath(ctx, 58, 520, 720, 210, 12);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(16,185,129,.18)';
+  ctx.stroke();
+  drawText(ctx, 'PICKABLE AREA - MEZZANINE PICK FACE', 76, 530, {color:'rgba(110,231,183,.78)', font:'bold 11px IBM Plex Mono'});
+
+  // SPR upper / special
+  ctx.fillStyle = 'rgba(245,158,11,.045)';
+  roundRectPath(ctx, 815, 520, 405, 305, 12);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(245,158,11,.18)';
+  ctx.stroke();
+  drawText(ctx, 'SPR UPPER RACK / SPECIAL HANDLING', 835, 530, {color:'rgba(253,230,138,.78)', font:'bold 11px IBM Plex Mono'});
+
   ctx.restore();
 
-  // grid sangat tipis
-  ctx.strokeStyle = 'rgba(148,163,184,.035)';
+  // subtle grid, low noise
+  ctx.strokeStyle = 'rgba(148,163,184,.025)';
   ctx.lineWidth = 1;
-  for(let x=80; x<1060; x+=80){ctx.beginPath();ctx.moveTo(x,50);ctx.lineTo(x,625);ctx.stroke();}
-  for(let y=120; y<625; y+=80){ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(1060,y);ctx.stroke();}
+  for(let x=80; x<1230; x+=80){ctx.beginPath();ctx.moveTo(x,50);ctx.lineTo(x,825);ctx.stroke();}
+  for(let y=120; y<825; y+=80){ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(1230,y);ctx.stroke();}
+
+  // access gate hints
+  drawText(ctx, 'Main Gate', 84, 48, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
+  ctx.fillStyle = '#ef4444'; ctx.fillRect(82,35,75,5);
+  drawText(ctx, 'Shutter / Loading', 545, 48, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
+  ctx.fillStyle = '#ef4444'; ctx.fillRect(550,35,125,5);
+
+  // static support rooms at bottom edge
+  drawRoom(ctx, 'Auto Wrapper', 72, 792, 110, 24, '#334155');
+  drawRoom(ctx, 'Office / Toilet', 200, 792, 145, 24, '#1e293b');
+  drawRoom(ctx, 'Transit Area', 365, 792, 132, 24, '#1e293b');
+  drawRoom(ctx, 'Assembly OB', 515, 792, 128, 24, '#1e293b');
+  drawRoom(ctx, 'Packing Line', 662, 792, 125, 24, '#1e293b');
+  drawRoom(ctx, 'Inbound / RFM', 80, 738, 145, 24, '#1e293b');
 
   // rack strips
   MAP_ZONE_SHAPES.forEach(shape=>drawZoneShape(ctx, shape, mapActivityByZone[shape.zone]));
   drawPickerMarkers(ctx);
 
-  // access gates
-  drawText(ctx, 'Main Gate', 90, 25, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
-  ctx.fillStyle = '#ef4444'; ctx.fillRect(85,35,75,5);
-  drawText(ctx, 'Shutter / Loading', 545, 25, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
-  ctx.fillStyle = '#ef4444'; ctx.fillRect(550,35,110,5);
-
-  drawText(ctx, 'WH SENTUL - CLEAN 2D RACK LAYOUT MONITOR', 35, 675, {color:'rgba(148,163,184,.75)', font:'bold 11px IBM Plex Mono'});
+  // bottom caption
+  drawText(ctx, 'Legend: red critical queue, amber active picking, green done, orange normal. Click zone strip for inspector.', 45, 848, {color:'rgba(148,163,184,.72)', font:'10px IBM Plex Mono'});
 }
 function renderRackMonitor(){
   bindMapCanvas();

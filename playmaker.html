@@ -312,48 +312,199 @@ body.dark-theme{
 ::-webkit-scrollbar-track{background:var(--bg3)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-/* LIVE MAP / RACK MONITOR - 2D BLUEPRINT */
-.map-page{flex-direction:column;overflow:hidden;background:#060a0f;color:#e2e8f0;min-height:0}
-.map-shell{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;height:100%;min-height:0;padding:14px;overflow:hidden;background:#060a0f}
-.map-board{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;padding:14px;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 50px #00000033;overscroll-behavior:contain}
-.map-side{background:#0d1117;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;min-height:0;display:flex;flex-direction:column;box-shadow:0 18px 50px #0000002a;overscroll-behavior:contain}
-.map-title-row{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;flex-wrap:wrap}
-.map-title{font-weight:800;font-size:14px;color:#f8fafc;letter-spacing:.02em}
-.map-sub{font-family:var(--mono);font-size:10px;color:#64748b;margin-top:2px;line-height:1.45}
-.map-legend{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.map-leg{display:flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid #1e2d3d;border-radius:999px;background:#111827;font-family:var(--mono);font-size:10px;color:#94a3b8}
-.map-dot{width:8px;height:8px;border-radius:2px;display:inline-block}
-.map-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.map-kpi{background:#111827;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px}
-.map-kpi-lbl{font-family:var(--mono);font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
-.map-kpi-val{font-family:var(--mono);font-size:20px;font-weight:800;color:#e2e8f0;margin-top:2px}
-.map-blueprint-wrap{flex:1;min-height:0;max-height:calc(100vh - 235px);position:relative;background:#030712;border:1px solid #1e2d3d;border-radius:14px;overflow:auto;padding:12px;display:block;overscroll-behavior:contain}
-.map-canvas{width:1280px;max-width:none;height:860px;background:#020617;border:1px solid #243447;border-radius:10px;box-shadow:inset 0 0 40px #00000055;cursor:crosshair;display:block}
-.map-floating-legend{position:absolute;left:28px;top:28px;background:#020617e6;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;z-index:4;display:flex;flex-direction:column;gap:7px;box-shadow:0 10px 28px #00000055;backdrop-filter:blur(6px)}
-.map-floating-legend .map-leg{border:none;background:transparent;padding:0;color:#cbd5e1}
-.map-status-strip{display:flex;gap:8px;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:#64748b}
-.map-status-strip strong{color:#e2e8f0}
-.map-inspector{padding:14px;border-bottom:1px solid #1e2d3d}
-.map-side-title{font-family:var(--mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:10px}
-.map-ins-name{font-size:18px;font-weight:900;color:#f8fafc;margin-bottom:4px}
-.map-ins-status{font-family:var(--mono);font-size:11px;font-weight:800;margin-bottom:12px}
-.map-ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.map-ins-card{background:#111827;border:1px solid #1e2d3d;border-radius:9px;padding:9px}
-.map-ins-lbl{font-family:var(--mono);font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}
-.map-ins-val{font-family:var(--mono);font-size:15px;font-weight:800;color:#e2e8f0;margin-top:2px;word-break:break-word}
-.map-critical{padding:14px;border-bottom:1px solid #1e2d3d;overflow:auto}
-.map-critical-item{padding:9px;border:1px solid #1e2d3d;border-radius:9px;background:#111827;margin-bottom:8px;cursor:pointer;transition:.15s}
-.map-critical-item:hover{border-color:#3b82f6;background:#172554}
-.map-critical-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.map-critical-zone{font-family:var(--mono);font-size:12px;font-weight:800;color:#f8fafc}
-.map-critical-score{font-family:var(--mono);font-size:11px;font-weight:800;color:#f87171}
-.map-critical-sub{font-size:10px;color:#94a3b8;margin-top:3px;line-height:1.4}
-.map-tracker{padding:14px;overflow:auto;min-height:180px}
-.map-picker-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid #1e2d3d;background:#020617;border-radius:10px;margin-bottom:8px;font-family:var(--mono);font-size:10px}
-.map-picker-name{font-family:var(--sans);font-weight:700;color:#f8fafc;font-size:12px}
-.map-picker-meta{color:#64748b;margin-top:2px}
-.map-picker-dot{width:8px;height:8px;border-radius:50%;background:#eab308;box-shadow:0 0 0 4px #eab30822;display:inline-block;margin-right:5px}
-@media(max-width:1100px){.map-shell{grid-template-columns:1fr;overflow:auto}.map-side{max-height:480px}.map-kpi-row{grid-template-columns:repeat(2,1fr)}.map-blueprint-wrap{max-height:520px}.map-floating-legend{position:static;flex-direction:row;margin-bottom:8px;align-self:flex-start}}
+
+/* LIVE MAP / DIGITAL WAREHOUSE BLUEPRINT V2 */
+.map-page{
+  flex-direction:column;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 5%,rgba(37,99,235,.14),transparent 32%),
+    radial-gradient(circle at 90% 95%,rgba(14,165,233,.10),transparent 34%),
+    #020617;
+  color:#e5eefb;
+  min-height:0;
+}
+.wm-shell{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:16px;
+  height:100%;
+  min-height:0;
+  padding:16px;
+  overflow:hidden;
+}
+.wm-main{display:flex;flex-direction:column;gap:14px;min-height:0}
+.wm-side{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto}
+.wm-topbar{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:14px 16px;border-radius:18px;border:1px solid rgba(96,165,250,.16);
+  background:linear-gradient(180deg,rgba(15,23,42,.94),rgba(2,6,23,.94));
+  box-shadow:0 18px 44px rgba(0,0,0,.30)
+}
+.wm-title{font-size:24px;font-weight:900;letter-spacing:-.03em;color:#f8fbff}
+.wm-subtitle{margin-top:4px;font-family:var(--mono);font-size:11px;color:#94a3b8;line-height:1.55}
+.wm-topbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wm-legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wm-leg{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;
+  border:1px solid rgba(148,163,184,.16);background:rgba(15,23,42,.75);
+  font-family:var(--mono);font-size:10px;color:#cbd5e1
+}
+.wm-leg-dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.wm-leg-dot.idle{background:#475569}
+.wm-leg-dot.active{background:#38bdf8;box-shadow:0 0 12px rgba(56,189,248,.9)}
+.wm-leg-dot.road{background:repeating-linear-gradient(90deg,#94a3b8 0 4px,transparent 4px 8px)}
+.wm-kpi-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.wm-kpi{
+  padding:14px 16px;border-radius:16px;border:1px solid rgba(96,165,250,.14);
+  background:linear-gradient(180deg,rgba(15,23,42,.94),rgba(2,6,23,.94));
+  box-shadow:0 14px 34px rgba(0,0,0,.24)
+}
+.wm-kpi-label{font-family:var(--mono);font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.09em}
+.wm-kpi-value{margin-top:6px;font-family:var(--mono);font-size:26px;font-weight:900;color:#f8fbff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wm-stage-wrap{
+  position:relative;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;
+  padding:14px;border-radius:22px;border:1px solid rgba(96,165,250,.16);
+  background:linear-gradient(180deg,rgba(8,15,31,.97),rgba(2,6,23,.98));
+  box-shadow:0 20px 50px rgba(0,0,0,.32)
+}
+.wm-viewport{
+  position:relative;flex:1;min-height:560px;overflow:hidden;border-radius:18px;
+  border:1px solid rgba(96,165,250,.18);
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.94),rgba(2,6,23,.98));
+  cursor:grab;touch-action:none;user-select:none
+}
+.wm-viewport.dragging{cursor:grabbing}
+.wm-scene{position:absolute;left:0;top:0;width:max-content;min-width:100%;min-height:100%;transform-origin:0 0;will-change:transform}
+.wm-blueprint-grid{
+  position:absolute;inset:0;min-width:2600px;min-height:1600px;pointer-events:none;opacity:.42;
+  background:
+    linear-gradient(rgba(30,41,59,.55) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(30,41,59,.55) 1px,transparent 1px);
+  background-size:42px 42px
+}
+.wm-blueprint{
+  position:relative;z-index:2;display:flex;flex-direction:column;gap:28px;
+  padding:34px;min-width:2400px;min-height:1450px
+}
+.wm-zone{
+  padding:18px;border-radius:22px;border:1px solid rgba(71,85,105,.52);
+  background:rgba(3,10,24,.80);box-shadow:inset 0 0 0 1px rgba(30,41,59,.28)
+}
+.wm-zone-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.wm-zone-title{font-size:18px;font-weight:900;color:#f8fbff}
+.wm-zone-meta{margin-top:3px;font-family:var(--mono);font-size:10px;color:#94a3b8}
+.wm-zone-badge{
+  padding:6px 10px;border-radius:999px;background:rgba(30,41,59,.78);
+  border:1px solid rgba(96,165,250,.18);font-family:var(--mono);font-size:10px;color:#cbd5e1
+}
+.wm-aisle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(720px,1fr));gap:18px}
+.wm-aisle{
+  padding:14px;border-radius:18px;border:1px solid rgba(51,65,85,.72);
+  background:linear-gradient(180deg,rgba(6,13,28,.96),rgba(2,6,23,.94))
+}
+.wm-aisle-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.wm-aisle-title{font-size:13px;font-weight:900;color:#e5eefb}
+.wm-aisle-sub{font-family:var(--mono);font-size:10px;color:#94a3b8}
+.wm-lane{display:grid;grid-template-columns:minmax(0,1fr) 110px minmax(0,1fr);gap:14px;align-items:stretch}
+.wm-rack-track{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.wm-gangway{
+  position:relative;min-height:284px;border-radius:16px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,rgba(15,23,42,.94),rgba(8,15,31,.96));
+  border:1px dashed rgba(148,163,184,.38)
+}
+.wm-gangway:before{
+  content:"";position:absolute;top:12px;bottom:12px;left:50%;width:3px;transform:translateX(-50%);
+  background:repeating-linear-gradient(to bottom,rgba(203,213,225,.75) 0 12px,transparent 12px 24px);opacity:.70
+}
+.wm-gangway:after{
+  content:"FORKLIFT GANGWAY";position:absolute;transform:rotate(-90deg);
+  font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:#64748b;white-space:nowrap
+}
+.wm-rack{
+  width:126px;min-height:244px;padding:10px;border-radius:16px;cursor:pointer;
+  border:1px solid rgba(71,85,105,.78);
+  background:linear-gradient(180deg,rgba(30,41,59,.86),rgba(15,23,42,.94));
+  box-shadow:inset 0 0 0 1px rgba(2,6,23,.5);
+  transition:transform .18s,border-color .18s,box-shadow .18s
+}
+.wm-rack:hover{transform:translateY(-2px);border-color:rgba(96,165,250,.48);box-shadow:0 12px 28px rgba(0,0,0,.34)}
+.wm-rack.selected{border-color:#60a5fa;box-shadow:0 0 0 1px rgba(96,165,250,.42),0 0 26px rgba(37,99,235,.26)}
+.wm-rack-name{
+  font-family:var(--mono);font-size:11px;font-weight:800;line-height:1.35;color:#e5eefb;margin-bottom:10px;word-break:break-word
+}
+.wm-level-stack{display:flex;flex-direction:column;gap:8px}
+.wm-level{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 10px;border-radius:12px;border:1px solid rgba(71,85,105,.65);
+  background:rgba(51,65,85,.48);color:#cbd5e1;font-family:var(--mono);font-size:11px;font-weight:800
+}
+.wm-level small{font-size:10px;color:#94a3b8}
+.wm-level.active{
+  color:#dbeafe;border-color:rgba(56,189,248,.72);
+  background:linear-gradient(180deg,rgba(14,116,144,.34),rgba(30,64,175,.36));
+  box-shadow:0 0 0 1px rgba(56,189,248,.2),0 0 14px rgba(56,189,248,.38),0 0 28px rgba(37,99,235,.18);
+  animation:wmPulse 1.75s infinite ease-in-out
+}
+@keyframes wmPulse{
+  0%,100%{box-shadow:0 0 0 1px rgba(56,189,248,.18),0 0 12px rgba(56,189,248,.28),0 0 24px rgba(37,99,235,.14)}
+  50%{box-shadow:0 0 0 1px rgba(56,189,248,.38),0 0 20px rgba(56,189,248,.68),0 0 38px rgba(37,99,235,.30)}
+}
+.wm-rack-foot{margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:#94a3b8}
+.wm-rack-status{display:inline-flex;align-items:center;gap:5px}
+.wm-rack-status:before{content:"";width:8px;height:8px;border-radius:50%;background:#475569}
+.wm-rack-status.active:before{background:#38bdf8;box-shadow:0 0 12px rgba(56,189,248,.9)}
+.wm-floating-controls{position:absolute;right:24px;top:24px;z-index:20;display:flex;flex-direction:column;gap:8px}
+.wm-floating-controls button{
+  min-width:42px;height:42px;border-radius:12px;border:1px solid rgba(96,165,250,.20);
+  background:rgba(15,23,42,.90);color:#f8fbff;font-family:var(--mono);font-size:13px;font-weight:900;
+  cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.30);transition:.16s
+}
+.wm-floating-controls button:hover{background:#0f172a;border-color:rgba(96,165,250,.50);transform:translateY(-1px)}
+.wm-tooltip{
+  position:absolute;z-index:25;display:none;min-width:260px;max-width:340px;padding:12px 13px;
+  border-radius:14px;border:1px solid rgba(96,165,250,.24);background:rgba(2,6,23,.97);
+  box-shadow:0 18px 36px rgba(0,0,0,.42);color:#e5eefb;pointer-events:none
+}
+.wm-tooltip.show{display:block}
+.wm-tooltip-title{font-size:13px;font-weight:900;color:#f8fbff}
+.wm-tooltip-sub{margin-top:2px;font-family:var(--mono);font-size:10px;color:#94a3b8}
+.wm-tooltip-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.wm-tooltip-card{padding:8px;border-radius:10px;background:rgba(15,23,42,.88);border:1px solid rgba(51,65,85,.82)}
+.wm-tooltip-card .k{font-family:var(--mono);font-size:9px;color:#94a3b8;text-transform:uppercase}
+.wm-tooltip-card .v{margin-top:3px;font-family:var(--mono);font-size:13px;font-weight:900;color:#f8fbff}
+.wm-tooltip-list{margin-top:10px;font-size:11px;line-height:1.55;color:#cbd5e1}
+.wm-bottom-hint{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:2px 2px 0;font-family:var(--mono);font-size:10px;color:#64748b}
+.wm-panel{
+  padding:16px;border-radius:18px;border:1px solid rgba(96,165,250,.14);
+  background:linear-gradient(180deg,rgba(8,15,31,.96),rgba(2,6,23,.96));
+  box-shadow:0 14px 34px rgba(0,0,0,.26)
+}
+.wm-panel-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#64748b}
+.wm-panel-title{margin-top:10px;font-size:24px;font-weight:900;color:#f8fbff}
+.wm-panel-sub{margin-top:4px;font-family:var(--mono);font-size:11px;line-height:1.5;color:#94a3b8}
+.wm-metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.wm-metric-card{padding:12px;border-radius:14px;background:rgba(15,23,42,.84);border:1px solid rgba(51,65,85,.84)}
+.wm-metric-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:#64748b}
+.wm-metric-value{margin-top:6px;font-family:var(--mono);font-size:21px;font-weight:900;color:#f8fbff;word-break:break-word}
+.wm-tag-list{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+.wm-tag{padding:7px 10px;border-radius:999px;background:rgba(30,41,59,.82);border:1px solid rgba(71,85,105,.85);font-size:11px;color:#dbeafe}
+.wm-empty-tag,.wm-empty-line{color:#64748b;font-family:var(--mono);font-size:11px}
+.wm-sku-list,.wm-critical-list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.wm-sku-item,.wm-critical-item{padding:10px 12px;border-radius:12px;border:1px solid rgba(51,65,85,.84);background:rgba(15,23,42,.84)}
+.wm-sku-item .sku-name{font-size:11px;color:#e2e8f0}
+.wm-sku-item .sku-meta{margin-top:4px;font-family:var(--mono);font-size:10px;color:#94a3b8}
+.wm-critical-item{cursor:pointer;transition:.16s}
+.wm-critical-item:hover{border-color:rgba(96,165,250,.52);transform:translateY(-1px)}
+.wm-critical-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.wm-critical-rack{font-family:var(--mono);font-size:12px;font-weight:900;color:#f8fbff}
+.wm-critical-score{font-family:var(--mono);font-size:11px;font-weight:900;color:#38bdf8}
+.wm-critical-sub{margin-top:4px;font-size:11px;color:#94a3b8}
+@media(max-width:1500px){.wm-shell{grid-template-columns:1fr 330px}.wm-kpi-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1180px){.wm-shell{grid-template-columns:1fr;overflow:auto}.wm-kpi-row{grid-template-columns:repeat(2,minmax(0,1fr))}.wm-aisle-grid{grid-template-columns:1fr}.wm-side{max-height:none}}
+@media(max-width:720px){.wm-kpi-row{grid-template-columns:1fr}.wm-lane{grid-template-columns:1fr}.wm-gangway{min-height:90px}.wm-gangway:after{transform:none}.wm-rack{width:100%}}
 
 
 /* HOURLY PRODUCTIVITY REPORT */
@@ -646,58 +797,98 @@ body.dark-theme .hour-good{background:#052e16!important;color:#86efac!important}
 
 
   <div id="page-map" class="page map-page">
-    <div class="map-shell">
-      <div class="map-board">
-        <div class="map-title-row">
+    <div class="wm-shell">
+
+      <section class="wm-main">
+        <div class="wm-topbar">
           <div>
-            <div class="map-title">Live Map - 2D Rack Layout Monitor</div>
-            <div class="map-sub" id="map-sub">Rack-strip activity from SO, picker, qty, rack level, and effort score. Click rack strip to inspect zone workload.</div>
+            <div class="wm-title">Live Map · Digital Warehouse Blueprint</div>
+            <div class="wm-subtitle">
+              2D rack layout grouped by Picking Zone & Aisle · drag to pan · wheel / button to zoom · klik rack untuk inspector.
+            </div>
           </div>
-          <div class="map-legend">
-            <div class="map-leg"><span class="map-dot" style="background:#ef4444"></span>Critical</div>
-            <div class="map-leg"><span class="map-dot" style="background:#f59e0b"></span>Picking</div>
-            <div class="map-leg"><span class="map-dot" style="background:#22c55e"></span>Done</div>
-            <div class="map-leg"><span class="map-dot" style="background:#f97316"></span>Normal</div>
+
+          <div class="wm-topbar-actions">
+            <div class="wm-legend">
+              <div class="wm-leg"><span class="wm-leg-dot idle"></span> Idle rack</div>
+              <div class="wm-leg"><span class="wm-leg-dot active"></span> Active picking</div>
+              <div class="wm-leg"><span class="wm-leg-dot road"></span> Forklift gangway</div>
+            </div>
+            <button class="btn-ghost" onclick="refreshMapPage()">↻ Refresh Map</button>
           </div>
         </div>
 
-        <div class="map-kpi-row">
-          <div class="map-kpi"><div class="map-kpi-lbl">Active Zone</div><div class="map-kpi-val" id="map-kpi-zone">0</div></div>
-          <div class="map-kpi"><div class="map-kpi-lbl">NEW Qty</div><div class="map-kpi-val" id="map-kpi-new">0</div></div>
-          <div class="map-kpi"><div class="map-kpi-lbl">Picking Qty</div><div class="map-kpi-val" id="map-kpi-pick">0</div></div>
-          <div class="map-kpi"><div class="map-kpi-lbl">Active Picker</div><div class="map-kpi-val" id="map-kpi-picker">0</div></div>
-          <div class="map-kpi"><div class="map-kpi-lbl">Critical Zone</div><div class="map-kpi-val" id="map-kpi-critical">0</div></div>
+        <div class="wm-kpi-row">
+          <div class="wm-kpi"><div class="wm-kpi-label">Active Zone</div><div class="wm-kpi-value" id="wmKpiZones">0</div></div>
+          <div class="wm-kpi"><div class="wm-kpi-label">Total Rack</div><div class="wm-kpi-value" id="wmKpiRacks">0</div></div>
+          <div class="wm-kpi"><div class="wm-kpi-label">Active Picking Rack</div><div class="wm-kpi-value" id="wmKpiActive">0</div></div>
+          <div class="wm-kpi"><div class="wm-kpi-label">Total Incoming Qty</div><div class="wm-kpi-value" id="wmKpiQty">0</div></div>
+          <div class="wm-kpi"><div class="wm-kpi-label">Selected Rack</div><div class="wm-kpi-value" id="wmKpiSelected">-</div></div>
         </div>
 
-        <div class="map-blueprint-wrap">
-          <div class="map-floating-legend">
-            <div class="map-leg"><span class="map-dot" style="background:#f97316"></span>Normal Rack</div>
-            <div class="map-leg"><span class="map-dot" style="background:#ef4444"></span>Critical Drop SO</div>
-            <div class="map-leg"><span class="map-dot" style="background:#eab308;border-radius:50%"></span>Picker Activity</div>
+        <div class="wm-stage-wrap">
+          <div class="wm-floating-controls">
+            <button type="button" id="wmZoomInBtn" title="Zoom In">＋</button>
+            <button type="button" id="wmZoomOutBtn" title="Zoom Out">－</button>
+            <button type="button" id="wmZoomResetBtn" title="Reset Zoom">Reset</button>
           </div>
-          <canvas id="warehouse-map-canvas" class="map-canvas" width="1280" height="860"></canvas>
+
+          <div class="wm-viewport" id="wmViewport">
+            <div class="wm-scene" id="wmScene">
+              <div class="wm-blueprint-grid"></div>
+              <div class="wm-blueprint" id="wmBlueprint"></div>
+            </div>
+            <div class="wm-tooltip" id="wmTooltip"></div>
+          </div>
+
+          <div class="wm-bottom-hint">
+            <span>🖱 Drag to pan</span>
+            <span>•</span>
+            <span>🛞 Wheel to zoom</span>
+            <span>•</span>
+            <span>🟦 Glowing rack = active picking</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="wm-side">
+        <div class="wm-panel">
+          <div class="wm-panel-label">Inspector</div>
+          <div class="wm-panel-title" id="wmInspectorRack">No Rack Selected</div>
+          <div class="wm-panel-sub" id="wmInspectorMeta">Click rack block to inspect workload.</div>
+
+          <div class="wm-metric-grid">
+            <div class="wm-metric-card"><div class="wm-metric-label">Picking Zone</div><div class="wm-metric-value" id="wmMetaZone">-</div></div>
+            <div class="wm-metric-card"><div class="wm-metric-label">Aisle</div><div class="wm-metric-value" id="wmMetaAisle">-</div></div>
+            <div class="wm-metric-card"><div class="wm-metric-label">Total Qty</div><div class="wm-metric-value" id="wmMetaQty">0</div></div>
+            <div class="wm-metric-card"><div class="wm-metric-label">Active Levels</div><div class="wm-metric-value" id="wmMetaLevels">0</div></div>
+            <div class="wm-metric-card"><div class="wm-metric-label">Picker Active</div><div class="wm-metric-value" id="wmMetaPickers">0</div></div>
+            <div class="wm-metric-card"><div class="wm-metric-label">SKU Count</div><div class="wm-metric-value" id="wmMetaSkus">0</div></div>
+          </div>
         </div>
 
-        <div class="map-status-strip">
-          <span>Click a rack strip to inspect connected SO workload.</span>
-          <span>Selected: <strong id="map-selected-label">-</strong></span>
+        <div class="wm-panel">
+          <div class="wm-panel-label">Active Picker</div>
+          <div class="wm-tag-list" id="wmPickerList">
+            <span class="wm-empty-tag">Belum ada rack dipilih</span>
+          </div>
         </div>
-      </div>
 
-      <div class="map-side">
-        <div class="map-inspector">
-          <div class="map-side-title">Inspector Komponen</div>
-          <div id="map-inspector-body"><div class="map-sub">Click a warehouse zone to inspect live activity.</div></div>
+        <div class="wm-panel">
+          <div class="wm-panel-label">SKU / SO Preview</div>
+          <div class="wm-sku-list" id="wmSkuList">
+            <div class="wm-empty-line">Belum ada data</div>
+          </div>
         </div>
-        <div class="map-critical">
-          <div class="map-side-title">Top Critical Zones</div>
-          <div id="map-critical-list"><div class="map-sub">No SO data yet.</div></div>
+
+        <div class="wm-panel">
+          <div class="wm-panel-label">Top Critical Rack</div>
+          <div class="wm-critical-list" id="wmCriticalList">
+            <div class="wm-empty-line">Map belum dimuat</div>
+          </div>
         </div>
-        <div class="map-tracker">
-          <div class="map-side-title">Picker Zone Tracker</div>
-          <div id="map-picker-list"><div class="map-sub">Picker data appears after sync or assignment preview.</div></div>
-        </div>
-      </div>
+      </aside>
+
     </div>
   </div>
 </div>
@@ -2544,598 +2735,587 @@ function buildChart(id,type,labels,data,label,colors){
 }
 
 
-/* LIVE MAP ENGINE - RACK STRIP BLUEPRINT */
-const BLUEPRINT_W = 1280;
-const BLUEPRINT_H = 860;
+/* LIVE MAP ENGINE V2 - INTERACTIVE 2D WAREHOUSE BLUEPRINT */
+const warehouseMapState = {
+  rows: [],
+  model: [],
+  selectedRackId: null,
+  transform: { scale: 0.72, x: 24, y: 24, minScale: 0.42, maxScale: 2.40 },
+  dragging: false,
+  dragStartX: 0,
+  dragStartY: 0,
+  movedDuringDrag: false,
+  interactionBound: false
+};
 
-/*
-  Rack-strip layout v1.
-  Ini bukan 23k rack individual; ini render strip rack per operational zone.
-  Workload tetap connect ke SO via picking_zone / origin_rack_name / picker / status.
-*/
-const MAP_RACK_LAYOUT_CONFIG = [
-  // Struktur dibuat sectioned: inventory SPR di atas, gangway tengah, pick face/mezzanine di bawah.
-  // Ini bukan koordinat CAD; ini clean operational map supaya supervisor bisa baca workload tanpa teks tabrakan.
-  {zone:'SPR 1-1', label:'SPR 1-1', x:80,  y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
-  {zone:'SPR 1-2', label:'SPR 1-2', x:245, y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
-  {zone:'SPR 1-3', label:'SPR 1-3', x:410, y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
-  {zone:'SPR 1-4', label:'SPR 1-4', x:575, y:130, racks:3, rackW:22, rackH:230, gap:28, dir:'vertical', group:'MAIN INVENTORY / SPR LOWER', labelY:94},
+function fmtMapNum(v){
+  return Number(v || 0).toLocaleString('id-ID');
+}
 
-  // Equipment-heavy area dipisah jelas di kanan atas.
-  {zone:'HRA-1', label:'HRA-1', x:835,  y:130, racks:3, rackW:24, rackH:255, gap:34, dir:'vertical', group:'HIGH RACK / EQUIPMENT', labelY:94},
-  {zone:'HRA-2', label:'HRA-2', x:1035, y:130, racks:3, rackW:24, rackH:255, gap:34, dir:'vertical', group:'HIGH RACK / EQUIPMENT', labelY:94},
+function uniqMap(arr){
+  return [...new Set((arr || []).filter(Boolean))];
+}
 
-  // Mezzanine pick face di bawah, lebih lega dan dipisah dari SPR lower oleh gangway.
-  {zone:'MZ 1-1', label:'MZ 1-1', x:80,  y:585, racks:7, rackW:18, rackH:125, gap:22, dir:'vertical', group:'PICKABLE AREA / MEZZANINE', labelY:548},
-  {zone:'MZ 2-1', label:'MZ 2-1', x:390, y:585, racks:6, rackW:18, rackH:125, gap:22, dir:'vertical', group:'PICKABLE AREA / MEZZANINE', labelY:548},
-  {zone:'MZ 1-2', label:'MZ 1-2', x:650, y:585, racks:3, rackW:18, rackH:125, gap:22, dir:'vertical', group:'PICKABLE AREA / MEZZANINE', labelY:548},
+function clampMap(v,min,max){
+  return Math.max(min, Math.min(max, v));
+}
 
-  // SPR upper rack di kanan bawah.
-  {zone:'SPR 2-1', label:'SPR 2-1', x:855,  y:585, racks:3, rackW:18, rackH:115, gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:548},
-  {zone:'SPR 2-2', label:'SPR 2-2', x:1010, y:585, racks:3, rackW:18, rackH:115, gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:548},
-  {zone:'SPR 2-3', label:'SPR 2-3', x:855,  y:745, racks:3, rackW:18, rackH:80,  gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:724},
-  {zone:'SPR 2-4', label:'SPR 2-4', x:1010, y:745, racks:3, rackW:18, rackH:80,  gap:22, dir:'vertical', group:'SPR UPPER RACK', labelY:724},
+function hashMapText(str){
+  let h = 0;
+  const s = String(str || '');
+  for(let i=0;i<s.length;i++) h = ((h << 5) - h) + s.charCodeAt(i), h |= 0;
+  return Math.abs(h);
+}
 
-  // Special handling / galon.
-  {zone:'BF-G', label:'BF-G', x:1150, y:745, racks:1, rackW:86, rackH:58, gap:0, dir:'block', group:'BULKY / GALON', labelY:724}
-];
+function getMapIncomingQty(row){
+  return Number(row.incoming_quantity || row.request_quantity || row.qty || 0) || 0;
+}
 
-function buildMapZoneShapes(){
-  const out = [];
-  MAP_RACK_LAYOUT_CONFIG.forEach(cfg=>{
-    const count = Math.max(1, Number(cfg.racks || 1));
-    for(let i=0;i<count;i++){
-      let x = cfg.x;
-      let y = cfg.y;
-      let w = cfg.rackW;
-      let h = cfg.rackH;
-      if(cfg.dir === 'vertical') x = cfg.x + i * (cfg.rackW + cfg.gap);
-      else if(cfg.dir === 'horizontal') y = cfg.y + i * (cfg.rackH + cfg.gap);
-      out.push({
-        zone:cfg.zone,
-        label: i === 0 ? cfg.label : '',
-        rackLabel: count > 1 ? `${cfg.label}-${String(i+1).padStart(2,'0')}` : cfg.label,
-        x,y,w,h,
-        group:cfg.group,
-        labelY:cfg.labelY,
-        rackIndex:i,
-        rackCount:count,
-        dir:cfg.dir,
-        labelAnchor:i===0
+function getMapRackName(row, idx){
+  const real = String(row.origin_rack_name || row.location || row.rack_name || row['Rack Name'] || '').trim();
+  if(real) return real;
+
+  // Fallback karena endpoint SO summary kadang tidak membawa origin_rack_name.
+  // Tetap dibuat rack virtual supaya map tidak kosong.
+  const zone = getMapZoneName(row).replace(/\s+/g,'');
+  const h = hashMapText((row.so_number || row.destination_name || idx || '') + zone);
+  const aisle = String((h % 8) + 1).padStart(2,'0');
+  const bay = String((Math.floor(h / 8) % 12) + 1).padStart(2,'0');
+  const level = String((Math.floor(h / 96) % 4) + 1);
+  return `STL-${zone || 'UNK'}-${aisle}-${bay}-L${level}`;
+}
+
+function getMapZoneName(row){
+  return String(row.picking_zone || row.PICKING_ZONE || row.PickingZone || row.zone || row['Picking Zone'] || 'NO ZONE').trim() || 'NO ZONE';
+}
+
+function getMapPickerName(row){
+  return String(row.Picker || row.picker || row.picker_name || row['Picker Name'] || '').trim();
+}
+
+function getMapSkuText(row){
+  return String(row.sku_number || row.SKU || row.product_id || row.so_number || '').trim();
+}
+
+function getMapSkuName(row){
+  return String(row.name || row.sku_description || row.product_name || row.destination_name || '').trim();
+}
+
+function isMapPickingActive(row){
+  const st = String(row.status || '').trim().toUpperCase();
+  const picker = getMapPickerName(row);
+  return st === 'PICKING' || (!!picker && !['DONE','COMPLETED','DELIVERED','READY TO SHIP'].includes(st));
+}
+
+function parseMapRackParts(rackName){
+  const raw = String(rackName || '').trim();
+  if(!raw){
+    return { raw:'', zoneCode:'UNK', aisle:'00', bay:'00', level:'L-', rackStem:'UNKNOWN', shortRack:'UNKNOWN' };
+  }
+
+  const levelMatch = raw.match(/-L(\d+)/i);
+  const level = levelMatch ? `L${levelMatch[1]}` : 'L-';
+  const noLevel = raw.replace(/-L\d+.*$/i, '');
+  const parts = noLevel.split('-').filter(Boolean);
+
+  // Format ideal: STL-MZA1-01-07-L3-02
+  const prefix = parts[0] || 'STL';
+  const zoneCode = parts[1] || 'UNK';
+  const aisle = parts[2] || '00';
+  const bay = parts[3] || '00';
+  const shortRack = [prefix, zoneCode, aisle, bay].filter(Boolean).join('-');
+
+  return { raw, zoneCode, aisle, bay, level, rackStem:noLevel, shortRack };
+}
+
+function buildWarehouseMapModel(rows){
+  const rackMap = new Map();
+
+  (rows || []).forEach((row, idx) => {
+    const rackName = getMapRackName(row, idx);
+    if(!rackName) return;
+
+    const parsed = parseMapRackParts(rackName);
+    const zone = getMapZoneName(row) || parsed.zoneCode;
+    const qty = getMapIncomingQty(row);
+    const picker = getMapPickerName(row);
+    const sku = getMapSkuText(row);
+    const skuName = getMapSkuName(row);
+    const active = isMapPickingActive(row);
+
+    const rackId = `${zone}__${parsed.aisle}__${parsed.rackStem}`;
+    if(!rackMap.has(rackId)){
+      rackMap.set(rackId, {
+        rackId,
+        zone,
+        aisle: parsed.aisle,
+        rackName: parsed.shortRack,
+        rackStem: parsed.rackStem,
+        levels: {},
+        totalQty: 0,
+        active: false,
+        skus: new Set(),
+        pickers: new Set(),
+        rowRefs: []
       });
     }
-  });
-  return out;
-}
 
-const MAP_ZONE_SHAPES = buildMapZoneShapes();
-const MAP_ZONE_ORDER = MAP_RACK_LAYOUT_CONFIG.map(s=>s.zone);
-let selectedMapZone = '';
-let mapActivityRows = [];
-let mapActivityByZone = {};
-let mapHoverZone = '';
-let mapCanvasBound = false;
+    const rack = rackMap.get(rackId);
+    rack.totalQty += qty;
+    rack.active = rack.active || active;
+    rack.rowRefs.push(row);
+    if(sku) rack.skus.add(sku);
+    if(picker) rack.pickers.add(picker);
 
-function getZoneShapes(zone){ return MAP_ZONE_SHAPES.filter(s=>s.zone === zone); }
-function getZoneBounds(zone){
-  const shapes = getZoneShapes(zone);
-  if(!shapes.length) return null;
-  const minX = Math.min(...shapes.map(s=>s.x));
-  const minY = Math.min(...shapes.map(s=>s.y));
-  const maxX = Math.max(...shapes.map(s=>s.x+s.w));
-  const maxY = Math.max(...shapes.map(s=>s.y+s.h));
-  return {x:minX,y:minY,w:maxX-minX,h:maxY-minY,cx:(minX+maxX)/2,cy:(minY+maxY)/2};
-}
-
-function normalizeZoneName(value){
-  const z = String(value || '').trim().toUpperCase().replace(/\s+/g,' ');
-  if(!z) return 'UNKNOWN';
-  if(z.includes('MZ 1-1') || z.includes('MZ1-1')) return 'MZ 1-1';
-  if(z.includes('MZ 2-1') || z.includes('MZ2-1')) return 'MZ 2-1';
-  if(z.includes('MZ 1-2') || z.includes('MZ1-2')) return 'MZ 1-2';
-  if(z.includes('HRA-1') || z.includes('HRA 1')) return 'HRA-1';
-  if(z.includes('HRA-2') || z.includes('HRA 2')) return 'HRA-2';
-  if(z.includes('SPR 1-1') || z.includes('SPR1-1')) return 'SPR 1-1';
-  if(z.includes('SPR 1-2') || z.includes('SPR1-2')) return 'SPR 1-2';
-  if(z.includes('SPR 1-3') || z.includes('SPR1-3')) return 'SPR 1-3';
-  if(z.includes('SPR 1-4') || z.includes('SPR1-4')) return 'SPR 1-4';
-  if(z.includes('SPR 2-1') || z.includes('SPR2-1')) return 'SPR 2-1';
-  if(z.includes('SPR 2-2') || z.includes('SPR2-2')) return 'SPR 2-2';
-  if(z.includes('SPR 2-3') || z.includes('SPR2-3')) return 'SPR 2-3';
-  if(z.includes('SPR 2-4') || z.includes('SPR2-4')) return 'SPR 2-4';
-  if(z.includes('BF-G') || z.includes('BFG') || z.includes('GALON')) return 'BF-G';
-  return String(value || 'UNKNOWN').trim() || 'UNKNOWN';
-}
-
-function getActualLevelFromSO(s){
-  const direct = Number(s.actual_level || s.level_actual || s.rack_level_actual || 0);
-  if(direct) return direct;
-  const rack = String(s.origin_rack_name || s.rack_name || s.location || '').toUpperCase();
-  const m = rack.match(/-L(\d+)(-|$)/);
-  return m ? Number(m[1]) : 0;
-}
-
-function isEquipmentSO(s, zone){
-  if(s.is_equipment_zone === true || String(s.is_equipment_zone).toLowerCase() === 'true') return true;
-  const zg = String(s.zone_group || '').toUpperCase();
-  const z = String(zone || '').toUpperCase();
-  return zg.includes('HRA') || zg.includes('SPR_2') || z.includes('HRA') || z.includes('SPR 2') || getActualLevelFromSO(s) >= 5;
-}
-
-function zonePenalty(zone){
-  const z = String(zone || '').toUpperCase();
-  if(z.includes('HRA')) return 500;
-  if(z.includes('SPR 2')) return 400;
-  if(z.includes('MZ')) return 300;
-  if(z.includes('BF-G')) return 350;
-  return 0;
-}
-
-function blankZoneActivity(zone){
-  return {
-    zone, total_so:0, total_qty:0, new_so:0, new_qty:0,
-    picking_so:0, picking_qty:0, done_so:0, done_qty:0,
-    active_pickers:new Set(), max_level:0, has_equipment_zone:false,
-    unique_racks:new Set(), effort_score:0, status:'NORMAL'
-  };
-}
-
-function buildZoneActivity(data){
-  const map = {};
-  MAP_ZONE_ORDER.forEach(zone=>{ map[zone] = blankZoneActivity(zone); });
-
-  (data || []).forEach(s=>{
-    const zone = normalizeZoneName(s.picking_zone || s.zone || s.Picking_Zone || s['Picking Zone']);
-    if(!map[zone]) map[zone] = blankZoneActivity(zone);
-
-    const d = map[zone];
-    const qty = Number(s.request_quantity || s.qty || s.request_qty || 0) || 0;
-    const st = String(s.status || 'NEW').toUpperCase().trim();
-    const picker = s.Picker || s.picker || s.picker_name || '';
-    const rack = s.origin_rack_name || s.rack_name || s.location || '';
-    const lvl = getActualLevelFromSO(s);
-
-    d.total_so += 1;
-    d.total_qty += qty;
-    if(rack) d.unique_racks.add(String(rack));
-    if(lvl > d.max_level) d.max_level = lvl;
-    if(isEquipmentSO(s, zone)) d.has_equipment_zone = true;
-    if(picker) d.active_pickers.add(String(picker));
-
-    if(st === 'NEW'){
-      d.new_so += 1; d.new_qty += qty;
-    } else if(st === 'PICKING'){
-      d.picking_so += 1; d.picking_qty += qty;
-    } else {
-      d.done_so += 1; d.done_qty += qty;
+    const levelKey = parsed.level || 'L-';
+    if(!rack.levels[levelKey]){
+      rack.levels[levelKey] = { level:levelKey, qty:0, active:false, skus:new Set(), skuNames:new Set(), pickers:new Set(), rows:[] };
     }
+
+    const levelObj = rack.levels[levelKey];
+    levelObj.qty += qty;
+    levelObj.active = levelObj.active || active;
+    levelObj.rows.push(row);
+    if(sku) levelObj.skus.add(sku);
+    if(skuName) levelObj.skuNames.add(skuName);
+    if(picker) levelObj.pickers.add(picker);
   });
 
-  Object.values(map).forEach(d=>{
-    const equipmentPenalty = d.has_equipment_zone ? 250 : 0;
-    d.effort_score = Math.round(
-      d.total_qty +
-      (d.total_so * 10) +
-      (d.unique_racks.size * 3) +
-      (d.max_level * 50) +
-      zonePenalty(d.zone) +
-      equipmentPenalty
-    );
+  const zoneMap = new Map();
 
-    if(d.new_qty >= 1000 || d.new_so >= 30 || d.effort_score >= 5000) d.status = 'CRITICAL';
-    else if(d.picking_qty > 0 || d.picking_so > 0) d.status = 'PICKING';
-    else if(d.done_so > 0 && d.new_so === 0 && d.picking_so === 0) d.status = 'DONE';
-    else d.status = 'NORMAL';
-
-    d.active_pickers = [...d.active_pickers].sort();
-    d.unique_rack_count = d.unique_racks.size;
-    delete d.unique_racks;
-  });
-
-  return Object.values(map).sort((a,b)=>{
-    const ai = MAP_ZONE_ORDER.indexOf(a.zone);
-    const bi = MAP_ZONE_ORDER.indexOf(b.zone);
-    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi) || a.zone.localeCompare(b.zone);
-  });
-}
-
-function mapColorForStatus(status){
-  const st = String(status || '').toUpperCase();
-  if(st === 'CRITICAL') return {fill:'rgba(239,68,68,0.58)', stroke:'rgba(248,113,113,0.95)', glow:'#ef4444', text:'#fecaca'};
-  if(st === 'PICKING') return {fill:'rgba(245,158,11,0.50)', stroke:'rgba(251,191,36,0.95)', glow:'#f59e0b', text:'#fde68a'};
-  if(st === 'DONE') return {fill:'rgba(34,197,94,0.45)', stroke:'rgba(74,222,128,0.95)', glow:'#22c55e', text:'#bbf7d0'};
-  return {fill:'rgba(249,115,22,0.50)', stroke:'rgba(251,146,60,0.85)', glow:'#f97316', text:'#fed7aa'};
-}
-
-function shortPickerName(name){
-  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-  if(!parts.length) return '';
-  return parts.slice(0,2).map(x=>x[0]).join('').toUpperCase();
-}
-function mapPointerToCanvas(e, canvas){
-  const rect = canvas.getBoundingClientRect();
-  return {
-    x: (e.clientX - rect.left) * (canvas.width / rect.width),
-    y: (e.clientY - rect.top) * (canvas.height / rect.height)
-  };
-}
-
-function getZoneAtPoint(x,y){
-  for(let i=MAP_ZONE_SHAPES.length-1;i>=0;i--){
-    const s = MAP_ZONE_SHAPES[i];
-    if(x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h) return s.zone;
-  }
-  return '';
-}
-
-function bindMapCanvas(){
-  if(mapCanvasBound) return;
-  const canvas = document.getElementById('warehouse-map-canvas');
-  if(!canvas) return;
-  mapCanvasBound = true;
-  canvas.addEventListener('mousemove', e=>{
-    const p = mapPointerToCanvas(e, canvas);
-    const z = getZoneAtPoint(p.x,p.y);
-    if(z !== mapHoverZone){
-      mapHoverZone = z;
-      canvas.style.cursor = z ? 'pointer' : 'crosshair';
-      drawWarehouseBlueprint();
-    }
-  });
-  canvas.addEventListener('mouseleave', ()=>{
-    mapHoverZone = '';
-    canvas.style.cursor = 'crosshair';
-    drawWarehouseBlueprint();
-  });
-  canvas.addEventListener('click', e=>{
-    const p = mapPointerToCanvas(e, canvas);
-    const z = getZoneAtPoint(p.x,p.y);
-    if(z) selectMapZone(z);
-  });
-}
-
-function drawText(ctx, text, x, y, opts={}){
-  ctx.save();
-  ctx.fillStyle = opts.color || '#cbd5e1';
-  ctx.font = opts.font || '11px IBM Plex Mono';
-  ctx.textAlign = opts.align || 'left';
-  ctx.textBaseline = opts.baseline || 'alphabetic';
-  ctx.fillText(text, x, y);
-  ctx.restore();
-}
-
-function roundRectPath(ctx, x, y, w, h, r){
-  const rr = Math.min(r, w/2, h/2);
-  ctx.beginPath();
-  ctx.moveTo(x+rr,y);
-  ctx.arcTo(x+w,y,x+w,y+h,rr);
-  ctx.arcTo(x+w,y+h,x,y+h,rr);
-  ctx.arcTo(x,y+h,x,y,rr);
-  ctx.arcTo(x,y,x+w,y,rr);
-  ctx.closePath();
-}
-
-function drawRoom(ctx, name, x, y, w, h, fill='#1e293b'){
-  ctx.save();
-  ctx.fillStyle = fill;
-  ctx.strokeStyle = '#334155';
-  ctx.lineWidth = 2;
-  ctx.fillRect(x,y,w,h);
-  ctx.strokeRect(x,y,w,h);
-  drawText(ctx, name, x+10, y+22, {color:'#94a3b8', font:'11px Inter'});
-  ctx.restore();
-}
-
-function drawZoneShape(ctx, shape, data){
-  const d = data || blankZoneActivity(shape.zone);
-  const c = mapColorForStatus(d.status);
-  const selected = selectedMapZone === shape.zone;
-  const hovered = mapHoverZone === shape.zone;
-  const isAnchor = shape.labelAnchor;
-
-  ctx.save();
-
-  if(isAnchor){
-    const b = getZoneBounds(shape.zone) || shape;
-    const panelX = b.x - 14;
-    const panelY = b.y - 44;
-    const panelW = b.w + 28;
-    const panelH = b.h + 76;
-
-    // background per zone supaya layout kebaca per blok
-    ctx.fillStyle = 'rgba(15,23,42,0.42)';
-    ctx.strokeStyle = selected ? 'rgba(96,165,250,0.90)' : hovered ? 'rgba(147,197,253,0.72)' : 'rgba(51,65,85,0.55)';
-    ctx.lineWidth = selected ? 2 : 1;
-    if(selected || hovered){
-      ctx.shadowBlur = selected ? 20 : 10;
-      ctx.shadowColor = selected ? '#60a5fa' : c.glow;
-    }
-    roundRectPath(ctx, panelX, panelY, panelW, panelH, 9);
-    ctx.fill();
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-
-    // group label dan zone label tidak nabrak rack
-    const labelY = shape.labelY || Math.max(26, b.y - 30);
-    drawText(ctx, shape.group || '', b.x - 8, labelY, {color:'rgba(148,163,184,0.68)', font:'bold 9px IBM Plex Mono'});
-    drawText(ctx, shape.zone, b.x - 8, labelY + 18, {color:'#e2e8f0', font:'bold 13px IBM Plex Mono'});
-
-    // SO / qty pindah kanan cluster, bukan di atas rack
-    if(d.total_so > 0){
-      const badgeX = Math.min(1040, b.x + b.w + 12);
-      const badgeY = b.y + 14;
-      drawText(ctx, `${d.total_so} SO`, badgeX, badgeY, {color:c.text || '#e2e8f0', font:'bold 10px IBM Plex Mono'});
-      drawText(ctx, `${Math.round(d.total_qty).toLocaleString('id-ID')} qty`, badgeX, badgeY + 15, {color:'rgba(148,163,184,0.88)', font:'9px IBM Plex Mono'});
-    }
-  }
-
-  // rack strip body - warna soft dan garis lebih sedikit
-  if(selected || hovered){
-    ctx.shadowBlur = selected ? 14 : 8;
-    ctx.shadowColor = selected ? '#60a5fa' : c.glow;
-  }
-  ctx.fillStyle = c.fill;
-  ctx.strokeStyle = selected ? '#60a5fa' : hovered ? '#93c5fd' : c.stroke;
-  ctx.lineWidth = d.status === 'CRITICAL' ? 1.8 : 1.2;
-  roundRectPath(ctx, shape.x, shape.y, shape.w, shape.h, 4);
-  ctx.fill();
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-
-  // shelf lines dikurangi, biar tidak noisy
-  ctx.strokeStyle = 'rgba(15,23,42,0.22)';
-  ctx.lineWidth = 1;
-  if(shape.h >= shape.w){
-    const step = Math.max(28, Math.floor(shape.h / 5));
-    for(let y = shape.y + step; y < shape.y + shape.h - 4; y += step){
-      ctx.beginPath(); ctx.moveTo(shape.x + 2, y); ctx.lineTo(shape.x + shape.w - 2, y); ctx.stroke();
-    }
-  } else {
-    const step = Math.max(28, Math.floor(shape.w / 5));
-    for(let x = shape.x + step; x < shape.x + shape.w - 4; x += step){
-      ctx.beginPath(); ctx.moveTo(x, shape.y + 2); ctx.lineTo(x, shape.y + shape.h - 2); ctx.stroke();
-    }
-  }
-
-  ctx.restore();
-}
-function drawPickerMarkers(ctx){
-  const rows = mapActivityRows.filter(d=>d.active_pickers && d.active_pickers.length);
-  rows.forEach(d=>{
-    const b = getZoneBounds(d.zone);
-    if(!b) return;
-    const pickers = d.active_pickers.slice(0, 6);
-
-    pickers.forEach((name, idx)=>{
-      // disebar dari kiri atas zona, bukan numpuk di tengah
-      const px = b.x + 12 + (idx % 3) * 42;
-      const py = b.y + Math.min(b.h - 22, 48 + Math.floor(idx / 3) * 32);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(px, py, 8, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(250,204,21,0.28)';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(px, py, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#facc15';
-      ctx.fill();
-      drawText(ctx, shortPickerName(name), px + 11, py + 3, {color:'#fef9c3', font:'bold 10px IBM Plex Mono'});
-      ctx.restore();
+  [...rackMap.values()]
+    .sort((a,b) => {
+      if(a.zone !== b.zone) return a.zone.localeCompare(b.zone, undefined, {numeric:true});
+      if(a.aisle !== b.aisle) return a.aisle.localeCompare(b.aisle, undefined, {numeric:true});
+      return a.rackName.localeCompare(b.rackName, undefined, {numeric:true});
+    })
+    .forEach(rack => {
+      if(!zoneMap.has(rack.zone)){
+        zoneMap.set(rack.zone, { zone:rack.zone, aisles:new Map(), totalQty:0, rackCount:0, activeCount:0 });
+      }
+      const zoneObj = zoneMap.get(rack.zone);
+      zoneObj.totalQty += rack.totalQty;
+      zoneObj.rackCount += 1;
+      if(rack.active) zoneObj.activeCount += 1;
+      if(!zoneObj.aisles.has(rack.aisle)) zoneObj.aisles.set(rack.aisle, []);
+      zoneObj.aisles.get(rack.aisle).push(rack);
     });
+
+  return [...zoneMap.values()].map(zoneObj => {
+    const aisles = [...zoneObj.aisles.entries()]
+      .sort((a,b) => a[0].localeCompare(b[0], undefined, {numeric:true}))
+      .map(([aisle, racks]) => {
+        const sorted = racks.sort((a,b) => a.rackName.localeCompare(b.rackName, undefined, {numeric:true}));
+        const left = [], right = [];
+        sorted.forEach((rack, idx) => (idx % 2 === 0 ? left : right).push(rack));
+        return {
+          aisle,
+          left,
+          right,
+          rackCount: sorted.length,
+          totalQty: sorted.reduce((s,r)=>s+r.totalQty,0)
+        };
+      });
+
+    return { ...zoneObj, aisles };
   });
 }
-function drawWarehouseBlueprint(){
-  const canvas = document.getElementById('warehouse-map-canvas');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.imageSmoothingEnabled = true;
-  ctx.textBaseline = 'middle';
 
-  ctx.fillStyle = '#020617';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // outer warehouse boundary
-  ctx.strokeStyle = '#334155';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(35,35,1210,790);
-
-  // header blueprint label
-  drawText(ctx, 'WH SENTUL - SECTIONED 2D RACK LAYOUT MONITOR', 45, 28, {color:'rgba(226,232,240,.86)', font:'bold 12px IBM Plex Mono'});
-  drawText(ctx, 'Data driven by SO zone, picker, status, qty, level, and effort score', 420, 28, {color:'rgba(148,163,184,.70)', font:'10px IBM Plex Mono'});
-
-  // SECTION BACKGROUNDS: dibuat mengikuti ide Gemini, tapi tetap pakai zone real Playmaker.
-  ctx.save();
-
-  // Main Inventory SPR
-  ctx.fillStyle = 'rgba(37,99,235,.060)';
-  roundRectPath(ctx, 58, 68, 700, 330, 12);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(59,130,246,.18)';
-  ctx.stroke();
-  drawText(ctx, 'MAIN INVENTORY - SPR LOWER RACK', 76, 78, {color:'rgba(147,197,253,.78)', font:'bold 11px IBM Plex Mono'});
-
-  // Equipment / high rack
-  ctx.fillStyle = 'rgba(124,58,237,.060)';
-  roundRectPath(ctx, 800, 68, 420, 330, 12);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(168,85,247,.18)';
-  ctx.stroke();
-  drawText(ctx, 'HRA / EQUIPMENT AREA', 820, 78, {color:'rgba(216,180,254,.78)', font:'bold 11px IBM Plex Mono'});
-
-  // Forklift flow road
-  ctx.fillStyle = 'rgba(15,23,42,.78)';
-  roundRectPath(ctx, 58, 425, 1162, 66, 11);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(148,163,184,.18)';
-  ctx.setLineDash([10,8]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  drawText(ctx, 'MAIN FORKLIFT FLOW ROAD / 2 GANGWAY', 82, 458, {color:'rgba(148,163,184,.78)', font:'bold 11px IBM Plex Mono'});
-  drawText(ctx, 'SPR to PICKABLE AREA', 950, 458, {color:'rgba(148,163,184,.55)', font:'10px IBM Plex Mono'});
-
-  // Pickable / mezzanine
-  ctx.fillStyle = 'rgba(16,185,129,.055)';
-  roundRectPath(ctx, 58, 520, 720, 210, 12);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(16,185,129,.18)';
-  ctx.stroke();
-  drawText(ctx, 'PICKABLE AREA - MEZZANINE PICK FACE', 76, 530, {color:'rgba(110,231,183,.78)', font:'bold 11px IBM Plex Mono'});
-
-  // SPR upper / special
-  ctx.fillStyle = 'rgba(245,158,11,.045)';
-  roundRectPath(ctx, 815, 520, 405, 305, 12);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(245,158,11,.18)';
-  ctx.stroke();
-  drawText(ctx, 'SPR UPPER RACK / SPECIAL HANDLING', 835, 530, {color:'rgba(253,230,138,.78)', font:'bold 11px IBM Plex Mono'});
-
-  ctx.restore();
-
-  // subtle grid, low noise
-  ctx.strokeStyle = 'rgba(148,163,184,.025)';
-  ctx.lineWidth = 1;
-  for(let x=80; x<1230; x+=80){ctx.beginPath();ctx.moveTo(x,50);ctx.lineTo(x,825);ctx.stroke();}
-  for(let y=120; y<825; y+=80){ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(1230,y);ctx.stroke();}
-
-  // access gate hints
-  drawText(ctx, 'Main Gate', 84, 48, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
-  ctx.fillStyle = '#ef4444'; ctx.fillRect(82,35,75,5);
-  drawText(ctx, 'Shutter / Loading', 545, 48, {color:'#ef4444', font:'bold 10px IBM Plex Mono'});
-  ctx.fillStyle = '#ef4444'; ctx.fillRect(550,35,125,5);
-
-  // static support rooms at bottom edge
-  drawRoom(ctx, 'Auto Wrapper', 72, 792, 110, 24, '#334155');
-  drawRoom(ctx, 'Office / Toilet', 200, 792, 145, 24, '#1e293b');
-  drawRoom(ctx, 'Transit Area', 365, 792, 132, 24, '#1e293b');
-  drawRoom(ctx, 'Assembly OB', 515, 792, 128, 24, '#1e293b');
-  drawRoom(ctx, 'Packing Line', 662, 792, 125, 24, '#1e293b');
-  drawRoom(ctx, 'Inbound / RFM', 80, 738, 145, 24, '#1e293b');
-
-  // rack strips
-  MAP_ZONE_SHAPES.forEach(shape=>drawZoneShape(ctx, shape, mapActivityByZone[shape.zone]));
-  drawPickerMarkers(ctx);
-
-  // bottom caption
-  drawText(ctx, 'Legend: red critical queue, amber active picking, green done, orange normal. Click zone strip for inspector.', 45, 848, {color:'rgba(148,163,184,.72)', font:'10px IBM Plex Mono'});
-}
 function renderRackMonitor(){
-  bindMapCanvas();
-  mapActivityRows = buildZoneActivity(soData);
-  mapActivityByZone = {};
-  mapActivityRows.forEach(d=>{ mapActivityByZone[d.zone] = d; });
+  initWarehouseMapInteractions();
 
-  const rows = mapActivityRows;
-  const activeRows = rows.filter(x=>x.total_so > 0);
-  const newQty = rows.reduce((a,x)=>a+x.new_qty,0);
-  const pickingQty = rows.reduce((a,x)=>a+x.picking_qty,0);
-  const critical = rows.filter(x=>x.status === 'CRITICAL').length;
-  const pickers = new Set();
-  rows.forEach(x=>(x.active_pickers||[]).forEach(p=>pickers.add(p)));
+  const rows = Array.isArray(soData) ? soData : [];
+  warehouseMapState.rows = rows;
+  warehouseMapState.model = buildWarehouseMapModel(rows);
 
-  const setText = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
-  setText('map-kpi-zone', activeRows.length.toLocaleString('id-ID'));
-  setText('map-kpi-new', newQty.toLocaleString('id-ID'));
-  setText('map-kpi-pick', pickingQty.toLocaleString('id-ID'));
-  setText('map-kpi-picker', pickers.size.toLocaleString('id-ID'));
-  setText('map-kpi-critical', critical.toLocaleString('id-ID'));
+  renderWarehouseBlueprint();
+  renderMapKpisV2();
+  renderCriticalRackListV2();
 
-  if(!selectedMapZone && activeRows[0]) selectedMapZone = activeRows[0].zone;
-  if(!selectedMapZone) selectedMapZone = 'MZ 1-1';
-  setText('map-selected-label', selectedMapZone || '-');
+  const selectedExists = warehouseMapState.selectedRackId && findMapRackById(warehouseMapState.selectedRackId);
+  if(!selectedExists){
+    const firstRack = warehouseMapState.model[0]?.aisles?.[0]?.left?.[0] || warehouseMapState.model[0]?.aisles?.[0]?.right?.[0] || null;
+    warehouseMapState.selectedRackId = firstRack ? firstRack.rackId : null;
+  }
 
-  drawWarehouseBlueprint();
-  renderMapInspector(mapActivityByZone[selectedMapZone] || rows[0]);
-  renderMapCriticalList(rows);
-  renderMapPickerList(rows);
+  if(warehouseMapState.selectedRackId) setSelectedMapRack(warehouseMapState.selectedRackId);
+  else renderMapInspectorV2(null);
+
+  applyWarehouseMapTransform();
 }
 
-function selectMapZone(zone){
-  selectedMapZone = zone;
+function refreshMapPage(){
   renderRackMonitor();
 }
 
-function renderMapInspector(d){
-  const box = document.getElementById('map-inspector-body');
-  if(!box || !d) return;
-  const pickerText = d.active_pickers && d.active_pickers.length ? d.active_pickers.join(', ') : '-';
-  const equip = d.has_equipment_zone ? 'YES' : 'NO';
-  const statusColor = d.status === 'CRITICAL' ? '#f87171' : d.status === 'PICKING' ? '#fbbf24' : d.status === 'DONE' ? '#4ade80' : '#fb923c';
-  box.innerHTML = `
-    <div class="map-ins-name">${esc(d.zone)}</div>
-    <div class="map-ins-status" style="color:${statusColor}">${d.status}</div>
-    <div class="map-ins-grid">
-      <div class="map-ins-card"><div class="map-ins-lbl">Total SO</div><div class="map-ins-val">${d.total_so.toLocaleString('id-ID')}</div></div>
-      <div class="map-ins-card"><div class="map-ins-lbl">Total Qty</div><div class="map-ins-val">${d.total_qty.toLocaleString('id-ID')}</div></div>
-      <div class="map-ins-card"><div class="map-ins-lbl">NEW</div><div class="map-ins-val">${d.new_so.toLocaleString('id-ID')} / ${d.new_qty.toLocaleString('id-ID')}</div></div>
-      <div class="map-ins-card"><div class="map-ins-lbl">PICKING</div><div class="map-ins-val">${d.picking_so.toLocaleString('id-ID')} / ${d.picking_qty.toLocaleString('id-ID')}</div></div>
-      <div class="map-ins-card"><div class="map-ins-lbl">DONE</div><div class="map-ins-val">${d.done_so.toLocaleString('id-ID')} / ${d.done_qty.toLocaleString('id-ID')}</div></div>
-      <div class="map-ins-card"><div class="map-ins-lbl">Effort</div><div class="map-ins-val">${d.effort_score.toLocaleString('id-ID')}</div></div>
-      <div class="map-ins-card"><div class="map-ins-lbl">Max Level</div><div class="map-ins-val">L${d.max_level || '-'}</div></div>
-      <div class="map-ins-card"><div class="map-ins-lbl">Equipment</div><div class="map-ins-val">${equip}</div></div>
-    </div>
-    <div class="map-ins-card" style="margin-top:8px">
-      <div class="map-ins-lbl">Active Pickers</div>
-      <div class="map-sub" style="margin-top:4px">${esc(pickerText)}</div>
+function renderWarehouseBlueprint(){
+  const el = document.getElementById('wmBlueprint');
+  if(!el) return;
+
+  const zones = warehouseMapState.model || [];
+  if(!zones.length){
+    el.innerHTML = `
+      <section class="wm-zone">
+        <div class="wm-zone-title">Map kosong</div>
+        <div class="wm-zone-meta">Tidak ada data rack/zone. Sync Data SO dulu.</div>
+      </section>`;
+    return;
+  }
+
+  el.innerHTML = zones.map(zone => `
+    <section class="wm-zone">
+      <div class="wm-zone-head">
+        <div>
+          <div class="wm-zone-title">${esc(zone.zone)}</div>
+          <div class="wm-zone-meta">${zone.aisles.length} aisle · ${fmtMapNum(zone.rackCount)} rack · ${fmtMapNum(zone.totalQty)} qty</div>
+        </div>
+        <div class="wm-zone-badge">${fmtMapNum(zone.activeCount)} active rack</div>
+      </div>
+      <div class="wm-aisle-grid">
+        ${zone.aisles.map(aisle => `
+          <div class="wm-aisle">
+            <div class="wm-aisle-head">
+              <div>
+                <div class="wm-aisle-title">Aisle ${esc(aisle.aisle)}</div>
+                <div class="wm-aisle-sub">${fmtMapNum(aisle.rackCount)} rack · ${fmtMapNum(aisle.totalQty)} qty</div>
+              </div>
+            </div>
+            <div class="wm-lane">
+              <div class="wm-rack-track left">${aisle.left.map(rack => renderMapRackCard(rack)).join('')}</div>
+              <div class="wm-gangway"></div>
+              <div class="wm-rack-track right">${aisle.right.map(rack => renderMapRackCard(rack)).join('')}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  `).join('');
+
+  bindMapRackEventsV2();
+}
+
+function renderMapRackCard(rack){
+  let levels = Object.values(rack.levels || {}).sort((a,b)=>{
+    const na = Number(String(a.level).replace(/\D/g,'')) || 0;
+    const nb = Number(String(b.level).replace(/\D/g,'')) || 0;
+    return na - nb;
+  });
+
+  // Biar bentuk rak tetap terasa bertingkat meski data summary cuma punya satu level fallback.
+  if(levels.length < 3){
+    const existing = new Set(levels.map(l=>l.level));
+    ['L1','L2','L3'].forEach(lv => {
+      if(!existing.has(lv)) levels.push({level:lv, qty:0, active:false, skus:new Set(), skuNames:new Set(), pickers:new Set(), rows:[]});
+    });
+    levels = levels.sort((a,b)=>(Number(String(a.level).replace(/\D/g,''))||0)-(Number(String(b.level).replace(/\D/g,''))||0));
+  }
+
+  const selected = warehouseMapState.selectedRackId === rack.rackId ? 'selected' : '';
+  return `
+    <div class="wm-rack ${selected}" data-rack-id="${esc(rack.rackId)}">
+      <div class="wm-rack-name">${esc(rack.rackName)}</div>
+      <div class="wm-level-stack">
+        ${levels.map(level => `
+          <div class="wm-level ${level.active ? 'active' : ''}" data-rack-id="${esc(rack.rackId)}" data-level="${esc(level.level)}">
+            <span>${esc(level.level)}</span>
+            <small>${fmtMapNum(level.qty)}</small>
+          </div>
+        `).join('')}
+      </div>
+      <div class="wm-rack-foot">
+        <span class="wm-rack-status ${rack.active ? 'active' : ''}">${rack.active ? 'Active' : 'Idle'}</span>
+        <span>${fmtMapNum(rack.totalQty)}</span>
+      </div>
     </div>`;
 }
 
-function renderMapCriticalList(rows){
-  const list = document.getElementById('map-critical-list');
-  if(!list) return;
-  const top = (rows || [])
-    .filter(x=>x.total_so > 0)
-    .sort((a,b)=>b.effort_score - a.effort_score)
-    .slice(0,8);
-
-  if(!top.length){
-    list.innerHTML = `<div class="map-sub">No SO data yet. Sync data first.</div>`;
-    return;
-  }
-
-  list.innerHTML = top.map(d=>`
-    <div class="map-critical-item" onclick="selectMapZone('${esc(d.zone)}')">
-      <div class="map-critical-top">
-        <div class="map-critical-zone">${esc(d.zone)}</div>
-        <div class="map-critical-score">${d.effort_score.toLocaleString('id-ID')}</div>
-      </div>
-      <div class="map-critical-sub">${d.status} - ${d.total_so.toLocaleString('id-ID')} SO - NEW ${d.new_qty.toLocaleString('id-ID')} qty - L${d.max_level || '-'}</div>
-    </div>`).join('');
-}
-
-function renderMapPickerList(rows){
-  const list = document.getElementById('map-picker-list');
-  if(!list) return;
-  const byPicker = {};
-  (soData || []).forEach(s=>{
-    const picker = s.Picker || s.picker || s.picker_name || '';
-    if(!picker) return;
-    const zone = normalizeZoneName(s.picking_zone || s.zone || s['Picking Zone']);
-    if(!byPicker[picker]) byPicker[picker] = {picker, zones:new Set(), so:0, qty:0};
-    byPicker[picker].zones.add(zone);
-    byPicker[picker].so += 1;
-    byPicker[picker].qty += Number(s.request_quantity || 0) || 0;
+function bindMapRackEventsV2(){
+  document.querySelectorAll('.wm-rack, .wm-level').forEach(node => {
+    node.addEventListener('click', function(ev){
+      if(warehouseMapState.movedDuringDrag) return;
+      ev.stopPropagation();
+      const rackId = this.getAttribute('data-rack-id');
+      const level = this.getAttribute('data-level') || '';
+      setSelectedMapRack(rackId, level);
+      showMapRackTooltip(ev, rackId, level);
+    });
   });
-  const arr = Object.values(byPicker).sort((a,b)=>b.qty-a.qty).slice(0,12);
-  if(!arr.length){
-    list.innerHTML = `<div class="map-sub">No active picker found.</div>`;
-    return;
-  }
-  list.innerHTML = arr.map(p=>`
-    <div class="map-picker-row">
-      <div>
-        <div class="map-picker-name"><span class="map-picker-dot"></span>${esc(p.picker)}</div>
-        <div class="map-picker-meta">Area: ${esc([...p.zones].slice(0,3).join(', '))}${p.zones.size>3?' +'+(p.zones.size-3):''}</div>
-      </div>
-      <div style="text-align:right">
-        <div style="color:#facc15;font-weight:800">${p.qty.toLocaleString('id-ID')} qty</div>
-        <div class="map-picker-meta">${p.so.toLocaleString('id-ID')} SO</div>
-      </div>
-    </div>`).join('');
 }
 
+function findMapRackById(rackId){
+  for(const zone of (warehouseMapState.model || [])){
+    for(const aisle of (zone.aisles || [])){
+      for(const rack of [...(aisle.left || []), ...(aisle.right || [])]){
+        if(rack.rackId === rackId) return rack;
+      }
+    }
+  }
+  return null;
+}
 
+function setSelectedMapRack(rackId, level=''){
+  warehouseMapState.selectedRackId = rackId;
+
+  document.querySelectorAll('.wm-rack').forEach(el => {
+    el.classList.toggle('selected', el.getAttribute('data-rack-id') === rackId);
+  });
+
+  const rack = findMapRackById(rackId);
+  renderMapInspectorV2(rack, level);
+  renderMapKpisV2();
+}
+
+function renderMapInspectorV2(rack, level=''){
+  const setText = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+
+  if(!rack){
+    setText('wmInspectorRack','No Rack Selected');
+    setText('wmInspectorMeta','Click rack block to inspect workload.');
+    setText('wmMetaZone','-'); setText('wmMetaAisle','-'); setText('wmMetaQty','0');
+    setText('wmMetaLevels','0'); setText('wmMetaPickers','0'); setText('wmMetaSkus','0');
+    const pl = document.getElementById('wmPickerList');
+    const sl = document.getElementById('wmSkuList');
+    if(pl) pl.innerHTML = `<span class="wm-empty-tag">Belum ada rack dipilih</span>`;
+    if(sl) sl.innerHTML = `<div class="wm-empty-line">Belum ada data</div>`;
+    return;
+  }
+
+  const allLevels = Object.values(rack.levels || {});
+  const activeLevels = allLevels.filter(l => l.active);
+  const allPickers = uniqMap(allLevels.flatMap(l => [...(l.pickers || [])]));
+  const allSkus = uniqMap(allLevels.flatMap(l => [...(l.skus || [])]));
+  const levelText = level ? ` · ${level}` : '';
+
+  setText('wmInspectorRack', `${rack.rackName}${levelText}`);
+  setText('wmInspectorMeta', `${rack.zone} · Aisle ${rack.aisle} · ${rack.active ? 'Active picking' : 'Idle'}`);
+  setText('wmMetaZone', rack.zone);
+  setText('wmMetaAisle', rack.aisle);
+  setText('wmMetaQty', fmtMapNum(rack.totalQty));
+  setText('wmMetaLevels', fmtMapNum(activeLevels.length));
+  setText('wmMetaPickers', fmtMapNum(allPickers.length));
+  setText('wmMetaSkus', fmtMapNum(allSkus.length));
+
+  const pickerList = document.getElementById('wmPickerList');
+  if(pickerList){
+    pickerList.innerHTML = allPickers.length
+      ? allPickers.map(p => `<span class="wm-tag">${esc(p)}</span>`).join('')
+      : `<span class="wm-empty-tag">Tidak ada picker aktif</span>`;
+  }
+
+  const rows = level && rack.levels[level] ? rack.levels[level].rows : rack.rowRefs;
+  const skuPreview = {};
+  rows.forEach(r => {
+    const key = getMapSkuText(r) || getMapSkuName(r) || getMapRackName(r);
+    if(!key) return;
+    if(!skuPreview[key]) skuPreview[key] = { sku:key, name:getMapSkuName(r), so:r.so_number || '', qty:0 };
+    skuPreview[key].qty += getMapIncomingQty(r);
+  });
+
+  const skuItems = Object.values(skuPreview).sort((a,b)=>b.qty-a.qty).slice(0,8);
+  const skuList = document.getElementById('wmSkuList');
+  if(skuList){
+    skuList.innerHTML = skuItems.length
+      ? skuItems.map(item => `
+          <div class="wm-sku-item">
+            <div class="sku-name">${esc(item.name || item.sku)}</div>
+            <div class="sku-meta">${esc(item.sku)} · SO ${esc(item.so || '-')} · Qty ${fmtMapNum(item.qty)}</div>
+          </div>
+        `).join('')
+      : `<div class="wm-empty-line">Tidak ada SKU / SO di rack ini</div>`;
+  }
+}
+
+function showMapRackTooltip(ev, rackId, level=''){
+  const tooltip = document.getElementById('wmTooltip');
+  const viewport = document.getElementById('wmViewport');
+  const rack = findMapRackById(rackId);
+  if(!tooltip || !viewport || !rack) return;
+
+  const rows = level && rack.levels[level] ? rack.levels[level].rows : rack.rowRefs;
+  const pickers = uniqMap(rows.map(getMapPickerName));
+  const skuNames = uniqMap(rows.map(r => getMapSkuName(r) || getMapSkuText(r))).slice(0,5);
+  const qty = rows.reduce((s,r)=>s+getMapIncomingQty(r),0);
+
+  tooltip.innerHTML = `
+    <div class="wm-tooltip-title">${esc(rack.rackName)} ${level ? '· ' + esc(level) : ''}</div>
+    <div class="wm-tooltip-sub">${esc(rack.zone)} · Aisle ${esc(rack.aisle)}</div>
+    <div class="wm-tooltip-grid">
+      <div class="wm-tooltip-card"><div class="k">Incoming Qty</div><div class="v">${fmtMapNum(qty)}</div></div>
+      <div class="wm-tooltip-card"><div class="k">Picker Active</div><div class="v">${fmtMapNum(pickers.length)}</div></div>
+    </div>
+    <div class="wm-tooltip-list">
+      <b>Picker:</b> ${pickers.length ? esc(pickers.join(', ')) : 'Tidak ada'}<br>
+      <b>SKU/SO:</b> ${skuNames.length ? esc(skuNames.join(', ')) : 'Tidak ada'}
+    </div>
+  `;
+
+  const rect = viewport.getBoundingClientRect();
+  const x = ev.clientX - rect.left + 14;
+  const y = ev.clientY - rect.top + 14;
+  tooltip.style.left = `${Math.max(8, Math.min(x, rect.width - 350))}px`;
+  tooltip.style.top = `${Math.max(8, Math.min(y, rect.height - 210))}px`;
+  tooltip.classList.add('show');
+}
+
+function hideMapRackTooltip(){
+  const tooltip = document.getElementById('wmTooltip');
+  if(tooltip) tooltip.classList.remove('show');
+}
+
+function renderMapKpisV2(){
+  const zones = warehouseMapState.model || [];
+  const racks = [];
+  zones.forEach(z => z.aisles.forEach(a => racks.push(...a.left, ...a.right)));
+
+  const totalQty = racks.reduce((s,r)=>s+r.totalQty,0);
+  const activeRack = racks.filter(r=>r.active).length;
+  const selectedRack = findMapRackById(warehouseMapState.selectedRackId);
+  const activeZones = zones.filter(z => z.totalQty > 0).length;
+
+  const setText = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  setText('wmKpiZones', fmtMapNum(activeZones));
+  setText('wmKpiRacks', fmtMapNum(racks.length));
+  setText('wmKpiActive', fmtMapNum(activeRack));
+  setText('wmKpiQty', fmtMapNum(totalQty));
+  setText('wmKpiSelected', selectedRack ? selectedRack.rackName : '-');
+}
+
+function renderCriticalRackListV2(){
+  const wrap = document.getElementById('wmCriticalList');
+  if(!wrap) return;
+
+  const racks = [];
+  (warehouseMapState.model || []).forEach(z => z.aisles.forEach(a => racks.push(...a.left, ...a.right)));
+
+  const ranked = racks.map(r => {
+    const activeLevels = Object.values(r.levels || {}).filter(l=>l.active).length;
+    const pickerPenalty = r.pickers ? r.pickers.size * 80 : 0;
+    const score = Math.round((r.totalQty || 0) + (activeLevels * 160) + pickerPenalty);
+    return {...r, score};
+  }).sort((a,b)=>b.score-a.score).slice(0,10);
+
+  if(!ranked.length){
+    wrap.innerHTML = `<div class="wm-empty-line">Belum ada data</div>`;
+    return;
+  }
+
+  wrap.innerHTML = ranked.map(r => `
+    <div class="wm-critical-item" data-critical-rack="${esc(r.rackId)}">
+      <div class="wm-critical-top">
+        <div class="wm-critical-rack">${esc(r.rackName)}</div>
+        <div class="wm-critical-score">${fmtMapNum(r.score)}</div>
+      </div>
+      <div class="wm-critical-sub">${esc(r.zone)} · Aisle ${esc(r.aisle)} · ${fmtMapNum(r.totalQty)} qty · ${r.active ? 'active' : 'idle'}</div>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('[data-critical-rack]').forEach(el => {
+    el.addEventListener('click', function(){
+      const rackId = this.getAttribute('data-critical-rack');
+      setSelectedMapRack(rackId);
+      centerMapOnRack(rackId);
+    });
+  });
+}
+
+function applyWarehouseMapTransform(){
+  const scene = document.getElementById('wmScene');
+  if(!scene) return;
+  const t = warehouseMapState.transform;
+  scene.style.transform = `translate(${t.x}px, ${t.y}px) scale(${t.scale})`;
+}
+
+function setWarehouseMapScale(nextScale, originX=0, originY=0){
+  const t = warehouseMapState.transform;
+  const oldScale = t.scale;
+  const newScale = clampMap(nextScale, t.minScale, t.maxScale);
+  if(newScale === oldScale) return;
+
+  t.x = originX - ((originX - t.x) * (newScale / oldScale));
+  t.y = originY - ((originY - t.y) * (newScale / oldScale));
+  t.scale = newScale;
+  applyWarehouseMapTransform();
+}
+
+function resetWarehouseMapView(){
+  warehouseMapState.transform.scale = 0.72;
+  warehouseMapState.transform.x = 24;
+  warehouseMapState.transform.y = 24;
+  applyWarehouseMapTransform();
+}
+
+function initWarehouseMapInteractions(){
+  if(warehouseMapState.interactionBound) return;
+
+  const viewport = document.getElementById('wmViewport');
+  if(!viewport) return;
+
+  warehouseMapState.interactionBound = true;
+
+  viewport.addEventListener('pointerdown', (ev) => {
+    if(ev.target.closest('.wm-rack') || ev.target.closest('.wm-level')) return;
+    warehouseMapState.dragging = true;
+    warehouseMapState.movedDuringDrag = false;
+    warehouseMapState.dragStartX = ev.clientX - warehouseMapState.transform.x;
+    warehouseMapState.dragStartY = ev.clientY - warehouseMapState.transform.y;
+    viewport.classList.add('dragging');
+    hideMapRackTooltip();
+  });
+
+  window.addEventListener('pointermove', (ev) => {
+    if(!warehouseMapState.dragging) return;
+    const nextX = ev.clientX - warehouseMapState.dragStartX;
+    const nextY = ev.clientY - warehouseMapState.dragStartY;
+
+    if(Math.abs(nextX - warehouseMapState.transform.x) > 2 || Math.abs(nextY - warehouseMapState.transform.y) > 2){
+      warehouseMapState.movedDuringDrag = true;
+    }
+
+    warehouseMapState.transform.x = nextX;
+    warehouseMapState.transform.y = nextY;
+    applyWarehouseMapTransform();
+  });
+
+  window.addEventListener('pointerup', () => {
+    warehouseMapState.dragging = false;
+    viewport.classList.remove('dragging');
+    setTimeout(()=>{ warehouseMapState.movedDuringDrag = false; }, 40);
+  });
+
+  viewport.addEventListener('wheel', (ev) => {
+    ev.preventDefault();
+    const rect = viewport.getBoundingClientRect();
+    const originX = ev.clientX - rect.left;
+    const originY = ev.clientY - rect.top;
+    const delta = ev.deltaY < 0 ? 1.12 : 0.90;
+    setWarehouseMapScale(warehouseMapState.transform.scale * delta, originX, originY);
+  }, {passive:false});
+
+  document.getElementById('wmZoomInBtn')?.addEventListener('click', () => setWarehouseMapScale(warehouseMapState.transform.scale * 1.12, 220, 180));
+  document.getElementById('wmZoomOutBtn')?.addEventListener('click', () => setWarehouseMapScale(warehouseMapState.transform.scale * 0.90, 220, 180));
+  document.getElementById('wmZoomResetBtn')?.addEventListener('click', resetWarehouseMapView);
+
+  viewport.addEventListener('click', (ev) => {
+    if(!ev.target.closest('.wm-rack') && !ev.target.closest('.wm-level')) hideMapRackTooltip();
+  });
+}
+
+function centerMapOnRack(rackId){
+  const allRacks = [...document.querySelectorAll('.wm-rack')];
+  const rackEl = allRacks.find(el => el.getAttribute('data-rack-id') === rackId);
+  const viewport = document.getElementById('wmViewport');
+  if(!rackEl || !viewport) return;
+
+  const viewportRect = viewport.getBoundingClientRect();
+  const rackRect = rackEl.getBoundingClientRect();
+
+  const deltaX = (viewportRect.width / 2) - (rackRect.left - viewportRect.left + rackRect.width / 2);
+  const deltaY = (viewportRect.height / 2) - (rackRect.top - viewportRect.top + rackRect.height / 2);
+
+  warehouseMapState.transform.x += deltaX;
+  warehouseMapState.transform.y += deltaY;
+  applyWarehouseMapTransform();
+}
 
 
 // ============================================================
